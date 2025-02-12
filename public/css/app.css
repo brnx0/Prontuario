@@ -1,0 +1,118 @@
+textarea{
+    resize: none;
+}
+/* Define a altura da navbar */
+.navbar {
+    height: 7vh; /* Altura fixa da navbar */
+}
+
+/* Layout principal ocupa 100% da tela */
+html, body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+}
+
+/* Define a área abaixo da navbar */
+.containerPrincipal {
+    display: flex;
+    height: 93vh; /* Ocupar todo o espaço restante */
+    transition: all 0.3s ease-in-out;
+    
+}
+#sidebar ul a {
+    text-decoration: none;
+}
+#sidebar ul a:hover {
+    background-color: red
+}
+
+/* Sidebar normal */
+#sidebar {
+    width: 300px;
+    height: 100%;
+    background-color: white;
+    transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
+}
+
+/* Sidebar oculta */
+#sidebar.hidden-sidebar {
+    transform: translateX(-100%);
+    width: 0;
+    overflow: hidden;
+}
+
+
+/* O conteúdo cresce quando o menu some */
+#content {
+    flex-grow: 1;
+    padding: 20px;
+    transition: width 0.3s ease-in-out;
+}
+
+/* Quando o menu some, o conteúdo ocupa 100% */
+.containerPrincipal.menu-hidden #content {
+    width: 100%;
+}
+#idade{
+   background-color: #fdfff5;
+   pointer-events: none;
+}
+#descricaoCaso{
+    min-height: 10rem;
+    border: var(--bs-border-width) solid var(--bs-border-color);
+}
+
+#paciente{
+    width: 100%;
+    text-align: left;
+    background-color: white;
+}
+
+.select-container {
+    position: relative;
+}
+.custom-select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+    background: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background: white;
+    display: none;
+    z-index: 10;
+}
+.dropdown input {
+    width: calc(100% - 16px);
+    padding: 8px;
+    border: none;
+    border-bottom: 1px solid #ccc;
+    outline: none;
+}
+.options {
+    max-height: 150px;
+    overflow-y: auto;
+}
+.option {
+    padding: 8px;
+    cursor: pointer;
+}
+.option:hover {
+    background: #f0f0f0;
+}
+input[readonly],textarea[readonly]{
+    background: #feffe383;
+}
