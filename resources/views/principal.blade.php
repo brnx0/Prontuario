@@ -27,7 +27,6 @@
                 <a href="/atendimento">
                     <li class="list-group-item">🔹 Novo Atendimento</li>
                 </a>
-
                 <li class="list-group-item">🔹 Histórico</li>
                 <li class="list-group-item active">📅 Cadastro</li>
                 <a href="/paciente">
@@ -39,6 +38,11 @@
                 <a href="/medico">
                     <li class="list-group-item">
                         Médicos
+                    </li>
+                </a>
+                <a href="/enfermeiro">
+                    <li class="list-group-item">
+                        Enfermeiros
                     </li>
                 </a>
                 <li class="list-group-item">💼 Profissão</li>

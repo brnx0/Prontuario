@@ -1,8 +1,10 @@
 <?php
 use App\Http\Controllers\AtendimentoController;
+use App\Http\Controllers\EnfermeiroController;
 use App\Http\Controllers\MedicoController;
 use App\Http\Controllers\PacienteController;
 use Illuminate\Support\Facades\Route;
+
 
 Route::get('/paciente',[PacienteController::class, 'index'])->name('paciente.index');
 Route::post('/paciente', [PacienteController::class, 'store'])->name('paciente.store');
@@ -17,6 +19,12 @@ Route::get('/medico',[MedicoController::class,'index'])->name('');
 Route::post('/medico',[MedicoController::class,'store'])->name('');
 Route::delete('/medico',[MedicoController::class,'destroy'])->name('');
 Route::PUT('/medico',[MedicoController::class,'updateStatus']);
+
+Route::get('/enfermeiro',[EnfermeiroController::class,'index'])->name('');
+Route::get('/enfermeiro',[EnfermeiroController::class,'filtro'])->name('filtrarEnfermeiro');
+Route::post('/enfermeiro',[EnfermeiroController::class,'store'])->name('');
+Route::delete('/enfermeiro',[EnfermeiroController::class,'destroy'])->name('');
+Route::PUT('/enfermeiro',[EnfermeiroController::class,'updateStatus']);
 
 
 
