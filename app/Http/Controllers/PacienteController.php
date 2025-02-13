@@ -10,7 +10,7 @@ use DateTime;
 
 class PacienteController extends Controller{
     public function index()    {
-        $paciente = Paciente::where('ATIVO' , '=','S')->orderBy('NOME','asc')->paginate(10);
+        $paciente = Paciente::where('ativo' , '=','S')->orderBy('nome','asc')->paginate(10);
         return view('paciente.pacientes', ['query' => $paciente]);
     }
 
