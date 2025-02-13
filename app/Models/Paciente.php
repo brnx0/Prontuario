@@ -11,17 +11,17 @@ class Paciente extends Model
 {
     //<?php
     //
-    protected $fillable = ['NOME','FILICAO_1','FILICAO_2','CEP','LOGRADOURO','NASCIMENTO','CIDADE','UF','TEL_1','TEL_2','EMAIL','CARTAO_SUS','PROF_COD'];
-    CONST updated_at = null;
-    CONST created_at = null;
-    protected $primaryKey = 'PAC_COD';
+    protected $fillable = ['nome','filicao_1','filicao_2','cep','logradouro','nascimento','cidade','uf','tel_1','tel_2','email','cartao_sus','prof_cod'];
+    const updated_at = null;
+    const created_at = null;
+    protected $primarykey = 'pac_cod';
     public $timestamps = false;
     protected $keyType = 'string';
 
     public $incrementing = false;
 
     public static function alunos(){
-        return DB::select('SELECT * FROM Pacientes');
+        return DB::select('SELECT * FROM pacientes');
     }
     protected static function boot(){
         parent::boot();
@@ -37,7 +37,7 @@ class Paciente extends Model
     }
     
     public function atendimento(){
-        return $this->hasMany(Atendimento::class,'PAC_COD','PAC_COD');
+        return $this->hasMany(Atendimento::class,'pac_cod','pac_cod');
     }
 
 }

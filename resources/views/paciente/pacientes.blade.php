@@ -15,15 +15,15 @@
             <div class="row g-2">
                 <div class="col-md-5">
                     <label class="form-label">Nome</label>
-                    <input type="text" class="form-control" id="filtroNome" placeholder="Digite um nome" name="NOME">
+                    <input type="text" class="form-control" id="filtroNome" placeholder="Digite um nome" name="nome">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">CPF</label>
-                    <input type="text" class="form-control" id="filtroCPF" placeholder="Digite um CPF" name="CPF">
+                    <input type="text" class="form-control" id="filtroCPF" placeholder="Digite um CPF" name="cpf">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Data de Nascimento</label>
-                    <input type="date" class="form-control" id="filtroData" name="filtroData">
+                    <input type="date" class="form-control" id="filtroData" name="filtrodata">
                 </div>
                 <div class="col-md-1 d-flex align-items-end">
                     <button type="submit" class="btn btn-primary w-100" >Filtrar</button>
@@ -48,29 +48,29 @@
                
              @foreach ($query as $paciente)
                <tr> 
-                    <td class="col-md-4">{{$paciente->NOME}}</td>
-                    <td class="col-md-2">080.824.475.32</td>
-                    <td class="col-md-2">{{$paciente->NASCIMENTO}}</td>
-                    <td class="col-md-2">{{$paciente->SUS}}</td>
+                    <td class="col-md-4">{{$paciente->nome}}</td>
+                    <td class="col-md-2">{{$paciente->cpf}}</td>
+                    <td class="col-md-2">{{$paciente->nascimento}}</td>
+                    <td class="col-md-2">{{$paciente->sus}}</td>
                     <td class="col-md-2"> 
                         <button class="btn btn-sm btn-warning edit-btn" data-bs-toggle="modal" data-bs-target="#pacienteModal" 
-                        data-pes_cod="{{$paciente->PES_COD}}"
-                        data-nome="{{$paciente->NOME}}"
-                        data-filicao_1="{{$paciente->FILICAO_1}}"
-                        data-filicao_2="{{$paciente->FILICAO_2}}"
-                        data-cep="{{$paciente->CEP}}"
-                        data-logradouro="{{$paciente->LOGRADOURO}}"
-                        data-cidade="{{$paciente->CIDADE}}"
-                        data-uf="{{$paciente->UF}}"
-                        data-tel_1="{{$paciente->TEL_1}}"
-                        data-tel_2="{{$paciente->TEL_2}}"
-                        data-email="{{$paciente->EMAIL}}"
-                        data-cartao_sus="{{$paciente->CARTAO_SUS}}"
-                        data-ativo="{{$paciente->Ativo}}"
-                        data-prof_cod="{{$paciente->PROF_COD}}">
+                        data-pes_cod="{{$paciente->pes_cod}}"
+                        data-nome="{{$paciente->nome}}"
+                        data-filicao_1="{{$paciente->filicao_1}}"
+                        data-filicao_2="{{$paciente->filicao_2}}"
+                        data-cep="{{$paciente->cep}}"
+                        data-logradouro="{{$paciente->logradouro}}"
+                        data-cidade="{{$paciente->cidade}}"
+                        data-uf="{{$paciente->uf}}"
+                        data-tel_1="{{$paciente->tel_1}}"
+                        data-tel_2="{{$paciente->tel_2}}"
+                        data-email="{{$paciente->email}}"
+                        data-cartao_sus="{{$paciente->cartao_sus}}"
+                        data-ativo="{{$paciente->ativo}}"
+                        data-prof_cod="{{$paciente->prof_cod}}">
                         Editar
                     </button>
-                        <button class="btn btn-sm btn-danger" onclick="confirmarExclusao('{{$paciente->PES_COD}}','{{csrf_token()}}')">Excluir</button>
+                        <button class="btn btn-sm btn-danger" onclick="confirmarExclusao('{{$paciente->pes_cod}}','{{csrf_token()}}')">Excluir</button>
                     </td>
                 </tr>
                 

@@ -7,12 +7,12 @@ use Illuminate\Support\Str;
 use App\Models\Paciente;
 
 class Atendimento extends Model{
-    protected $fillable = ['ATEND_COD','PAC_COD','DT_ATENDIMENTO','SITUCAO_QUEIXA','MMHG','BPM' ,'SPO2','TEMP' ,'RPM','KG','HGT','DESC_CASO','ENF_COD','ESP_COD','MED_COD'];
-    CONST updated_at = null;
-    CONST created_at = null;
-    protected $primaryKey = 'ATEND_COD';
+    protected $fillable = ['atend_cod','pac_cod','dt_atendimento','situcao_queixa','mmhg','bpm' ,'spo2','temp' ,'rpm','kg','hgt','desc_caso','enf_cod','esp_cod','med_cod'];
+    const updated_at = null;
+    const created_at = null;
+    protected $primarykey = 'atend_cod';
     public $timestamps = false;
-    protected $keyType = 'string';
+    protected $keytype = 'string';
 
     public $incrementing = false;
     protected static function boot(){
@@ -25,10 +25,10 @@ class Atendimento extends Model{
     }
 
     public function paciente(){
-        return $this->belongsTo(Paciente::class,'PAC_COD', 'PAC_COD');
+        return $this->belongsTo(Paciente::class,'pac_cod', 'pac_cod');
     }
     public function medico(){
-        return $this->belongsTo(Medico::class,'MED_COD','MED_COD');
+        return $this->belongsTo(Medico::class,'med_cod','med_cod');
     }
     //
 }

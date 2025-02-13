@@ -16,7 +16,7 @@
                             <div class="row mb-3">
                                 <div class="col-md-5">
                                     <label for="nome" class="form-label">Nome</label>
-                                    <input type="text" class="form-control" id="nome" name='NOME' required>
+                                    <input type="text" class="form-control" id="nome" name='nome' required>
                                 </div>
                                 <div class="col-md-3">
                                     <label for="profissao" class="form-label">Profissão</label>
@@ -28,7 +28,7 @@
                                 </div>
                                 <div class="col-md-3">
                                     <label for="idade" class="form-label">Nascimento</label>
-                                    <input type="date" class="form-control" id="nascimento" name="NASCIMENTO" onblur="calcularIdade(this.value,'idade')">
+                                    <input type="date" class="form-control" id="nascimento" name="nascimento" onblur="calcularIdade(this.value,'idade')">
                                 </div>
                                 <div class="col-md-1">
                                     <label for="idade" class="form-label">Idade</label>
@@ -38,49 +38,49 @@
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <label for="filiacao1" class="form-label">Filiação 1</label>
-                                    <input type="text" class="form-control" id="filiacao_1" name="FILICAO_1">
+                                    <input type="text" class="form-control" id="filiacao_1" name="filicao_1">
                                 </div>
                                 <div class="col-md-6">
                                     <label for="filiacao2" class="form-label">Filiação 2</label>
-                                    <input type="text" class="form-control" id="filiacao_2" name="FILICAO_2">
+                                    <input type="text" class="form-control" id="filiacao_2" name="filicao_2">
                                 </div>
                             </div>
                             <div class="row mb-3">
                                 <div class="col-md-3">
                                     <label for="cep" class="form-label">CEP</label>
-                                    <input type="text" class="form-control" id="cep" name="CEP">
+                                    <input type="text" class="form-control" id="cep" name="cep">
                                 </div>
                                 <div class="col-md-5">
                                     <label for="logradouro" class="form-label">Logradouro</label>
-                                    <input type="text" class="form-control" id="logradouro" name="LOGRADOURO">
+                                    <input type="text" class="form-control" id="logradouro" name="logradouro">
                                 </div>
                                 <div class="col-md-3">
                                     <label for="cidade" class="form-label">Cidade</label>
-                                    <input type="text" class="form-control" id="cidade" name="CIDADE">
+                                    <input type="text" class="form-control" id="cidade" name="cidade">
                                 </div>
                                 <div class="col-md-1">
                                     <label for="uf" class="form-label">UF</label>
-                                    <input type="text" class="form-control" id="uf" name="UF">
+                                    <input type="text" class="form-control" id="uf" name="uf">
                                 </div>
                             </div>
                             <div class="row mb-3">
                                 <div class="col-md-4">
                                     <label for="telefone" class="form-label">Telefone</label>
-                                    <input type="text" class="form-control" id="telefone" name="TEL_1">
+                                    <input type="text" class="form-control" id="telefone" name="tel_1">
                                 </div>
                                 <div class="col-md-4">
                                     <label for="celular" class="form-label">Celular</label>
-                                    <input type="text" class="form-control" id="celular" name="TEL_2">
+                                    <input type="text" class="form-control" id="celular" name="tel_2">
                                 </div>
                                 <div class="col-md-4">
                                     <label for="email" class="form-label">E-mail</label>
-                                    <input type="email" class="form-control" id="email" name="EMAIL">
+                                    <input type="email" class="form-control" id="email" name="email">
                                 </div>
                             </div>
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <label for="cartaoSUS" class="form-label">Cartão do SUS</label>
-                                    <input type="text" class="form-control" id="cartaoSUS" name="CARTAO_SUS">
+                                    <input type="text" class="form-control" id="cartaoSUS" name="cartao_sus">
                                 </div>
                             </div>
                             <div class="modal-footer">

@@ -15,16 +15,16 @@ class AtendimentoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index($ATEND_COD =null){
-        if($ATEND_COD){
-            $atendimento = Atendimento::with('paciente')->find($ATEND_COD,$columns = ['*']);
+    public function index($atend_cod =null){
+        if($atend_cod){
+            $atendimento = Atendimento::with('paciente')->find($atend_cod,$columns = ['*']);
             return view("atendimento.show",['atendimento' => $atendimento, 'paciente' => $atendimento->paciente]); 
         }else{
-            $pacientes = Paciente::select('PAC_COD', 'NOME')->where('ATIVO','=','S')->orderBy('NOME','ASC')->get();
-            $medicos = Medico::select()->where('ATIVO','=','S')->orderBy('MED_NOME')->get();
+            $pacientes = Paciente::select('pac_cod', 'nome')->where('ativo','=','S')->orderBy('nome','asc')->get();
+            $medicos = Medico::select()->where('ativo','=','S')->orderBy('med_nome')->get();
             return view("atendimento.atendimento",[
                 'pacientes' => $pacientes, 
-                'Data'=> (new DateTime())->format('Y-m-d H:i'),
+                'data'=> (new datetime())->format('y-m-d h:i'),
                 'medicos' => $medicos
             ]);
         } 
@@ -49,25 +49,25 @@ class AtendimentoController extends Controller
         try {
         //   DB::beginTransaction();
            $atend_cod = Atendimento::create([
-          'DT_ATENDIMENTO' => $request->dtAtendimento,
-          'SITUCAO_QUEIXA' => $request->SITUACAO,
-          'MMHG'  => $request->mmhg,
-          'BPM' => $request->bpm,
-          'SPO2'=> $request->spo2,
-          'TEMP' => $request->temp,
-          'RPM'=> $request->rpm,
-          'KG'=> $request->kg,
-          'HGT'=> $request->hgt,
-          'DESC_CASO'=> $request->descricaoCaso,
-          'ENF_COD'=> $request->ENF_COD,
-          'ESP_COD'=> $request->ESP_COD,
-          'MED_COD' => $request->MED_COD,
-          'PAC_COD' => $request->PAC_COD
+          'dt_atendimento' => $request->dtAtendimento,
+          'situcao_queixa' => $request->situacao,
+          'mmhg'  => $request->mmhg,
+          'bpm' => $request->bpm,
+          'spo2'=> $request->spo2,
+          'temp' => $request->temp,
+          'rpm'=> $request->rpm,
+          'kg'=> $request->kg,
+          'hgt'=> $request->hgt,
+          'desc_caso'=> $request->descricaoCaso,
+          'enf_cod'=> $request->enf_cod,
+          'esp_cod'=> $request->esp_cod,
+          'med_cod' => $request->med_cod,
+          'pac_cod' => $request->pac_cod
 
         ]);
         // DB::commit();  
         
-        return redirect('/atendimento/'.$atend_cod->ATEND_COD);
+        return redirect('/atendimento/'.$atend_cod->atend_cod);
         
         } catch (QueryException $th) {
             DB::rollBack();

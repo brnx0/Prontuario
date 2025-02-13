@@ -22,29 +22,29 @@ class PacienteController extends Controller{
         
     }
     public function store(Request $request)    {
-        $dataNascimento = (new DateTime($request->NASCIMENTO))->setTime(0,0,0);       
+        $dataNascimento = (new DateTime($request->nascimento))->setTime(0,0,0);       
        if( $dataNascimento > (new DateTime())->setTime(0,0,0)){
             return redirect()->back()->withInput()->with(['error'=>'A data de nascimento não pode ser maior que a data atual',]);
        }
         try {
             DB::beginTransaction();
             Paciente::updateOrCreate([
-                'PAC_COD' => $request->pes_cod
+                'pac_cod' => $request->pes_cod
             ],
             [
-                'NOME' => $request->NOME,
-                'FILICAO_1' => $request->FILICAO_1,
-                'FILICAO_2' => $request->FILICAO_2,
-                'CEP' => $request->CEP,
-                'NASCIMENTO' => $dataNascimento,
-                'LOGRADOURO' => $request->LOGRADOURO,
-                'CIDADE' => $request->CIDADE,
-                'UF'  => $request->UF,   
-                'TEL_1' => $request->TEL_1 ,
-                'TEL_2' => $request->TEL_2 ,
-                'EMAIL' => $request->EMAIL ,
-                'CARTAO_SUS' => $request->CARTAO_SUS ,
-                'PROF_COD' => $request->PROF_COD   
+                'nome' => $request->NOME,
+                'filicao_1' => $request->FILICAO_1,
+                'filicao_2' => $request->FILICAO_2,
+                'cep' => $request->CEP,
+                'nascimento' => $dataNascimento,
+                'logradouro' => $request->LOGRADOURO,
+                'cidade' => $request->CIDADE,
+                'uf'  => $request->UF,   
+                'tel_1' => $request->TEL_1 ,
+                'tel_2' => $request->TEL_2 ,
+                'email' => $request->EMAIL ,
+                'cartao_sus' => $request->CARTAO_SUS ,
+                'prof_cod' => $request->PROF_COD   
             ]);
             DB::commit();
             return redirect('/paciente')->with('success','Sucesso!');
@@ -61,13 +61,13 @@ class PacienteController extends Controller{
         }
         $query = Paciente::query();
         if($request->NOME){
-           $query->where('NOME','LIKE', '%'.$request->NOME.'%');
+           $query->where('nome','LIKE', '%'.$request->NOME.'%');
         }
         if($request->CPF){
-            $query->where('CPF','=', $request->CPF);
+            $query->where('cpf','=', $request->CPF);
          }
          if($request->filtroData){
-            $query->where('NASCIMENTO','=', $request->filtroData,);
+            $query->where('nascimento','=', $request->filtroData,);
          }
     
         return view('paciente.pacientes',['query' => $query->paginate(10)]);

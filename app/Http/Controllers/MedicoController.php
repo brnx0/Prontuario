@@ -34,8 +34,8 @@ class MedicoController extends Controller
         }
         try{
             Medico::create([
-                'MED_NOME' => $request->nomeMedico,
-                'CRM' =>$request->crmMedico
+                'med_nome' => $request->nomemedico,
+                'crm' =>$request->crmMedico
             ]);
             return back()->with('success', 'Registro criado.');
         }catch(QueryException $th){
@@ -68,7 +68,7 @@ class MedicoController extends Controller
     }
     public function updateStatus(Request $request)    {
        try{
-           $med= Medico::find($request->MED_COD)->update(['ATIVO' => $request->STATUS]);
+           $med= Medico::find($request->med_cod)->update(['ativo' => $request->status]);
           
             return back()->with('success','Status atualizado com sucesso');
 
@@ -82,11 +82,11 @@ class MedicoController extends Controller
      */
     public function destroy(Request $request,)    {
     
-        if(!$request->MED_COD){
+        if(!$request->med_cod){
             return back()->with('error','Aconteceu um erro,  Se o erro persistir, entre em contato com o suporte e informe a seguinte mensagem: BAD REQUEST:400');
         }
         try{
-            Medico::destroy($request->MED_COD);
+            Medico::destroy($request->med_cod);
             return back()->with('success','Registro deletado.');
 
         }catch(QueryException $th){

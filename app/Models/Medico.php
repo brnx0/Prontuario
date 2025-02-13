@@ -5,12 +5,12 @@ use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 
 class Medico extends Model{
-    protected $fillable = ['MED_NOME','CRM','ATIVO'];
-    CONST updated_at = null;
-    CONST created_at = null;
-    protected $primaryKey = 'MED_COD';
+    protected $fillable = ['med_nome','crm','ativo'];
+    const updated_at = null;
+    const created_at = null;
+    protected $primarykey = 'med_cod';
     public $timestamps = false;
-    protected $keyType = 'string';
+    protected $keytype = 'string';
 
     public $incrementing = false;
     protected static function boot(){
@@ -22,7 +22,7 @@ class Medico extends Model{
         });
     }
     public function paciente(){
-        return $this->hasMany(Atendimento::class,'MED_COD', 'MED_COD');
+        return $this->hasMany(Atendimento::class,'med_cod', 'med_cod');
     }
     //
 }

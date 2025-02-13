@@ -35,12 +35,12 @@
                         <i class="fa-solid fa-arrow-down"></i>
                     </div>
                     <div class="dropdown" id="dropdown">
-                        <input type="text" name="PAC_COD" id="PAC_COD"  hidden>
+                        <input type="text" name="PAC_COD" id="pac_cod"  hidden>
                         <input type="text" id="filterInput" placeholder="Filtrar..." onkeyup="filterOptions(this,'optionsContainer')"  >
                         <div class="options" id="optionsContainer">
                           
                                 @foreach ($pacientes as $paciente)
-                                <div class="option" onclick="selectOption(this,'{{$paciente->PAC_COD}}','PAC_COD')">{{$paciente->NOME}}</div> 
+                                <div class="option" onclick="selectOption(this,'{{$paciente->pac_cod}}','pac_cod')">{{$paciente->nome}}</div> 
                                 @endforeach 
 
                         </div>
@@ -68,7 +68,7 @@
                         <input type="text" id="filterInput" placeholder="Filtrar..." onkeyup="filterOptions(this,'optionsContainer01')" >
                         <div class="options" id="optionsContainer01">
                             @foreach ($medicos as $medico)
-                                <div class="option" onclick="selectOption(this,'{{$medico->MED_COD}}','MED_COD')">{{$medico->MED_NOME}}</div> 
+                                <div class="option" onclick="selectOption(this,'{{$medico->med_cod}}','med_cod')">{{$medico->med_nome}}</div> 
                                 
                             @endforeach
                            {{-- 
@@ -86,7 +86,7 @@
                     </div>
                     <div class="dropdown" id="dropdown02">
                         <input type="text" id="filterInput" placeholder="Filtrar..." onkeyup="filterOptions(this,'optionsContainer02')" >
-                        <input type="text" name="ESP_COD" hidden>
+                        <input type="text" name="esp_cod" hidden>
                         <div class="options" id="optionsContainer02">
                             {{-- Adicionar os medicos aqui --}}
                         </div>

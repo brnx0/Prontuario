@@ -12,7 +12,7 @@ class EnfermeiroController extends Controller
      * Display a listing of the resource.
      */
     public function index()    {
-        $enfermeiro = Enfermeiro::orderBy('ENF_NOME')->paginate(10);
+        $enfermeiro = Enfermeiro::orderBy('enf_nome')->paginate(10);
         return view('enfermeiros.show',['enfermeiros'=> $enfermeiro]);
     }
     public function filtro (Request $request){
@@ -21,10 +21,10 @@ class EnfermeiroController extends Controller
         }
         $enfermeiros = Enfermeiro::query();
         if($request->filtroNome){
-           $enfermeiros->where('ENF_NOME','LIKE', '%'.$request->filtroNome.'%');
+           $enfermeiros->where('enf_nome','LIKE', '%'.$request->filtroNome.'%');
         }
         if($request->filtroCRE){
-            $enfermeiros->where('CRE','=', $request->filtroCRE);
+            $enfermeiros->where('cre','=', $request->filtroCRE);
          }
     
         return view('enfermeiros.show',['enfermeiros' => $enfermeiros->paginate(10)]);
@@ -47,8 +47,8 @@ class EnfermeiroController extends Controller
         }
         try{
             Enfermeiro::create([
-                'ENF_NOME' => $request->nomeENF,
-                'CRE' =>$request->creENF
+                'enf_nome' => $request->nomeENF,
+                'cre' =>$request->creENF
             ]);
             return back()->with('success', 'Registro criado.');
         }catch(QueryException $th){
@@ -82,7 +82,7 @@ class EnfermeiroController extends Controller
     }
     public function updateStatus(Request $request)    {
         try{
-            Enfermeiro::find($request->ENF_COD)->update(['ATIVO' => $request->STATUS]);
+            Enfermeiro::find($request->ENF_COD)->update(['ativo' => $request->STATUS]);
             return back()->with('success','Status atualizado com sucesso');
  
         }catch(QueryException $th){

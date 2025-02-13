@@ -5,10 +5,10 @@ use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 
 class Enfermeiro extends Model{
-    protected $fillable = ['ENF_NOME','CRE','ATIVO'];
-    CONST updated_at = null;
-    CONST created_at = null;
-    protected $primaryKey = 'ENF_COD';
+    protected $fillable = ['enf_nome','cre','ativo'];
+    const updated_at = null;
+    const created_at = null;
+    protected $primarykey = 'enf_cod';
     public $timestamps = false;
     protected $keyType = 'string';
 
@@ -22,7 +22,7 @@ class Enfermeiro extends Model{
         });
     }
     public function paciente(){
-        return $this->hasMany(Atendimento::class,'ENF_COD', 'ENF_COD');
+        return $this->hasMany(Atendimento::class,'enf_cod', 'enf_cod');
     }
     //
 }

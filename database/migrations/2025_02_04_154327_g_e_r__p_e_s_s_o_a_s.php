@@ -11,86 +11,87 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('PROFISSAO', function(BluePrint $table){
-            $table->uuid('PROF_COD')->primary();;
-            $table->string('PROF_DESC');
-            $table->string('Ativo'); /*onDelete('cascade')*/
+        Schema::create('profissao', function(BluePrint $table){
+            $table->uuid('prof_cod')->primary();;
+            $table->string('prof_desc');
+            $table->string('ativo'); /*onDelete('cascade')*/
         });
 
-        Schema::create('PACIENTES', function(BluePrint $table){
-        $table->uuid('PAC_COD')->primary();
-        $table->string('NOME');
-        $table->string('FILICAO_1')->nullable();
-        $table->string('FILICAO_2')->nullable();
-        $table->string('CEP')->nullable();
-        $table->string('LOGRADOURO')->nullable();
-        $table->string('CIDADE')->nullable();
-        $table->string('UF')->nullable();
-        $table->date('NASCIMENTO')->nullable();
-        $table->string('TEL_1')->nullable();
-        $table->string('TEL_2')->nullable();
-        $table->string('EMAIL')->nullable();
-        $table->string('CARTAO_SUS')->nullable();
-        $table->string('ATIVO')->nullable()->default('S');
+        Schema::create('pacientes', function(BluePrint $table){
+        $table->uuid('pac_cod')->primary();
+        $table->string('nome');
+        $table->string('cpf')->nullable();
+        $table->string('filicao_1')->nullable();
+        $table->string('filicao_2')->nullable();
+        $table->string('cep')->nullable();
+        $table->string('logradouro')->nullable();
+        $table->string('cidade')->nullable();
+        $table->string('uf')->nullable();
+        $table->date('nascimento')->nullable();
+        $table->string('tel_1')->nullable();
+        $table->string('tel_2')->nullable();
+        $table->string('email')->nullable();
+        $table->string('cartao_sus')->nullable();
+        $table->string('ativo')->nullable()->default('S');
         });
        
-        Schema::create('MEDICOS', function (Blueprint $table){
-            $table->uuid('MED_COD')->primary();;
-            $table->string('MED_NOME');
-            $table->string('CRM')->nullable();;
-            $table->string('ATIVO')->default('S');
+        Schema::create('medicos', function (Blueprint $table){
+            $table->uuid('med_cod')->primary();;
+            $table->string('med_nome');
+            $table->string('crm')->nullable();;
+            $table->string('ativo')->default('S');
 
         });
-        Schema::create('ENFERMEIROS', function (Blueprint $table){
-            $table->uuid('ENF_COD')->primary();;
-            $table->string('ENF_NOME');
-            $table->string('CRE')->nullable();;
-            $table->string('ATIVO')->default('S');
+        Schema::create('enfermeiros', function (Blueprint $table){
+            $table->uuid('enf_cod')->primary();;
+            $table->string('enf_nome');
+            $table->string('cre')->nullable();;
+            $table->string('ativo')->default('S');
 
         });
         
-        Schema::create('ESPECIALIDADES', function(BluePrint $table){
-            $table->uuid('ESP_COD')->primary();
-            $table->string('ESCP_DESC');
-            $table->string('ATIVO');
+        Schema::create('especialidades', function(BluePrint $table){
+            $table->uuid('esp_cod')->primary();
+            $table->string('escp_desc');
+            $table->string('ativo');
         });
 
-        Schema::create('ATENDIMENTOS', function(BluePrint $table){
-        $table->uuid('ATEND_COD')->primary();
-        $table->dateTime('DT_ATENDIMENTO');
-        $table->string('SITUCAO_QUEIXA')->nullable();
-        $table->decimal('MMHG')->nullable();
-        $table->decimal('BPM')->nullable();
-        $table->decimal('RPM')->nullable();
-        $table->decimal('SPO2')->nullable();
-        $table->decimal('TEMP')->nullable();
-        $table->decimal('KG')->nullable();
-        $table->decimal('HGT')->nullable();
-        $table->longText('DESC_CASO')->nullable();
+        Schema::create('atendimentos', function(BluePrint $table){
+        $table->uuid('atend_cod')->primary();
+        $table->datetime('dt_atendimento');
+        $table->string('situcao_queixa')->nullable();
+        $table->decimal('mmhg')->nullable();
+        $table->decimal('bpm')->nullable();
+        $table->decimal('rpm')->nullable();
+        $table->decimal('spo2')->nullable();
+        $table->decimal('temp')->nullable();
+        $table->decimal('kg')->nullable();
+        $table->decimal('hgt')->nullable();
+        $table->longtext('desc_caso')->nullable();
         });
 
 
-        Schema::table('PACIENTES', function(BluePrint $table){
-            $table->uuid('PROF_COD')->nullable();
-            $table->foreign('PROF_COD')->references('PROF_COD')->on('PROFISSAO');
+        Schema::table('pacientes', function(BluePrint $table){
+            $table->uuid('prof_cod')->nullable();
+            $table->foreign('prof_cod')->references('prof_cod')->on('profissao');
         });
        
-        Schema::table('ATENDIMENTOS', function(BluePrint $table){
-            $table->uuid('ENF_COD')->nullable();
-            $table->foreign('ENF_COD')->references('ENF_COD')->on('ENFERMEIROS');
+        Schema::table('atendimentos', function(BluePrint $table){
+            $table->uuid('enf_cod')->nullable();
+            $table->foreign('enf_cod')->references('enf_cod')->on('enfermeiros');
         });
-        Schema::table('ATENDIMENTOS', function(BluePrint $table){
-            $table->uuid('ESP_COD')->nullable();
-            $table->foreign('ESP_COD')->references('ESP_COD')->on('ESPECIALIDADES');
+        Schema::table('atendimentos', function(BluePrint $table){
+            $table->uuid('esp_cod')->nullable();
+            $table->foreign('esp_cod')->references('esp_cod')->on('especialidades');
         });
-        Schema::table('ATENDIMENTOS', function(BluePrint $table){
-            $table->uuid('MED_COD')->nullable();
-            $table->foreign('MED_COD')->references('MED_COD')->on('MEDICOS');
+        Schema::table('atendimentos', function(BluePrint $table){
+            $table->uuid('med_cod')->nullable();
+            $table->foreign('med_cod')->references('med_cod')->on('medicos');
             
         });
-        Schema::table('ATENDIMENTOS', function(BluePrint $table){
-            $table->uuid('PAC_COD');
-            $table->foreign('PAC_COD')->references('PAC_COD')->on('PACIENTES');
+        Schema::table('atendimentos', function(BluePrint $table){
+            $table->uuid('pac_cod');
+            $table->foreign('pac_cod')->references('pac_cod')->on('pacientes');
             
         });
 
