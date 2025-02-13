@@ -47,25 +47,25 @@ class AtendimentoController extends Controller
             return redirect()->back()->with("error","");
         }
         try {
-        //   DB::beginTransaction();
-           $atend_cod = Atendimento::create([
-          'dt_atendimento' => $request->dtAtendimento,
-          'situcao_queixa' => $request->situacao,
-          'mmhg'  => $request->mmhg,
-          'bpm' => $request->bpm,
-          'spo2'=> $request->spo2,
-          'temp' => $request->temp,
-          'rpm'=> $request->rpm,
-          'kg'=> $request->kg,
-          'hgt'=> $request->hgt,
-          'desc_caso'=> $request->descricaoCaso,
-          'enf_cod'=> $request->enf_cod,
-          'esp_cod'=> $request->esp_cod,
-          'med_cod' => $request->med_cod,
-          'pac_cod' => $request->pac_cod
+            DB::beginTransaction();
+            $atend_cod = Atendimento::create([
+            'dt_atendimento' => $request->dtAtendimento,
+            'situcao_queixa' => $request->situacao,
+            'mmhg'  => $request->mmhg,
+            'bpm' => $request->bpm,
+            'spo2'=> $request->spo2,
+            'temp' => $request->temp,
+            'rpm'=> $request->rpm,
+            'kg'=> $request->kg,
+            'hgt'=> $request->hgt,
+            'desc_caso'=> $request->descricaoCaso,
+            'enf_cod'=> $request->enf_cod,
+            'esp_cod'=> $request->esp_cod,
+            'med_cod' => $request->med_cod,
+            'pac_cod' => $request->pac_cod
 
         ]);
-        // DB::commit();  
+            DB::commit();  
         
         return redirect('/atendimento/'.$atend_cod->atend_cod);
         

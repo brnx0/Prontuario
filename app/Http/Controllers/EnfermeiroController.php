@@ -82,7 +82,7 @@ class EnfermeiroController extends Controller
     }
     public function updateStatus(Request $request)    {
         try{
-            Enfermeiro::find($request->ENF_COD)->update(['ativo' => $request->STATUS]);
+            Enfermeiro::find($request->enf_cod)->update(['ativo' => $request->status]);
             return back()->with('success','Status atualizado com sucesso');
  
         }catch(QueryException $th){
@@ -95,11 +95,11 @@ class EnfermeiroController extends Controller
      * Remove the specified resource from storage.
      */
     public function destroy(Request $request, Enfermeiro $enfermeiro)    {
-        if(!$request->ENF_COD){
+        if(!$request->enf_cod){
             return back()->with('error','Aconteceu um erro,  Se o erro persistir, entre em contato com o suporte e informe a seguinte mensagem: BAD REQUEST:400');
         }
         try{
-            Enfermeiro::destroy($request->ENF_COD);
+            Enfermeiro::destroy($request->enf_cod);
             return back()->with('success','Registro deletado.');
 
         }catch(QueryException $th){

@@ -29,12 +29,9 @@ class MedicoController extends Controller
      */
     public function store(Request $request)
     {
-        if(!$request->nomeMedico){
-
-        }
         try{
             Medico::create([
-                'med_nome' => $request->nomemedico,
+                'med_nome' => $request->nomeMedico,
                 'crm' =>$request->crmMedico
             ]);
             return back()->with('success', 'Registro criado.');
@@ -58,6 +55,24 @@ class MedicoController extends Controller
     {
         //
     }
+    public function filtro (Request $request){
+
+        // if(empty($request->nome) && empty($request->cpf) && empty($request->filtroData) ){
+        //     return PacienteController::index();
+        // }
+        // $query = Paciente::query();
+        // if($request->nome){
+        //    $query->where('nome','LIKE', '%'.$request->nome.'%');
+        // }
+        // if($request->cpf){
+        //     $query->where('cpf','=', $request->cpf);
+        //  }
+        //  if($request->filtroData){
+        //     $query->where('nascimento','=', $request->filtroData,);
+        //  }
+    
+        // return view('paciente.pacientes',['query' => $query->paginate(10)]);
+   }
 
     /**
      * Update the specified resource in storage.

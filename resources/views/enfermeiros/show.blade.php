@@ -62,19 +62,19 @@
                
                 @foreach ($enfermeiros as $enfermeiro)
                     <tr> 
-                        <td class="col-md-6">{{$enfermeiro->ENF_NOME}}</td>
-                        <td class="col-md-2">{{$enfermeiro->CRE}}</td>
+                        <td class="col-md-6">{{$enfermeiro->enf_nome}}</td>
+                        <td class="col-md-2">{{$enfermeiro->cre}}</td>
                         <td class="col-md-2">
-                            @if ($enfermeiro->ATIVO == 'S')
-                                <button class="btn btn-sm btn-secondary ms-2" onclick="ativarInativarENF('{{$enfermeiro->ENF_COD}}','N','{{ csrf_token() }}')">Desativar</button>
+                            @if ($enfermeiro->ativo == 'S')
+                                <button class="btn btn-sm btn-secondary ms-2" onclick="ativarInativarENF('{{$enfermeiro->enf_cod}}','N','{{ csrf_token() }}')">Desativar</button>
                             @else
-                                <button class="btn btn-sm btn-secondary ms-2" onclick="ativarInativarENF('{{$enfermeiro->ENF_COD}}','S','{{csrf_token()}}')">Ativar</button>
+                                <button class="btn btn-sm btn-secondary ms-2" onclick="ativarInativarENF('{{$enfermeiro->enf_cod}}','S','{{csrf_token()}}')">Ativar</button>
                             @endif
                             
                             <button class="btn btn-sm btn-warning edit-btn ms-2" data-bs-toggle="modal" data-bs-target="#pacienteModal"> 
                                 Editar
                             </button>
-                            <button class="btn btn-sm btn-danger ms-2" onclick="excluirEnf('{{$enfermeiro->ENF_COD}}')">Excluir</button>
+                            <button class="btn btn-sm btn-danger ms-2" onclick="excluirEnf('{{$enfermeiro->enf_cod}}')">Excluir</button>
                         </td>
                     </tr>
                 @endforeach
@@ -83,15 +83,15 @@
         <form id="editStatusEnf" method="POST">
             @csrf
             @method('PUT') 
-            <input type="text" name="ENF_COD" id="edENF_COD" hidden>
-            <input type="text" name="STATUS" id="Status" hidden>
+            <input type="text" name="enf_cod" id="edENF_COD" hidden>
+            <input type="text" name="status" id="Status" hidden>
             
 
         </form>
         <form  id="deletEnf" method="POST" >
             @csrf
             @method('DELETE') 
-            <input type="text" name="ENF_COD" id="ENF_COD" hidden>
+            <input type="text" name="enf_cod" id="ENF_COD" hidden>
         </form>
         <div class=" justify-content-center">
              {{ $enfermeiros->links('pagination::bootstrap-4', ['next' => 'Próximo', 'previous' => 'Anterior'])}}  

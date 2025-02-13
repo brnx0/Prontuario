@@ -10,9 +10,9 @@ class Atendimento extends Model{
     protected $fillable = ['atend_cod','pac_cod','dt_atendimento','situcao_queixa','mmhg','bpm' ,'spo2','temp' ,'rpm','kg','hgt','desc_caso','enf_cod','esp_cod','med_cod'];
     const updated_at = null;
     const created_at = null;
-    protected $primarykey = 'atend_cod';
+    protected $primaryKey = 'atend_cod';
     public $timestamps = false;
-    protected $keytype = 'string';
+    protected $keyType = 'string';
 
     public $incrementing = false;
     protected static function boot(){

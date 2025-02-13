@@ -8,7 +8,7 @@ class Enfermeiro extends Model{
     protected $fillable = ['enf_nome','cre','ativo'];
     const updated_at = null;
     const created_at = null;
-    protected $primarykey = 'enf_cod';
+    protected $primaryKey = 'enf_cod';
     public $timestamps = false;
     protected $keyType = 'string';
 

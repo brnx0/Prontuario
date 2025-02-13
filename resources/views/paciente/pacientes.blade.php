@@ -23,7 +23,7 @@
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Data de Nascimento</label>
-                    <input type="date" class="form-control" id="filtroData" name="filtrodata">
+                    <input type="date" class="form-control" id="filtroData" name="filtroData">
                 </div>
                 <div class="col-md-1 d-flex align-items-end">
                     <button type="submit" class="btn btn-primary w-100" >Filtrar</button>
@@ -54,7 +54,7 @@
                     <td class="col-md-2">{{$paciente->sus}}</td>
                     <td class="col-md-2"> 
                         <button class="btn btn-sm btn-warning edit-btn" data-bs-toggle="modal" data-bs-target="#pacienteModal" 
-                        data-pes_cod="{{$paciente->pes_cod}}"
+                        data-pes_cod="{{$paciente->pac_cod}}"
                         data-nome="{{$paciente->nome}}"
                         data-filicao_1="{{$paciente->filicao_1}}"
                         data-filicao_2="{{$paciente->filicao_2}}"
@@ -70,7 +70,7 @@
                         data-prof_cod="{{$paciente->prof_cod}}">
                         Editar
                     </button>
-                        <button class="btn btn-sm btn-danger" onclick="confirmarExclusao('{{$paciente->pes_cod}}','{{csrf_token()}}')">Excluir</button>
+                        <button class="btn btn-sm btn-danger" onclick="confirmarExclusao('{{$paciente->pac_cod}}','{{csrf_token()}}')">Excluir</button>
                     </td>
                 </tr>
                 

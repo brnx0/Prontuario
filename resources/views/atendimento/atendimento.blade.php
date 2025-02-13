@@ -30,17 +30,17 @@
                     <span style="color: red;">*</span>
                 </label>
                 <div class="select-container">
-                    <div class="custom-select" onclick="toggleDropdown('dropdown')">
+                    <div class="custom-select" id="custom-select" onclick="toggleDropdown('dropdown')">
                         Selecione uma paciente
                         <i class="fa-solid fa-arrow-down"></i>
                     </div>
                     <div class="dropdown" id="dropdown">
-                        <input type="text" name="PAC_COD" id="pac_cod"  hidden>
+                        <input type="text" name="pac_cod" id="pac_cod"  hidden>
                         <input type="text" id="filterInput" placeholder="Filtrar..." onkeyup="filterOptions(this,'optionsContainer')"  >
                         <div class="options" id="optionsContainer">
                           
                                 @foreach ($pacientes as $paciente)
-                                <div class="option" onclick="selectOption(this,'{{$paciente->pac_cod}}','pac_cod')">{{$paciente->nome}}</div> 
+                                <div class="option" onclick="selectOption(this,'{{$paciente->pac_cod}}','pac_cod','custom-select','dropdown')">{{$paciente->nome}}</div> 
                                 @endforeach 
 
                         </div>
@@ -49,7 +49,7 @@
             </div>
             <div class="col-md-2">
                 <label for="dtAtendimento" class="form-label">Data do Atendimento</label>
-                <input type="datetime-local" class="form-control" id="dtAtendimento" name="dtAtendimento" value="{{$Data}}">
+                <input type="datetime-local" class="form-control" id="dtAtendimento" name="dtAtendimento" value="{{$data}}">
             </div>
             <div class="col-md-2">
                 <button class="btn btn-success">Imprimir Atendimento</button>
@@ -59,16 +59,16 @@
             <div class="col-md-8">
                 <label for="medico" class="form-label">Médico(a)</label>
                 <div class="select-container">
-                    <div class="custom-select" onclick="toggleDropdown('dropdown01')">
+                    <div class="custom-select" id="custom-select1"onclick="toggleDropdown('dropdown01')">
                         Selecione uma médico(a)
                         <i class="fa-solid fa-arrow-down"></i>
                     </div>
                     <div class="dropdown" id="dropdown01">
-                        <input type="text" name="MED_COD" hidden>
+                        <input type="text" name="med_cod" hidden>
                         <input type="text" id="filterInput" placeholder="Filtrar..." onkeyup="filterOptions(this,'optionsContainer01')" >
                         <div class="options" id="optionsContainer01">
                             @foreach ($medicos as $medico)
-                                <div class="option" onclick="selectOption(this,'{{$medico->med_cod}}','med_cod')">{{$medico->med_nome}}</div> 
+                                <div class="option" onclick="selectOption(this,'{{$medico->med_cod}}','med_cod','custom-select1','dropdown01')">{{$medico->med_nome}}</div> 
                                 
                             @endforeach
                            {{-- 

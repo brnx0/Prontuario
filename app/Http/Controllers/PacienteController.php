@@ -22,49 +22,49 @@ class PacienteController extends Controller{
         
     }
     public function store(Request $request)    {
-        $dataNascimento = (new DateTime($request->nascimento))->setTime(0,0,0);       
-       if( $dataNascimento > (new DateTime())->setTime(0,0,0)){
-            return redirect()->back()->withInput()->with(['error'=>'A data de nascimento não pode ser maior que a data atual',]);
-       }
+    //     $dataNascimento = (new DateTime($request->nascimento))->setTime(0,0,0);       
+    //    if( $dataNascimento > (new DateTime())->setTime(0,0,0)){
+    //         return redirect()->back()->withInput()->with(['error'=>'A data de nascimento não pode ser maior que a data atual',]);
+    //    }
         try {
             DB::beginTransaction();
             Paciente::updateOrCreate([
                 'pac_cod' => $request->pes_cod
             ],
             [
-                'nome' => $request->NOME,
-                'filicao_1' => $request->FILICAO_1,
-                'filicao_2' => $request->FILICAO_2,
+                'nome' => $request->nome,
+                'filicao_1' => $request->filicao_1,
+                'filicao_2' => $request->filicao_2,
                 'cep' => $request->CEP,
-                'nascimento' => $dataNascimento,
-                'logradouro' => $request->LOGRADOURO,
-                'cidade' => $request->CIDADE,
-                'uf'  => $request->UF,   
-                'tel_1' => $request->TEL_1 ,
-                'tel_2' => $request->TEL_2 ,
-                'email' => $request->EMAIL ,
-                'cartao_sus' => $request->CARTAO_SUS ,
-                'prof_cod' => $request->PROF_COD   
+                'nascimento' => $request->nascimento,
+                'logradouro' => $request->logradouro,
+                'cidade' => $request->cidade,
+                'uf'  => $request->uf,   
+                'tel_1' => $request->tel_1 ,
+                'tel_2' => $request->tel_2 ,
+                'email' => $request->email ,
+                'cartao_sus' => $request->cartao_sus ,
+                'prof_cod' => $request->prof_cod   
             ]);
             DB::commit();
             return redirect('/paciente')->with('success','Sucesso!');
 
         } catch (QueryException  $th) {
             DB::rollBack();
-            return redirect('/paciente')->with('error','Erro ao criar o registro. '.$th->errorInfo[2]);
+            return redirect('/paciente')->with('error','Erro ao criar o registro. '.$th ->getMessage());
         }
     }
    public function filtro (Request $request){
 
-        if(empty($request->NOME) && empty($request->CPF) && empty($request->filtroData) ){
+        if(empty($request->nome) && empty($request->cpf) && empty($request->filtroData) ){
             return PacienteController::index();
         }
         $query = Paciente::query();
-        if($request->NOME){
-           $query->where('nome','LIKE', '%'.$request->NOME.'%');
+        if($request->nome){
+           $query->where('nome','LIKE', '%'.$request->nome.'%');
         }
-        if($request->CPF){
-            $query->where('cpf','=', $request->CPF);
+        if($request->cpf){
+            $query->where('cpf','=', $request->cpf);
          }
          if($request->filtroData){
             $query->where('nascimento','=', $request->filtroData,);

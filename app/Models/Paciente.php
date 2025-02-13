@@ -7,14 +7,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str; 
 
-class Paciente extends Model
-{
-    //<?php
-    //
+class Paciente extends Model{
+   
     protected $fillable = ['nome','filicao_1','filicao_2','cep','logradouro','nascimento','cidade','uf','tel_1','tel_2','email','cartao_sus','prof_cod'];
     const updated_at = null;
     const created_at = null;
-    protected $primarykey = 'pac_cod';
+    protected $primaryKey = 'pac_cod';
     public $timestamps = false;
     protected $keyType = 'string';
 
@@ -32,7 +30,12 @@ class Paciente extends Model
         });
     }
     public function getNascimentoAttribute($data){
-        return Carbon::createFromFormat('Y-m-d', $data)->format('d-m-Y');
+        if(!$data){
+            return null;
+        }else{
+            return Carbon::createFromFormat('Y-m-d', $data)->format('d-m-Y');
+        }
+        
 
     }
     

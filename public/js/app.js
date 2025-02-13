@@ -13,19 +13,19 @@ document.addEventListener("DOMContentLoaded", function (){
     document.querySelectorAll(".edit-btn").forEach(button  =>{
         button.addEventListener("click", function(){
             document.getElementsByName('pes_cod')[0].value = this.getAttribute("data-pes_cod");
-            document.getElementsByName('NOME')[1].value = this.getAttribute("data-nome");
-            document.getElementsByName('FILICAO_1')[0].value = this.getAttribute("data-filicao_1");
-            document.getElementsByName('FILICAO_2')[0].value = this.getAttribute("data-filicao_2");
-            document.getElementsByName('CEP')[0].value = this.getAttribute("data-cep");
-            document.getElementsByName('LOGRADOURO')[0].value = this.getAttribute("data-logradouro");
-            document.getElementsByName('CIDADE')[0].value = this.getAttribute("data-cidade");
-            document.getElementsByName('UF')[0].value = this.getAttribute("data-uf");
-            document.getElementsByName('TEL_1')[0].value = this.getAttribute("data-tel_1");
-            document.getElementsByName('TEL_2')[0].value = this.getAttribute("data-tel_2");
-            document.getElementsByName('EMAIL')[0].value = this.getAttribute("data-email");
-            document.getElementsByName('CARTAO_SUS')[0].value = this.getAttribute("data-cartao_sus");
-            document.getElementsByName('Ativo')[0].value = this.getAttribute("data-ativo");
-            document.getElementsByName('PROF_COD')[0].value = this.getAttribute("data-prof_cod");
+            document.getElementsByName('nome')[1].value = this.getAttribute("data-nome");
+            document.getElementsByName('filicao_1')[0].value = this.getAttribute("data-filicao_1");
+            document.getElementsByName('filicao_2')[0].value = this.getAttribute("data-filicao_2");
+            document.getElementsByName('cep')[0].value = this.getAttribute("data-cep");
+            document.getElementsByName('logradouro')[0].value = this.getAttribute("data-logradouro");
+            document.getElementsByName('cidade')[0].value = this.getAttribute("data-cidade");
+            document.getElementsByName('uf')[0].value = this.getAttribute("data-uf");
+            document.getElementsByName('tel_1')[0].value = this.getAttribute("data-tel_1");
+            document.getElementsByName('tel_2')[0].value = this.getAttribute("data-tel_2");
+            document.getElementsByName('email')[0].value = this.getAttribute("data-email");
+            document.getElementsByName('cartao_sUS')[0].value = this.getAttribute("data-cartao_sus");
+            document.getElementsByName('ativo')[0].value = this.getAttribute("data-ativo");
+            document.getElementsByName('prof_cod')[0].value = this.getAttribute("data-prof_cod");
         })
     })
 });

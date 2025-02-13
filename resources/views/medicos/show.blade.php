@@ -62,19 +62,19 @@
                
                 @foreach ($medicos as $medico)
                     <tr> 
-                        <td class="col-md-6">{{$medico->MED_NOME}}</td>
-                        <td class="col-md-2">{{$medico->CRM}}</td>
+                        <td class="col-md-6">{{$medico->med_nome}}</td>
+                        <td class="col-md-2">{{$medico->crm}}</td>
                         <td class="col-md-2">
-                            @if ($medico->ATIVO == 'S')
-                                <button class="btn btn-sm btn-secondary ms-2" onclick="ativarInativarMed('{{$medico->MED_COD}}','N','{{ csrf_token() }}')">Desativar</button>
+                            @if ($medico->ativo == 'S')
+                                <button class="btn btn-sm btn-secondary ms-2" onclick="ativarInativarMed('{{$medico->med_cod}}','N','{{ csrf_token() }}')">Desativar</button>
                             @else
-                                <button class="btn btn-sm btn-secondary ms-2" onclick="ativarInativarMed('{{$medico->MED_COD}}','S','{{csrf_token()}}')">Ativar</button>
+                                <button class="btn btn-sm btn-secondary ms-2" onclick="ativarInativarMed('{{$medico->med_cod}}','S','{{csrf_token()}}')">Ativar</button>
                             @endif
                             
                             <button class="btn btn-sm btn-warning edit-btn ms-2" data-bs-toggle="modal" data-bs-target="#pacienteModal"> 
                                 Editar
                             </button>
-                            <button class="btn btn-sm btn-danger ms-2" onclick="excluirMedico('{{$medico->MED_COD}}')">Excluir</button>
+                            <button class="btn btn-sm btn-danger ms-2" onclick="excluirMedico('{{$medico->med_cod}}')">Excluir</button>
                         </td>
                     </tr>
                 @endforeach
@@ -83,15 +83,15 @@
         <form id="editStatusMed" method="POST">
             @csrf
             @method('PUT') 
-            <input type="text" name="MED_COD" id="edMED_COD" hidden>
-            <input type="text" name="STATUS" id="Status" hidden>
+            <input type="text" name="med_cod" id="edMED_COD" hidden>
+            <input type="text" name="status" id="Status" hidden>
             
 
         </form>
         <form  id="deletMedico" method="POST" >
             @csrf
             @method('DELETE') 
-            <input type="text" name="MED_COD" id="MED_COD" hidden>
+            <input type="text" name="med_cod" id="MED_COD" hidden>
         </form>
         <div class=" justify-content-center">
             {{-- {{ $query->links('pagination::bootstrap-4', ['next' => 'Próximo', 'previous' => 'Anterior'])}}  --}}

@@ -5,9 +5,9 @@ function toggleDropdown(elemeto) {
     // document.getElementById('filterInput').focus();
 }
 
-function selectOption(element,PAC_COD,input) {
-    document.querySelector('.custom-select').textContent = element.textContent;
-    document.querySelector('.dropdown').style.display = 'none';
+function selectOption(element,PAC_COD,input,elementoFiltro, elementDrop) {
+    document.getElementById(elementoFiltro).textContent = element.textContent;
+    document.getElementById(elementDrop).style.display = 'none';
     document.getElementsByName(input)[0].value = PAC_COD;
 }
 
