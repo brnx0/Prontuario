@@ -30,5 +30,11 @@ class Atendimento extends Model{
     public function medico(){
         return $this->belongsTo(Medico::class,'med_cod','med_cod');
     }
+    public function enfermeiro(){
+        return $this->belongsTo(Enfermeiro::class,'enf_cod','enf_cod');
+    }
+    public function especialidade(){
+        return $this->belongsTo(Especialidade::class,'esp_cod','esp_cod');
+    }
     //
 }

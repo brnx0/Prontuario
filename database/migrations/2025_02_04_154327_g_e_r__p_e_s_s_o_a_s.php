@@ -53,13 +53,13 @@ return new class extends Migration
         Schema::create('especialidades', function(BluePrint $table){
             $table->uuid('esp_cod')->primary();
             $table->string('escp_desc');
-            $table->string('ativo');
+            $table->string('ativo')->default('S');;
         });
 
         Schema::create('atendimentos', function(BluePrint $table){
         $table->uuid('atend_cod')->primary();
         $table->datetime('dt_atendimento');
-        $table->string('situcao_queixa')->nullable();
+        $table->string('situacao_queixa')->nullable();
         $table->decimal('mmhg')->nullable();
         $table->decimal('bpm')->nullable();
         $table->decimal('rpm')->nullable();

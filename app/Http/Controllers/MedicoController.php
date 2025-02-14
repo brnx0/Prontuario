@@ -27,8 +27,7 @@ class MedicoController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
+    public function store(Request $request)    {
         try{
             Medico::create([
                 'med_nome' => $request->nomeMedico,
@@ -57,21 +56,18 @@ class MedicoController extends Controller
     }
     public function filtro (Request $request){
 
-        // if(empty($request->nome) && empty($request->cpf) && empty($request->filtroData) ){
-        //     return PacienteController::index();
-        // }
-        // $query = Paciente::query();
-        // if($request->nome){
-        //    $query->where('nome','LIKE', '%'.$request->nome.'%');
-        // }
-        // if($request->cpf){
-        //     $query->where('cpf','=', $request->cpf);
-        //  }
-        //  if($request->filtroData){
-        //     $query->where('nascimento','=', $request->filtroData,);
-        //  }
+        if(empty($request->nome) && empty($request->crm)  ){
+            return MedicoController::index();
+        }
+        $query = Medico::query();
+        if($request->nome){
+           $query->where('med_nome','LIKE', '%'.$request->nome.'%');
+        }
+        if($request->crm){
+            $query->where('crm','=', $request->crm);
+         }
     
-        // return view('paciente.pacientes',['query' => $query->paginate(10)]);
+        return view('medicos.show',['medicos' => $query->paginate(10)]);
    }
 
     /**

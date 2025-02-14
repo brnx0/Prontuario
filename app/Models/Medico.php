@@ -11,7 +11,6 @@ class Medico extends Model{
     protected $primaryKey = 'med_cod';
     public $timestamps = false;
     protected $keyType = 'string';
-
     public $incrementing = false;
     protected static function boot(){
         parent::boot();
@@ -21,8 +20,7 @@ class Medico extends Model{
             }
         });
     }
-    public function paciente(){
+    public function atendimento(){
         return $this->hasMany(Atendimento::class,'med_cod', 'med_cod');
     }
-    //
 }

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Atendimento;
+use App\Models\Enfermeiro;
+use App\Models\Especialidade;
 use App\Models\Medico;
 use App\Models\Paciente;
 use DateTime;
@@ -17,15 +19,28 @@ class AtendimentoController extends Controller
      */
     public function index($atend_cod =null){
         if($atend_cod){
-            $atendimento = Atendimento::with('paciente')->find($atend_cod,$columns = ['*']);
-            return view("atendimento.show",['atendimento' => $atendimento, 'paciente' => $atendimento->paciente]); 
+            $atendimento = Atendimento::with(['paciente','enfermeiro','medico', 'especialidade'])->find($atend_cod,$columns = ['*']);
+            
+            return view("atendimento.show",[
+                'atendimento' => $atendimento, 
+                'paciente' => $atendimento->paciente,
+                'medico' => $atendimento->medico,
+                'enfermeiro' =>$atendimento->enfermeiro,
+                'especialidade' => $atendimento->especialidade        
+            ]); 
         }else{
+            $enfermeiro = Enfermeiro::select ('enf_cod', 'enf_nome')->where('ativo', '=', 'S')->orderBy('enf_nome', 'asc')->get();
             $pacientes = Paciente::select('pac_cod', 'nome')->where('ativo','=','S')->orderBy('nome','asc')->get();
             $medicos = Medico::select()->where('ativo','=','S')->orderBy('med_nome')->get();
+            $especialidade = Especialidade::select()->where('ativo','=','S')->orderBy('escp_desc')->get();
+            
+
             return view("atendimento.atendimento",[
                 'pacientes' => $pacientes, 
                 'data'=> (new datetime())->format('y-m-d h:i'),
-                'medicos' => $medicos
+                'medicos' => $medicos,
+                'enfermeiros' => $enfermeiro,
+                'especialidades' => $especialidade
             ]);
         } 
     }
@@ -47,10 +62,11 @@ class AtendimentoController extends Controller
             return redirect()->back()->with("error","");
         }
         try {
+            
             DB::beginTransaction();
             $atend_cod = Atendimento::create([
             'dt_atendimento' => $request->dtAtendimento,
-            'situcao_queixa' => $request->situacao,
+            'situacao_queixa' => $request->situacao,
             'mmhg'  => $request->mmhg,
             'bpm' => $request->bpm,
             'spo2'=> $request->spo2,
@@ -59,7 +75,7 @@ class AtendimentoController extends Controller
             'kg'=> $request->kg,
             'hgt'=> $request->hgt,
             'desc_caso'=> $request->descricaoCaso,
-            'enf_cod'=> $request->enf_cod,
+            'enf_cod'=> $request->enfermeiro,
             'esp_cod'=> $request->esp_cod,
             'med_cod' => $request->med_cod,
             'pac_cod' => $request->pac_cod

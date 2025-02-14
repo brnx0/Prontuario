@@ -18,6 +18,7 @@ html, body {
     display: flex;
     height: 93vh; /* Ocupar todo o espaço restante */
     transition: all 0.3s ease-in-out;
+    overflow: scroll;
     
 }
 #sidebar ul a {
@@ -115,4 +116,12 @@ html, body {
 }
 input[readonly],textarea[readonly]{
     background: #feffe383;
+}
+#btnImprimir{
+    align-content: end;
+}
+.hover:hover{
+    margin-top: calc(-1* var(--bs-list-group-border-width));
+    border-top-width: var(--bs-list-group-border-width);
+    background-color: bisque;
 }

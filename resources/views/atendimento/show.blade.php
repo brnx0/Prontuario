@@ -29,30 +29,30 @@
                 <label for="dtAtendimento" class="form-label" >Data do Atendimento</label>
                 <input type="datetime-local" class="form-control" id="dtAtendimento" name="dtAtendimento" value="{{$atendimento->dt_atendimento}}" readonly disabled>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-2" id="btnImprimir">
                 <button class="btn btn-success">Imprimir Atendimento</button>
             </div>
         </div>
         <div class="row mb-3">
             <div class="col-md-8">
                 <label for="medico" class="form-label">Médico(a)</label>
-                <input type="text" class="form-control" value="Medico"  disabled> 
+                <input type="text" class="form-control" value="{{$medico?->med_nome}}"  disabled> 
             </div>
             <div class="col-md-4">
                 <label for="especialidade" class="form-label">Especialidade</label>
-                <input type="text" class="form-control" value="Especialidade"  disabled> 
+                <input type="text" class="form-control" value="{{$especialidade?->escp_desc}}"  disabled> 
             </div>
         </div>
         <div class="row mb-3">
             <div class="col-md-12">
                 <label for="enfermeiro" class="form-label">Enfermeiro(a)</label>
-                <input type="text" class="form-control" id="enfermeiro" name="enfermeiro" disabled>
+                <input type="text" class="form-control" id="enfermeiro" name="enfermeiro" value ="{{$enfermeiro?->enf_nome}}"disabled>
             </div>
         </div>
         <div class="row mb-3">
             <div class="div col-md-12">
                 <label for="queixaSituacao" readonly>Situação/Queixa</label>
-                <input type="text" class="form-control" id="queixaSituacao" name="situacao" readonly disabled>
+                <input type="text" class="form-control" id="queixaSituacao" name="situacao" value="{{$atendimento->situacao_queixa}}" readonly disabled>
             </div>
         </div>
         <div class="row mb-3">

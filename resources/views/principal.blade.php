@@ -25,31 +25,36 @@
             <ul class="list-group">
                 <li class="list-group-item active">📂 Atendimento</li>
                 <a href="/atendimento">
-                    <li class="list-group-item">🔹 Novo Atendimento</li>
+                    <li class="list-group-item hover">🔹 Novo Atendimento</li>
                 </a>
-                <li class="list-group-item">🔹 Histórico</li>
+                <li class="list-group-item hover">🔹 Histórico</li>
                 <li class="list-group-item active">📅 Cadastro</li>
                 <a href="/paciente">
-                    <li class="list-group-item">
+                    <li class="list-group-item hover">
                         <i class="fa-solid fa-user-plus"style="color: #000000;"> </i> 
                     Paciente
                     </li>
                 </a>
                 <a href="/medico">
-                    <li class="list-group-item">
+                    <li class="list-group-item hover">
+                        <i class="fa-solid fa-user-doctor"style="color: #000000;"> </i>
                         Médicos
                     </li>
                 </a>
                 <a href="/enfermeiro">
-                    <li class="list-group-item">
+                    <li class="list-group-item hover">
+                        <i class="fa-solid fa-user-nurse" style="color: #000000;"> </i>
                         Enfermeiros
                     </li>
                 </a>
-                <li class="list-group-item">💼 Profissão</li>
-                <li class="list-group-item active">🩺 Especialidade</li>
+                <a href="/especialidade">
+                    <li class="list-group-item hover">🩺 Especialidade</li>
+                </a>
+                
+                
             </ul>
         </div>
-        <div id="content" class="flex-grow-1 p-4">
+        <div id="content" class="flex-grow-1 ">
           @yield('content')
         </div>
     </div>

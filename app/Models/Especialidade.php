@@ -1,14 +1,15 @@
 <?php
 
 namespace App\Models;
-use Illuminate\Support\Str; 
-use Illuminate\Database\Eloquent\Model;
 
-class Enfermeiro extends Model{
-    protected $fillable = ['enf_nome','cre','ativo'];
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str; 
+
+class Especialidade extends Model{
+    protected $fillable = ['escp_desc','ativo'];
     const updated_at = null;
     const created_at = null;
-    protected $primaryKey = 'enf_cod';
+    protected $primaryKey = 'esp_cod';
     public $timestamps = false;
     protected $keyType = 'string';
 
@@ -22,7 +23,6 @@ class Enfermeiro extends Model{
         });
     }
     public function atendimento(){
-        return $this->hasMany(Atendimento::class,'enf_cod', 'enf_cod');
+        return $this->hasMany(Atendimento::class,'esp_cod', 'esp_cod');
     }
-    //
 }
