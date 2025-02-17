@@ -7,7 +7,7 @@ use App\Http\Controllers\PacienteController;
 
 use Illuminate\Support\Facades\Route;
 
-
+Route::middleware(['auth'])->group(function () {
 Route::get('/paciente',[PacienteController::class, 'index'])->name('paciente.index');
 Route::post('/paciente', [PacienteController::class, 'store'])->name('paciente.store');
 Route::get('/paciente', [PacienteController::class,'filtro'])->name('filtrar.paciente');
@@ -16,13 +16,13 @@ Route::delete('/paciente/{id}',[PacienteController::class,'destroy'])->name('del
 Route::get('/atendimento/{ATEND_COD?}',[AtendimentoController::class,'index'])->name('atendimentoIndex');
 Route::post('/atendimento', [AtendimentoController::class,'store'])->name('atendimentoPost');
 
-Route::middleware(['auth'])->group(function () {
+
 Route::get('/medico',[MedicoController::class,'index'])->name('');
 Route::get('/medico',[MedicoController::class,'filtro'])->name(name: 'filtrarMedico');
 Route::post('/medico',[MedicoController::class,'store'])->name('');
 Route::delete('/medico',[MedicoController::class,'destroy'])->name('');
 Route::PUT('/medico',[MedicoController::class,'updateStatus']);
-});
+
 
 Route::get('/enfermeiro',[EnfermeiroController::class,'index'])->name('');
 Route::get('/enfermeiro',[EnfermeiroController::class,'filtro'])->name('filtrarEnfermeiro');
@@ -41,7 +41,7 @@ Route::get('/', function () {
     return view('principal');
  })->name('paciente');
 
-
+});
 
 Route::middleware([
     'auth:sanctum',
