@@ -15,6 +15,8 @@ Route::delete('/paciente/{id}',[PacienteController::class,'destroy'])->name('del
 
 Route::get('/atendimento/{ATEND_COD?}',[AtendimentoController::class,'index'])->name('atendimentoIndex');
 Route::post('/atendimento', [AtendimentoController::class,'store'])->name('atendimentoPost');
+Route::get('/historico{nome?}{dataAtendimento?}', [AtendimentoController::class,'historico']);
+Route::get('/historico/{ATEND_COD}', [AtendimentoController::class,'registroAtendimento']);
 
 
 Route::get('/medico',[MedicoController::class,'index'])->name('');

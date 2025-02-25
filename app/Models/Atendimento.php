@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str; 
 use App\Models\Paciente;
+use Carbon\Carbon;
+
 
 class Atendimento extends Model{
     protected $fillable = ['atend_cod','pac_cod','dt_atendimento','situcao_queixa','mmhg','bpm' ,'spo2','temp' ,'rpm','kg','hgt','desc_caso','enf_cod','esp_cod','med_cod'];
@@ -23,6 +25,11 @@ class Atendimento extends Model{
             }
         });
     }
+    public function getDtAtendimentoAttribute($value)    {
+        if($value){
+            return Carbon::parse($value)->format('d/m/Y H:i:s');
+        }
+    }
 
     public function paciente(){
         return $this->belongsTo(Paciente::class,'pac_cod', 'pac_cod');
@@ -34,7 +41,7 @@ class Atendimento extends Model{
         return $this->belongsTo(Enfermeiro::class,'enf_cod','enf_cod');
     }
     public function especialidade(){
-        return $this->belongsTo(Especialidade::class,'esp_cod','esp_cod');
+        return $this->belongsTo(Especialidade::class,'esp_cod');
     }
     //
 }

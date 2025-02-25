@@ -16,7 +16,16 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container-fluid">
             <button class="btn btn-light me-2" id="toggleMenu">☰</button>
-            <span class="navbar-brand">Meu Sistema</span>
+            <span class="navbar-brand">
+                
+                
+                Prontuário Digital</span>
+                <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                    @csrf
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-box-arrow-right"></i> Sair
+                    </button>
+                </form>
         </div>
     </nav>
     <div class="d-flex containerPrincipal">
@@ -27,7 +36,9 @@
                 <a href="/atendimento">
                     <li class="list-group-item hover">🔹 Novo Atendimento</li>
                 </a>
-                <li class="list-group-item hover">🔹 Histórico</li>
+                <a href="/historico">
+                    <li class="list-group-item hover">🔹 Histórico</li>
+                </a>
                 <li class="list-group-item active">📅 Cadastro</li>
                 <a href="/paciente">
                     <li class="list-group-item hover">

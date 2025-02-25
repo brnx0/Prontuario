@@ -26,3 +26,27 @@ document.addEventListener('click', function(event) {
         document.querySelector('.dropdown').style.display = 'none';
     }
 });
+
+async function abrirAtendimento(atend_cod){
+   const req =   await (await (fetch(`/historico/${atend_cod}`))).json()
+   let modal = new bootstrap.Modal(document.getElementById('atendimentoModal'));
+   await preencherDados(req);
+   modal.show()
+  
+}
+async function preencherDados(dados){
+    console.log(dados)
+    document.getElementById("bpm").value = dados.bpm;
+    document.getElementById("dtAtendimento").value = dados.dt_atendimento;
+    document.getElementById("enfermeiroHistorico").value = dados.enfermeiro_nome;
+    document.getElementById("especialistaHistorico").value = dados.especialidade_desc;
+    document.getElementById("hgt").value = dados.hgt;
+    document.getElementById("kg").value = dados.kg;
+    document.getElementById("medicoHistorico").value = dados.medico_nome;
+    document.getElementById("mmhg").value = dados.mmhg;
+    document.getElementById("pacienteHistorico").value = dados.paciente_nome;
+    document.getElementById("rpm").value = dados.rpm;
+    document.getElementById("queixaSituacao").value = dados.situacao_queixa;
+    document.getElementById("spo2").value = dados.spo2;
+    document.getElementById("temp").value = dados.temp;
+}

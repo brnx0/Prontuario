@@ -8,6 +8,7 @@ use App\Models\Especialidade;
 use App\Models\Medico;
 use App\Models\Paciente;
 use DateTime;
+use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -44,7 +45,35 @@ class AtendimentoController extends Controller
             ]);
         } 
     }
-
+    public function registroAtendimento($atend_cod){
+        try{
+            $atendimento = Atendimento::select([
+                'atendimentos.dt_atendimento',
+                'atendimentos.situacao_queixa',
+                'atendimentos.mmhg',
+                'atendimentos.bpm',
+                'atendimentos.rpm',
+                'atendimentos.spo2',
+                'atendimentos.temp',
+                'atendimentos.kg',
+                'atendimentos.hgt',
+                'pacientes.nome AS paciente_nome', // Nome do paciente
+                'enfermeiros.enf_nome AS enfermeiro_nome', // Nome do enfermeiro
+                'medicos.med_nome AS medico_nome', // Nome do médico
+                'especialidades.escp_desc AS especialidade_desc' // Descrição da especialidade
+            ])
+            ->leftJoin('pacientes', 'atendimentos.pac_cod', '=', 'pacientes.pac_cod')
+            ->leftJoin('enfermeiros', 'atendimentos.enf_cod', '=', 'enfermeiros.enf_cod')
+            ->leftJoin('medicos', 'atendimentos.med_cod', '=', 'medicos.med_cod')
+            ->leftJoin('especialidades', 'atendimentos.esp_cod', '=', 'especialidades.esp_cod')
+            ->where('atendimentos.atend_cod', $atend_cod)
+            ->first();
+           
+            return response()->json($atendimento); 
+        }catch(Exception $e){
+            return $e->getMessage();
+        }
+    }   
     /**
      * Show the form for creating a new resource.
      */
@@ -90,7 +119,16 @@ class AtendimentoController extends Controller
             return redirect()->back()->with('error', $th->getMessage());
         }
     }
-
+    public function historico(Request $request ){
+         if(!$request->nome && !$request->dtAtendimento){
+            $atendimento = Atendimento::with(['paciente','enfermeiro','medico', 'especialidade'])->paginate(10);
+         
+           return view('atendimento.historico', ['atendimentos' =>$atendimento]);
+     }
+        
+        
+;        
+    }
     /**
      * Display the specified resource.
      */
