@@ -25,7 +25,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0">Médicos</h2>
         <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#medicoModal">
-            Cadastrar Médico
+        <i class="fa-solid fa-plus fa-lg" style="color:rgb(245, 245, 245);"></i>
         </button>
     </div>
     
@@ -66,15 +66,21 @@
                         <td class="col-md-2">{{$medico->crm}}</td>
                         <td class="col-md-2">
                             @if ($medico->ativo == 'S')
-                                <button class="btn btn-sm btn-secondary ms-2" onclick="ativarInativarMed('{{$medico->med_cod}}','N','{{ csrf_token() }}')">Desativar</button>
+                                <button class="btn btn-sm btn-success ms-2" onclick="ativarInativarMed('{{$medico->med_cod}}','N','{{ csrf_token() }}')" title="Inativar">
+                                    <i class="fas fa-toggle-on fa-xl " ></i>
+                                </button>
                             @else
-                                <button class="btn btn-sm btn-secondary ms-2" onclick="ativarInativarMed('{{$medico->med_cod}}','S','{{csrf_token()}}')">Ativar</button>
+                                <button class="btn btn-sm btn-success ms-2" onclick="ativarInativarMed('{{$medico->med_cod}}','S','{{csrf_token()}}')"title="Ativar">
+                                    <i class="fas fa-toggle-off fa-xl"  ></i>
+                                </button>
                             @endif
                             
-                            <button class="btn btn-sm btn-warning edit-btn ms-2" data-bs-toggle="modal" data-bs-target="#pacienteModal"> 
-                                Editar
+                            <button class="btn btn-sm btn-warning edit-btn ms-2" data-bs-toggle="modal" data-bs-target="#pacienteModal" title="Editar"> 
+                                <i class="fa-solid fa-pen-to-square fa-xl" style="color: #ffffff;"></i>
                             </button>
-                            <button class="btn btn-sm btn-danger ms-2" onclick="excluirMedico('{{$medico->med_cod}}')">Excluir</button>
+                            <button class="btn btn-sm btn-danger ms-2" onclick="excluirMedico('{{$medico->med_cod}}')"title="Excluir">
+                                <i class="fa-solid fa-trash fa-xl" style="color: #ffffff;"></i>
+                            </button>
                         </td>
                     </tr>
                 @endforeach

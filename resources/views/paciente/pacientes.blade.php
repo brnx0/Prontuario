@@ -5,7 +5,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0">Pacientes</h2>
         <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#pacienteModal" id="btnCadastro"> 
-            Novo Paciente
+            <i class="fa-solid fa-plus fa-lg" style="color:rgb(245, 245, 245);"></i>
         </button>
     </div>
     
@@ -53,24 +53,27 @@
                     <td class="col-md-2">{{$paciente->nascimento}}</td>
                     <td class="col-md-2">{{$paciente->sus}}</td>
                     <td class="col-md-2"> 
-                        <button class="btn btn-sm btn-warning edit-btn" data-bs-toggle="modal" data-bs-target="#pacienteModal" 
-                        data-pes_cod="{{$paciente->pac_cod}}"
-                        data-nome="{{$paciente->nome}}"
-                        data-filicao_1="{{$paciente->filicao_1}}"
-                        data-filicao_2="{{$paciente->filicao_2}}"
-                        data-cep="{{$paciente->cep}}"
-                        data-logradouro="{{$paciente->logradouro}}"
-                        data-cidade="{{$paciente->cidade}}"
-                        data-uf="{{$paciente->uf}}"
-                        data-tel_1="{{$paciente->tel_1}}"
-                        data-tel_2="{{$paciente->tel_2}}"
-                        data-email="{{$paciente->email}}"
-                        data-cartao_sus="{{$paciente->cartao_sus}}"
-                        data-ativo="{{$paciente->ativo}}"
-                        data-prof_cod="{{$paciente->prof_cod}}">
-                        Editar
-                    </button>
-                        <button class="btn btn-sm btn-danger" onclick="confirmarExclusao('{{$paciente->pac_cod}}','{{csrf_token()}}')">Excluir</button>
+                        
+                        <button class="btn btn-sm btn-warning edit-btn" data-bs-toggle="modal" data-bs-target="#pacienteModal"  title="Clique aqui para editar"
+                            data-pes_cod="{{$paciente->pac_cod}}"
+                            data-nome="{{$paciente->nome}}"
+                            data-filicao_1="{{$paciente->filicao_1}}"
+                            data-filicao_2="{{$paciente->filicao_2}}"
+                            data-cep="{{$paciente->cep}}"
+                            data-logradouro="{{$paciente->logradouro}}"
+                            data-cidade="{{$paciente->cidade}}"
+                            data-uf="{{$paciente->uf}}"
+                            data-tel_1="{{$paciente->tel_1}}"
+                            data-tel_2="{{$paciente->tel_2}}"
+                            data-email="{{$paciente->email}}"
+                            data-cartao_sus="{{$paciente->cartao_sus}}"
+                            data-ativo="{{$paciente->ativo}}"
+                            data-prof_cod="{{$paciente->prof_cod}}">
+                            <i class="fa-solid fa-pen-to-square fa-xl" style="color: #ffffff;"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="confirmarExclusao('{{$paciente->pac_cod}}','{{csrf_token()}}')">
+                            <i class="fa-solid fa-trash fa-xl" style="color: #ffffff;"></i>
+                        </button>
                     </td>
                 </tr>
                 
