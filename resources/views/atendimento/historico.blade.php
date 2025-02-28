@@ -37,7 +37,7 @@
                 @foreach ($atendimentos as $atendimento)
                     <tr>
                         <td class="col-md-1">
-                            <button class="btn" onclick="abrirAtendimento('{{$atendimento->atend_cod}}')">
+                            <button class="btn" id="btnModal" onclick="abrirAtendimento('{{$atendimento->atend_cod}}')">
                                 <i class="fa-solid fa-eye" style="color: #74C0FC;"></i>
                             </button>
                         </td>
@@ -46,25 +46,7 @@
                         <td class="col-md-5" style="word-break: break-word; white-space: normal;">
                             {{ $atendimento?->situacao_queixa}}
                         </td>
-                    </tr>
-                
-                
-
-                {{-- {{$atendimento->dt_atendimento}}
-                {{$atendimento?->situacao_queixa}}
-                
-                {{$atendimento?->mmhg}}
-                {{$atendimento?->bpm}}
-                {{$atendimento?->rpm}}
-                {{$atendimento?->spo2}}
-                {{$atendimento?->temp}}
-                {{$atendimento?->kg}}
-                {{$atendimento?->hgt}}
-                {{$atendimento?->paciente->nome}}
-                {{$atendimento->enfermeiro?->enf_nome}}
-                {{$atendimento?->medico?->med_nome}}
-                {{$atendimento?->especialidade?->escp_desc}} --}}
-                    
+                    </tr>             
                 @endforeach
                
             </tbody>
@@ -81,20 +63,24 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form>
-            <input type="text" name="atend_cod" value="" hidden>
+         
+            <input type="text" name="atend_cod"  id="atend_cod"hidden>
             
             <div class="row mb-3">
               <div class="col-md-6">
                 <label for="paciente" class="form-label">Paciente</label>
                 <input type="text" class="form-control" id="pacienteHistorico" disabled> 
               </div>
-              <div class="col-md-3">
+              <div class="col-md-4">
                 <label for="dtAtendimento" class="form-label" >Data do Atendimento</label>
                 <input type="" class="form-control" id="dtAtendimento" name="dtAtendimento"  readonly disabled>
               </div>
-              <div class="col-md-3" id="btnImprimir">
-                <button class="btn btn-success">Imprimir Atendimento</button>
+              <div class="col-md-2" id="btnImprimir">
+                <button class="btn btn-success" onclick="imprimirAtendimento('atend_cod')">
+                    Imprimir
+                </button>   
+    
+                
               </div>
             </div>
   
@@ -166,15 +152,18 @@
                 <textarea name="descricaoCaso" id="descricaoCaso" disabled></textarea>
               </div>
             </div>
-          </form>
+         
         </div>
   
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-          <button type="button" class="btn btn-primary">Voltar</button>
+          
         </div>
       </div>
     </div>
+  </div>
+  <div id=iframe>
+
   </div>
 
 @endsection

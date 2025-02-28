@@ -4,8 +4,15 @@ use App\Http\Controllers\EnfermeiroController;
 use App\Http\Controllers\EspecialidadeController;
 use App\Http\Controllers\MedicoController;
 use App\Http\Controllers\PacienteController;
-
+use App\Http\Controllers\Auth\RegisteredUserController;
 use Illuminate\Support\Facades\Route;
+
+
+
+
+
+
+Route::get('/relatorio/{Codigo}', [AtendimentoController::class,'gerarfichaAtendimento']);
 
 Route::middleware(['auth'])->group(function () {
 Route::get('/paciente',[PacienteController::class, 'index'])->name('paciente.index');
@@ -37,21 +44,27 @@ Route::get('/especialidade',[EspecialidadeController::class,'filtro'])->name('fi
 Route::post('/especialidade',[EspecialidadeController::class,'store'])->name('');
 Route::delete('/especialidade',[EspecialidadeController::class,'destroy'])->name('');
 Route::PUT('/especialidade',[EspecialidadeController::class,'updateStatus']);
-
-
-Route::get('/', function () {
-    return view('principal');
- })->name('paciente');
-
 });
 
-Route::middleware([
-    'auth:sanctum',
-    config('jetstream.auth_session'),
-    'verified'
-])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+// Route::get('/', function () {
+//     return view('principal');
+//  })->name('paciente');
+
+// );
+
+// Route::middleware([
+//     'auth:sanctum',
+//     config('jetstream.auth_session'),
+//     'verified'
+// ])->group(function () {
+//     Route::get('/dashboard', function () {
+//         return view('dashboard');
+//     })->name('dashboard');
+// });
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
+    Route::post('/register', [RegisteredUserController::class, 'store']);
 });
 
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

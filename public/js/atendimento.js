@@ -28,14 +28,16 @@ document.addEventListener('click', function(event) {
 });
 
 async function abrirAtendimento(atend_cod){
-   const req =   await (await (fetch(`/historico/${atend_cod}`))).json()
-   let modal = new bootstrap.Modal(document.getElementById('atendimentoModal'));
-   await preencherDados(req);
-   modal.show()
+    document.getElementById('btnModal').disable = true;
+    const req =   await (await (fetch(`/historico/${atend_cod}`))).json()
+    let modal = new bootstrap.Modal(document.getElementById('atendimentoModal'));
+    await preencherDados(req);
+    modal.show();
+    document.getElementById('btnModal').disable = false;
   
 }
 async function preencherDados(dados){
-    console.log(dados)
+    document.getElementById("atend_cod").value = dados.atend_cod;
     document.getElementById("bpm").value = dados.bpm;
     document.getElementById("dtAtendimento").value = dados.dt_atendimento;
     document.getElementById("enfermeiroHistorico").value = dados.enfermeiro_nome;
@@ -50,3 +52,53 @@ async function preencherDados(dados){
     document.getElementById("spo2").value = dados.spo2;
     document.getElementById("temp").value = dados.temp;
 }
+async function imprimirAtendimento(atend) {
+    const codigo = document.getElementById(atend).value;
+    console.log(codigo)
+    if(!codigo){
+
+    }
+    window.open('/relatorio/'+codigo);
+}
+//     try {
+//         const atend_id = 1;
+
+//         // Fazendo a requisição para obter o PDF
+//         const response = await fetch(`/relatorio/${atend_id}`, {
+//             method: 'GET'
+//         });
+
+//         const data = await response.json();
+
+//         // Criar o iframe com o PDF
+//         let iframe = await criarIframe(data.pdf);
+//         document.getElementById('iframePDF').contentWindow.print(); 
+
+    
+
+//     } catch (error) {
+//         Swal.fire({
+//             title: 'Aconteceu um erro ao gerar o relatório.',
+//             text: error,
+//             icon: 'error'
+//         });
+//     }
+// }
+
+// async function criarIframe(pdf) {
+//     const divPai = document.getElementById('iframe');  // A div onde o iframe será inserido
+//     divPai.innerHTML = '';  // Limpar conteúdo anterior do iframe
+
+//     const iframe = document.createElement('iframe');
+//     iframe.style.display = 'none';  // Deixar o iframe oculto
+//     iframe.src = 'data:application/pdf;base64,' + pdf;  // Carregar o PDF base64 no iframe
+//     iframe.id = "iframePDF"
+
+//     divPai.appendChild(iframe);
+
+//     // Retornar o iframe para ser usado após o carregamento
+//     return new Promise((resolve, reject) => {
+//         iframe.onload = () => resolve(iframe);  // Resolve a Promise quando o iframe carregar
+//         iframe.onerror = () => reject('Erro ao carregar o iframe');  // Rejeitar caso ocorra um erro
+//     });
+// }

@@ -48,7 +48,10 @@
                 </div>
             </div>
             <div class="col-md-2">
-                <label for="dtAtendimento" class="form-label">Data do Atendimento</label>
+                <label for="dtAtendimento" class="form-label">
+                    Data do Atendimento
+                    <span style="color: red;">*</span>
+                </label>
                 <input type="datetime-local" class="form-control" id="dtAtendimento" name="dtAtendimento" value="{{$data}}" required>
             </div>
         </div>
