@@ -68,6 +68,7 @@ return new class extends Migration
         $table->decimal('kg')->nullable();
         $table->decimal('hgt')->nullable();
         $table->longtext('desc_caso')->nullable();
+        $table->longtext('receituario')->nullable();
         });
 
 
