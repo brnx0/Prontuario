@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prontuario Digital</title>
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+    
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://kit.fontawesome.com/b13fe40c08.js" crossorigin="anonymous"></script>
@@ -16,16 +20,16 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container-fluid">
             <button class="btn btn-light me-2" id="toggleMenu">☰</button>
-            <span class="navbar-brand">
+            <span class="navbar-brand">               
                 
-                
-                Prontuário Digital</span>
-                <form method="POST" action="{{ route('logout') }}" class="d-inline">
-                    @csrf
-                    <button type="submit" class="btn btn-danger">
-                        <i class="bi bi-box-arrow-right"></i> Sair
-                    </button>
-                </form>
+                Prontuário Digital
+            </span>
+            <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                @csrf
+                <button type="submit" class="btn btn-danger">
+                    <i class="bi bi-box-arrow-right"></i> Sair
+                </button>
+            </form>
         </div>
     </nav>
     <div class="d-flex containerPrincipal">

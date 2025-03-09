@@ -20,7 +20,10 @@
 @endif
     
 
-<<div class="container mt-4">
+<div class="container mt-4">
+    {{-- <img src="{{ asset('assets/img/brasao-municipio.png') }}" class="logo" alt="Brasão"> --}}
+
+
     <form method="POST"  id="formAtendimento">
         @csrf
         <div class="row mb-3">
@@ -48,7 +51,10 @@
                 </div>
             </div>
             <div class="col-md-2">
-                <label for="dtAtendimento" class="form-label">Data do Atendimento</label>
+                <label for="dtAtendimento" class="form-label">
+                    Data do Atendimento
+                    <span style="color: red;">*</span>
+                </label>
                 <input type="datetime-local" class="form-control" id="dtAtendimento" name="dtAtendimento" value="{{$data}}" required>
             </div>
         </div>
@@ -158,11 +164,17 @@
         <div class="mb-4">
             <div class="col-sm-12 d-flex flex-column">
             <label class="label form-label text-nowrap">Descrição do Caso Clínico</label>
-            <textarea name="descricaoCaso" id="descricaoCaso"></textarea>
+            <textarea name="descricaoCaso" id="descricaoCaso" rows  ></textarea>
             </div>
         </div>
-        <div>
-            <button type="submit" class="btn btn-success" onclick="salvarAtendimento()">Salvar</button>
+        <input type="text" name="receituario" id ="receituario" hidden>
+        <label class="label  form-label text-noweap">Receituario </label>
+        <div class="mb-4" id="editorReceituario" >
+        </div>
+            
+
+        <div class="pb-2">
+            <button  class="btn btn-success" onclick="salvarAtendimento()">Salvar</button>
         </div>
     </form>
 </div>

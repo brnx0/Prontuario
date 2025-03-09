@@ -18,8 +18,9 @@
     });
 </script>
 @endif
+
 <div class="container mt-4">
-    <input type="text" name="atend_cod" value="{{$atendimento->atend_cod}}" hidden>
+    <input type="text" name="atend_cod" value="{{$atendimento->atend_cod}}" hidden id="atend_cod">
         <div class="row mb-3">
             <div class="col-md-8">
                 <label for="paciente" class="form-label">Paciente</label>
@@ -27,10 +28,15 @@
             </div>
             <div class="col-md-2">
                 <label for="dtAtendimento" class="form-label" >Data do Atendimento</label>
-                <input type="datetime-local" class="form-control" id="dtAtendimento" name="dtAtendimento" value="{{$atendimento->dt_atendimento}}" readonly disabled>
+                <input type="text" class="form-control" id="dtAtendimento" name="dtAtendimento" placeholder="DD/MM/YYYY" value="{{$atendimento->dt_atendimento}}" readonly disabled>
             </div>
-            <div class="col-md-2" id="btnImprimir">
-                <button class="btn btn-success">Imprimir Atendimento</button>
+            <div class="col-md-2" id="btnImprimir" >
+                <button class="btn btn-success" onclick="imprimirAtendimento('atend_cod')">
+                    <i class="fa-solid fa-print"></i>
+                </button>
+                <button class="btn btn-primary" onclick="imprimirReceita('atend_cod')">
+                    <i class="fa-solid fa-laptop-medical"></i>
+                </button>
             </div>
         </div>
         <div class="row mb-3">
@@ -98,8 +104,11 @@
             </div>
         </div>
         <div>
-            <button type="button" class="btn btn-primary">Voltar</button>
+            <a href="/atendimento">
+                <button type="button" class="btn btn-primary">Voltar</button>
+            </a>
         </div>
+       
     
 </div>
 </div>

@@ -18,8 +18,11 @@ html, body {
     display: flex;
     height: 93vh; /* Ocupar todo o espaço restante */
     transition: all 0.3s ease-in-out;
-    overflow: scroll;
     
+    
+}
+.container{
+    height: 100vh;
 }
 #sidebar ul a {
     text-decoration: none;
@@ -27,6 +30,7 @@ html, body {
 #sidebar ul a:hover {
     background-color: red
 }
+
 
 /* Sidebar normal */
 #sidebar {
@@ -49,6 +53,7 @@ html, body {
     flex-grow: 1;
     padding: 20px;
     transition: width 0.3s ease-in-out;
+    overflow: auto;
 }
 
 /* Quando o menu some, o conteúdo ocupa 100% */
@@ -124,4 +129,10 @@ input[readonly],textarea[readonly]{
     margin-top: calc(-1* var(--bs-list-group-border-width));
     border-top-width: var(--bs-list-group-border-width);
     background-color: bisque;
+}
+#editorReceituario{
+    height: 180px;
+}
+.ql-editor{
+    background-color: #ffffff;
 }
