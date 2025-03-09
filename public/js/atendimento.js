@@ -1,8 +1,19 @@
+//Editor Receituario
+    const quill = new Quill('#editorReceituario', {
+        theme: 'snow',
+        placeholder: 'Digite os dados da receita'
+  });
+async function salvarAtendimento(){
+    const result = quill.root.innerHTML;
+    document.getElementById('receituario').value = result
+    console.log(result)
+   
+
+}
 
 function toggleDropdown(elemeto) {
     const dropdown = document.getElementById(elemeto);
     dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-    // document.getElementById('filterInput').focus();
 }
 
 function selectOption(element,PAC_COD,input,elementoFiltro, elementDrop) {
@@ -28,14 +39,16 @@ document.addEventListener('click', function(event) {
 });
 
 async function abrirAtendimento(atend_cod){
-   const req =   await (await (fetch(`/historico/${atend_cod}`))).json()
-   let modal = new bootstrap.Modal(document.getElementById('atendimentoModal'));
-   await preencherDados(req);
-   modal.show()
+    document.getElementById('btnModal').disable = true;
+    const req =   await (await (fetch(`/historico/${atend_cod}`))).json()
+    let modal = new bootstrap.Modal(document.getElementById('atendimentoModal'));
+    await preencherDados(req);
+    modal.show();
+    document.getElementById('btnModal').disable = false;
   
 }
 async function preencherDados(dados){
-    console.log(dados)
+    document.getElementById("atend_cod").value = dados.atend_cod;
     document.getElementById("bpm").value = dados.bpm;
     document.getElementById("dtAtendimento").value = dados.dt_atendimento;
     document.getElementById("enfermeiroHistorico").value = dados.enfermeiro_nome;
@@ -49,4 +62,18 @@ async function preencherDados(dados){
     document.getElementById("queixaSituacao").value = dados.situacao_queixa;
     document.getElementById("spo2").value = dados.spo2;
     document.getElementById("temp").value = dados.temp;
+}
+async function imprimirAtendimento(atend) {
+    var codigo = document.getElementById(atend).value;
+    if(codigo){
+        window.open('/relatorio/'+codigo);
+    }
+    
+}
+async function imprimirReceita(atend) {
+    var codigo = document.getElementById(atend).value;
+    if(codigo){
+        window.open('/receita/'+codigo);
+    }
+    
 }
