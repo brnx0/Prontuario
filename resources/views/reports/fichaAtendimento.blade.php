@@ -81,7 +81,7 @@
                 <td><b>CARTÃO DO SUS:</b> {{$dados['original']['cartao_sus'] }} </td>
             </tr>
             <tr>
-                <td colspan="2"><b>SITUAÇÃO/QUEIXA:</b> {{wordwrap($dados['original']['situacao_queixa'], 80, "<br>\n", true)}}'</td>
+                <td colspan="2"><b>SITUAÇÃO/QUEIXA:</b> {{wordwrap($dados['original']['situacao_queixa'], 80, "<br>\n", true)}}</td>
             </tr>
         </table>
     </div>
