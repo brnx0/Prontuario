@@ -9,7 +9,7 @@ use Carbon\Carbon;
 
 
 class Atendimento extends Model{
-    protected $fillable = ['atend_cod','pac_cod','dt_atendimento','situcao_queixa','mmhg','bpm' ,'spo2','temp' ,'rpm','kg','hgt','desc_caso','enf_cod','esp_cod','med_cod'];
+    protected $fillable = ['atend_cod','pac_cod','dt_atendimento','situcao_queixa','mmhg','bpm' ,'spo2','temp' ,'rpm','kg','hgt','desc_caso','enf_cod','esp_cod','med_cod','receituario'];
     const updated_at = null;
     const created_at = null;
     protected $primaryKey = 'atend_cod';
