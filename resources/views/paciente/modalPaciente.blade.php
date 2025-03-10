@@ -15,7 +15,10 @@
                             <input type="text" name="pes_cod" hidden>
                             <div class="row mb-3">
                                 <div class="col-md-5">
-                                    <label for="nome" class="form-label">Nome</label>
+                                    <label for="nome" class="form-label">
+                                        Nome
+                                        <span style="color: red;">*</span>
+                                    </label>
                                     <input type="text" class="form-control" id="nome" name='nome' required>
                                 </div>
                                 <div class="col-md-3">

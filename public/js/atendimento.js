@@ -12,9 +12,23 @@ async function salvarAtendimento(){
 }
 
 function toggleDropdown(elemeto) {
+    document.querySelectorAll('.dropdown').forEach(dropdown => {
+        if (dropdown.id !== elemeto) {
+            dropdown.style.display = 'none';
+        }
+    });
     const dropdown = document.getElementById(elemeto);
     dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
 }
+document.addEventListener('click', function(event) {
+    const isDropdown = event.target.closest('.dropdown');
+    const isCustomSelect = event.target.closest('.custom-select');
+    if (!isDropdown && !isCustomSelect) {
+        document.querySelectorAll('.dropdown').forEach(dropdown => {
+            dropdown.style.display = 'none';
+        });
+    }
+});
 
 function selectOption(element,PAC_COD,input,elementoFiltro, elementDrop) {
     document.getElementById(elementoFiltro).textContent = element.textContent;
@@ -77,3 +91,63 @@ async function imprimirReceita(atend) {
     }
     
 }
+
+
+const paginationData = {
+    optionsContainer: { currentPage: 1, itemsPerPage: 5 },      // Pacientes
+    optionsContainer01: { currentPage: 1, itemsPerPage: 5 },    // Médicos
+    optionsContainer02: { currentPage: 1, itemsPerPage: 5 },    // Especialidades
+    optionsContainer03: { currentPage: 1, itemsPerPage: 5 }     // Enfermeiros
+};
+
+// Função para exibir a página específica
+function showPage(containerId, container) {
+    const config = paginationData[containerId];
+    const options = container.querySelectorAll('.option');
+    const totalPages = Math.ceil(options.length / config.itemsPerPage);
+
+    options.forEach((option, index) => {
+        option.style.display = (index >= (config.currentPage - 1) * config.itemsPerPage && index < config.currentPage * config.itemsPerPage)
+            ? "block"
+            : "none";
+    });
+
+    const pageInfo = container.querySelector('.pageInfo');
+    if (pageInfo) {
+        pageInfo.innerText = `Página ${config.currentPage} de ${totalPages}`;
+    }
+}
+
+// Próxima página
+function nextPage(containerId) {
+    const container = document.getElementById(containerId);
+    const config = paginationData[containerId];
+    const options = container.querySelectorAll('.option');
+    const totalPages = Math.ceil(options.length / config.itemsPerPage);
+
+    if (config.currentPage < totalPages) {
+        config.currentPage++;
+        showPage(containerId, container);
+    }
+}
+
+// Página anterior
+function prevPage(containerId) {
+    const container = document.getElementById(containerId);
+    const config = paginationData[containerId];
+
+    if (config.currentPage > 1) {
+        config.currentPage--;
+        showPage(containerId, container);
+    }
+}
+
+// Inicializar a paginação ao carregar
+document.addEventListener("DOMContentLoaded", function () {
+    Object.keys(paginationData).forEach(containerId => {
+        const container = document.getElementById(containerId);
+        if (container) {
+            showPage(containerId, container);
+        }
+    });
+});

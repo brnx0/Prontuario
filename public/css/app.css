@@ -111,10 +111,12 @@ html, body {
 .options {
     max-height: 150px;
     overflow-y: auto;
+    
 }
 .option {
     padding: 8px;
     cursor: pointer;
+    border: 1px solid #ccc;
 }
 .option:hover {
     background: #f0f0f0;
@@ -135,4 +137,8 @@ input[readonly],textarea[readonly]{
 }
 .ql-editor{
     background-color: #ffffff;
+}
+
+.pagination-controls{
+    padding-left: 8px;
 }
