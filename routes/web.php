@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::middleware(['auth'])->group(function () {
-Route::get('/', function () { return view('principal');})->name('paciente');
+Route::get('/', function () { return view('principal');})->name('index');
 /*Relatorios*/
 Route::get('/relatorio/{Codigo}', [AtendimentoController::class,'gerarfichaAtendimento']);
 Route::get('/receita/{Codigo}', [AtendimentoController::class,'gerarReceita']);
