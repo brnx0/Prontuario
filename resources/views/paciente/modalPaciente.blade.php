@@ -14,14 +14,33 @@
                         <form id="formPaciente">
                             <input type="text" name="pes_cod" hidden>
                             <div class="row mb-3">
-                                <div class="col-md-5">
+                                <div class="col-md-7">
                                     <label for="nome" class="form-label">
                                         Nome
                                         <span style="color: red;">*</span>
                                     </label>
                                     <input type="text" class="form-control" id="nome" name='nome' required>
                                 </div>
+                                
                                 <div class="col-md-3">
+                                    <label for="idade" class="form-label">Nascimento</label>
+                                    <input type="date" class="form-control" id="nascimento" name="nascimento" onblur="calcularIdade(this.value,'idade')" >
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="idade" class="form-label">Idade</label>
+                                    <input type="text" class="form-control" id="idade" readonly>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label for="cpf" class="form-label">CPF</label>
+                                    <input class="form-control" id='cpf' name="cpf" oninput="maskCpf(this)" maxlength="14">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="cartaoSUS" class="form-label">Cartão do SUS</label>
+                                    <input type="text" class="form-control" id="cartaoSUS" name="cartao_sus">
+                                </div>
+                                <div class="col-md-4">
                                     <label for="profissao" class="form-label">Profissão</label>
                                     <select class="form-select" id="profissao" >
                                         <option value="">Selecione</option>
@@ -29,14 +48,7 @@
                                         <option value="Enfermeiro">Enfermeiro</option>
                                     </select>
                                 </div>
-                                <div class="col-md-3">
-                                    <label for="idade" class="form-label">Nascimento</label>
-                                    <input type="date" class="form-control" id="nascimento" name="nascimento" onblur="calcularIdade(this.value,'idade')">
-                                </div>
-                                <div class="col-md-1">
-                                    <label for="idade" class="form-label">Idade</label>
-                                    <input type="tex" class="form-control" id="idade" readonly>
-                                </div>
+
                             </div>
                             <div class="row mb-3">
                                 <div class="col-md-6">
@@ -78,12 +90,6 @@
                                 <div class="col-md-4">
                                     <label for="email" class="form-label">E-mail</label>
                                     <input type="email" class="form-control" id="email" name="email">
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="cartaoSUS" class="form-label">Cartão do SUS</label>
-                                    <input type="text" class="form-control" id="cartaoSUS" name="cartao_sus">
                                 </div>
                             </div>
                             <div class="modal-footer">

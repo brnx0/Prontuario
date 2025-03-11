@@ -1,5 +1,8 @@
 @extends('principal')
 @section('content')
+<head>
+    <script src="{{asset('js/paciente.js')}}"></script>
+</head>
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -7,8 +10,7 @@
         <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#pacienteModal" id="btnCadastro"> 
             <i class="fa-solid fa-plus fa-lg" style="color:rgb(245, 245, 245);"></i>
         </button>
-    </div>
-    
+    </div>   
     <!-- Filtros -->
     <div class="card p-3 mb-3">
         <form id="filterForm" method="GET" action="{{route('filtrar.paciente')}}">
@@ -31,7 +33,6 @@
             </div>
         </form>
     </div>
-
     <!-- Tabela de Registros -->
     <div class="table-responsive">
         <table class="table table-striped table-bordered">
@@ -45,7 +46,6 @@
                 </tr>
             </thead>
             <tbody id="tabelaRegistros">
-               
              @foreach ($query as $paciente)
                <tr> 
                     <td class="col-md-4">{{$paciente->nome}}</td>
@@ -53,7 +53,15 @@
                     <td class="col-md-2">{{$paciente->nascimento}}</td>
                     <td class="col-md-2">{{$paciente->sus}}</td>
                     <td class="col-md-2"> 
-                        
+                        @if ($paciente->ativo == 'S')
+                            <button class="btn btn-sm btn-success ms-2" onclick="ativarInativarRegistro('{{$paciente->pac_cod}}','N','{{ csrf_token() }}')" title="Inativar">
+                                <i class="fas fa-toggle-on fa-xl " ></i>
+                            </button>
+                        @else
+                            <button class="btn btn-sm btn-success ms-2" onclick="ativarInativarRegistro('{{$paciente->pac_cod}}','S','{{csrf_token()}}')"title="Ativar">
+                                <i class="fas fa-toggle-off fa-xl"  ></i>
+                            </button>
+                        @endif  
                         <button class="btn btn-sm btn-warning edit-btn" data-bs-toggle="modal" data-bs-target="#pacienteModal"  title="Clique aqui para editar"
                             data-pes_cod="{{$paciente->pac_cod}}"
                             data-nome="{{$paciente->nome}}"
@@ -86,7 +94,12 @@
     </div>
 </div>
  @include('paciente.modalPaciente')
-</script>
+ <form id="editStatusPaciente" method="POST">
+    @csrf
+    @method('PUT') 
+    <input type="text" name="pac_cod" id="pac_cod" hidden>
+    <input type="text" name="status" id="status" hidden>
+</form>
 @if(session('open_modal'))
     <script>
      document.addEventListener('DOMContentLoaded', function() {
