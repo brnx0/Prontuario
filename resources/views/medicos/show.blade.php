@@ -91,8 +91,6 @@
             @method('PUT') 
             <input type="text" name="med_cod" id="edMED_COD" hidden>
             <input type="text" name="status" id="Status" hidden>
-            
-
         </form>
         <form  id="deletMedico" method="POST" >
             @csrf

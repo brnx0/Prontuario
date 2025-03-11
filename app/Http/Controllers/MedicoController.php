@@ -84,7 +84,7 @@ class MedicoController extends Controller
             return back()->with('success','Status atualizado com sucesso');
 
        }catch(QueryException $th){
-            return back()->with('error','x');
+            return back()->with('error','Aconteceu um erro, tente novamente em alguns instantes');
        }
     }
 

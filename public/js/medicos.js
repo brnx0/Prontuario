@@ -22,8 +22,6 @@ async function excluirMedico(med_cod){
 function ativarInativarMed(med_cod, status) {
     document.getElementById('Status').value = status;
     document.getElementById('edMED_COD').value = med_cod;
-    document.getElementById('editStatusMed').submit();
-    console.log(document.getElementById('Status').value,document.getElementById('edMED_COD').value)
-    
+    document.getElementById('editStatusMed').submit();  
 }
 
