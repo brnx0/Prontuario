@@ -18,17 +18,15 @@ class PacienteController extends Controller{
     {      
     }
     public function store(Request $request)    {
-    //     $dataNascimento = (new DateTime($request->nascimento))->setTime(0,0,0);       
-    //    if( $dataNascimento > (new DateTime())->setTime(0,0,0)){
-    //         return redirect()->back()->withInput()->with(['error'=>'A data de nascimento não pode ser maior que a data atual',]);
-    //    }
         try {
+            $cpf = str_replace(".","",str_replace("-","",$request->cpf));
             DB::beginTransaction();
             Paciente::updateOrCreate([
                 'pac_cod' => $request->pes_cod
             ],
             [
                 'nome' => $request->nome,
+                'cpf' => $cpf,
                 'filicao_1' => $request->filicao_1,
                 'filicao_2' => $request->filicao_2,
                 'cep' => $request->CEP,

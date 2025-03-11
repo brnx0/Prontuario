@@ -49,7 +49,7 @@
              @foreach ($query as $paciente)
                <tr> 
                     <td class="col-md-4">{{$paciente->nome}}</td>
-                    <td class="col-md-2">{{$paciente->cpf}}</td>
+                    <td class="col-md-2 cpf">{{$paciente->cpf}}</td>
                     <td class="col-md-2">{{$paciente->nascimento}}</td>
                     <td class="col-md-2">{{$paciente->sus}}</td>
                     <td class="col-md-2"> 
@@ -64,6 +64,7 @@
                         @endif  
                         <button class="btn btn-sm btn-warning edit-btn" data-bs-toggle="modal" data-bs-target="#pacienteModal"  title="Clique aqui para editar"
                             data-pes_cod="{{$paciente->pac_cod}}"
+                            data-cpf="{{$paciente->cpf}}"
                             data-nome="{{$paciente->nome}}"
                             data-filicao_1="{{$paciente->filicao_1}}"
                             data-filicao_2="{{$paciente->filicao_2}}"

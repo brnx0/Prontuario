@@ -19,7 +19,7 @@
     </style>
 </head>
 <body>
-    {{-- <img src="{{ $img }}" style="width: 150px; display: block;" alt="Brasão"> --}}
+    <img src="{!!asset('assets/img/brasao-municipio.png')!!}" style="width: 150px; display: block;" alt="Brasão"> 
     <div class="header">
         <div class="title">Receituário</div>
     </div>

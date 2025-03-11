@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str; 
 
 class Paciente extends Model{
-    protected $fillable = ['nome','filicao_1','filicao_2','cep','logradouro','nascimento','cidade','uf','tel_1','tel_2','email','cartao_sus','prof_cod','ativo'];
+    protected $fillable = ['nome','cpf','filicao_1','filicao_2','cep','logradouro','nascimento','cidade','uf','tel_1','tel_2','email','cartao_sus','prof_cod','ativo'];
     const updated_at = null;
     const created_at = null;
     protected $primaryKey = 'pac_cod';
