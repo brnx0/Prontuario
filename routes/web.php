@@ -35,6 +35,7 @@ Route::get('/historico/{ATEND_COD}', [AtendimentoController::class,'registroAten
 
 
 Route::get('/medico',[MedicoController::class,'index'])->name('');
+Route::get('/medico/{Codigo}',[MedicoController::class,'getMedico'])->name('getMedico');
 Route::get('/medico',[MedicoController::class,'filtro'])->name(name: 'filtrarMedico');
 Route::post('/medico',[MedicoController::class,'store'])->name('');
 Route::delete('/medico',[MedicoController::class,'destroy'])->name('');

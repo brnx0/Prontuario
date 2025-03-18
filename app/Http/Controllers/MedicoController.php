@@ -12,16 +12,21 @@ class MedicoController extends Controller
      * Display a listing of the resource.
      */
     public function index()    {
-        $medico = Medico::all();
+        $medico = Medico::orderBy('med_nome')->paginate(10);
         return view('medicos.show',['medicos'=>$medico]);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        //
+    public function getMedico($request)    {
+        try{
+            $medico = Medico::find($request, $columns = ['*']);
+            return json_encode($medico);
+        }catch(QueryException $th){
+            return json_encode($th);
+        }
+        
     }
 
     /**
@@ -29,11 +34,16 @@ class MedicoController extends Controller
      */
     public function store(Request $request)    {
         try{
-            Medico::create([
+            Medico::updateOrCreate(
+                [
+                'med_cod' =>$request->med_cod
+                ],
+                [
                 'med_nome' => $request->nomeMedico,
                 'crm' =>$request->crmMedico
-            ]);
-            return back()->with('success', 'Registro criado.');
+                ]
+            );
+            return back()->with('success', 'Salvo com sucesso!');
         }catch(QueryException $th){
             return back()->with('error', $th->getMessage());
         }
@@ -70,9 +80,7 @@ class MedicoController extends Controller
         return view('medicos.show',['medicos' => $query->paginate(10)]);
    }
 
-    /**
-     * Update the specified resource in storage.
-     */
+  
     public function update(Request $request, Medico $medico)
     {
         //
