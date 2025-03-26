@@ -24,7 +24,7 @@
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0">Enfermeiros</h2>
-        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#enfModal">
+        <button type="button" class="btn btn-success" onclick="abrirModal(true)">
             <i class="fa-solid fa-plus fa-lg" style="color:rgb(245, 245, 245);"></i>
         </button>
     </div>
@@ -75,7 +75,7 @@
                                 </button>
                             @endif
                             
-                            <button class="btn btn-sm btn-warning edit-btn ms-2" data-bs-toggle="modal" data-bs-target="#pacienteModal"> 
+                            <button class="btn btn-sm btn-warning edit-btn ms-2" onclick="getEnfermeiro('{{$enfermeiro->enf_cod}}')"> 
                                 <i class="fa-solid fa-pen-to-square fa-xl" style="color: #ffffff;"></i><!-- Editar -->
                             </button>
                             <button class="btn btn-sm btn-danger ms-2" onclick="excluirEnf('{{$enfermeiro->enf_cod}}')">

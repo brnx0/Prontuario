@@ -33,9 +33,15 @@ class EnfermeiroController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        //
+    public function getEnfermeiro($request)    {
+        try{
+            $enfermeiro = Enfermeiro::find($request, $columns = ['*']);
+         
+            return json_encode($enfermeiro);
+        }catch(QueryException $th){
+            return json_encode($th);
+        }
+        
     }
 
     /**
@@ -46,9 +52,13 @@ class EnfermeiroController extends Controller
 
         }
         try{
-            Enfermeiro::create([
-                'enf_nome' => $request->nomeENF,
-                'cre' =>$request->creENF
+            Enfermeiro::updateOrCreate(
+            [
+                'enf_cod' => $request->enf_cod
+            ],
+            [
+                'enf_nome' => $request->nomeEnf,
+                'cre' =>$request->creEnf
             ]);
             return back()->with('success', 'Registro criado.');
         }catch(QueryException $th){

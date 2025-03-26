@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Models\Enfermeiro;
 use Illuminate\Database\QueryException;
 use App\Models\Paciente;
 use Illuminate\Support\Facades\DB;
@@ -13,10 +15,8 @@ class PacienteController extends Controller{
         $paciente = Paciente::orderBy('nome','asc')->paginate(10);
         return view('paciente.pacientes', ['query' => $paciente]);
     }
+ 
 
-    public function create(Request $request)
-    {      
-    }
     public function store(Request $request)    {
         try {
             $cpf = str_replace(".","",str_replace("-","",$request->cpf));
