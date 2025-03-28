@@ -36,13 +36,14 @@ Route::get('/historico/{ATEND_COD}', [AtendimentoController::class,'registroAten
 
 Route::get('/medico',[MedicoController::class,'index'])->name('');
 Route::get('/medico/{Codigo}',[MedicoController::class,'getMedico'])->name('getMedico');
-Route::get('/medico',[MedicoController::class,'filtro'])->name(name: 'filtrarMedico');
+Route::get('/medico',[MedicoController::class,'filtro'])->name('filtrarMedico');
 Route::post('/medico',[MedicoController::class,'store'])->name('');
 Route::delete('/medico',[MedicoController::class,'destroy'])->name('');
 Route::put('/medico',[MedicoController::class,'updateStatus']);
 
 
 Route::get('/enfermeiro',[EnfermeiroController::class,'index'])->name('');
+Route::get('/enfermeiro/{ID}',[EnfermeiroController::class,'getEnfermeiro'])->name('getEnfermeiro');
 Route::get('/enfermeiro',[EnfermeiroController::class,'filtro'])->name('filtrarEnfermeiro');
 Route::post('/enfermeiro',[EnfermeiroController::class,'store'])->name('');
 Route::delete('/enfermeiro',[EnfermeiroController::class,'destroy'])->name('');
