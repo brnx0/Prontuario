@@ -70,7 +70,7 @@
                                     <i class="fas fa-toggle-on fa-xl "></i><!--  Inativar -->
                                 </button>
                             @else
-                                <button class="btn btn-sm btn-success ms-2" onclick="ativarInativarENF('{{$enfermeiro->enf_cod}}','S','{{csrf_token()}}')">
+                                <button class="btn btn-sm btn-danger ms-2" onclick="ativarInativarENF('{{$enfermeiro->enf_cod}}','S','{{csrf_token()}}')">
                                <i class="fas fa-toggle-off fa-xl"></i> <!--  Ativar -->
                                 </button>
                             @endif

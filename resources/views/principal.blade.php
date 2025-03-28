@@ -12,6 +12,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://kit.fontawesome.com/b13fe40c08.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="{{asset('css/app.css')}}">
+    <link rel="shortcut icon" href="{{ asset('assets/img/ico.png') }}">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
    
     

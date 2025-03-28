@@ -6,28 +6,14 @@ use App\Models\Especialidade;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
-class EspecialidadeController extends Controller
-{
-    /**
-     * Display a listing of the resource.
-     */
+class EspecialidadeController extends Controller{
+
     public function index()    {
         
-        $especialidade = Especialidade::all();
+        $especialidade = Especialidade::orderBy('escp_desc')->paginate(10);
         return view('especialidade.show',['especialidades'=>$especialidade]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request){
         try{
             Especialidade::create([
@@ -37,7 +23,7 @@ class EspecialidadeController extends Controller
         }catch(QueryException $th){
             return back()->with('error', $th->getMessage());
         }
-        //
+
     }
 
     public function filtro (Request $request){
@@ -54,35 +40,18 @@ class EspecialidadeController extends Controller
         return view('especialidade.show',['especialidades' => $query->paginate(10)]);
    }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Especialidade $especialidade)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Especialidade $especialidade)
-    {
-        //
-    }
+    public function updateStatus(Request $request)    {
+        try{
+             Especialidade::find($request->espc_cod)->update(['ativo' => $request->status]);
+             return back()->with('success','Status atualizado com sucesso');
+ 
+        }catch(QueryException $th){
+             return back()->with('error','Aconteceu um erro, tente novamente em alguns instantes');
+        }
+     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Especialidade $especialidade)
-    {
-        //
-    }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Especialidade $especialidade)
-    {
-        //
-    }
+
+     
 }

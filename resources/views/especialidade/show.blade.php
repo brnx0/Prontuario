@@ -1,7 +1,7 @@
 @extends('principal') 
 @section('content')
 <head>
-    <script src="{{asset('js/medicos.js')}}"></script>
+    <script src="{{asset('js/especialidade.js')}}"></script>
 </head>
 @if (session('success'))
     <script>
@@ -58,14 +58,14 @@
                 @foreach ($especialidades as $especialidade)
                     <tr> 
                         <td class="col-md-6">{{$especialidade->escp_desc}}</td>
-                        <td class="col-md-2">{{$especialidade->ativo}}</td>
+                        <td class="col-md-2">{{$especialidade->ativo == 'S' ? 'Ativo':'Inativo';}}</td>
                         <td class="col-md-2">
                             @if ($especialidade->ativo == 'S')
-                                <button class="btn btn-sm btn-success ms-2" onclick="ativarInativarMed('{{$especialidade->esp_cod}}','N','{{ csrf_token() }}')">
+                                <button class="btn btn-sm btn-success ms-2" onclick="ativarInativarEspc('{{$especialidade->esp_cod}}','N','{{ csrf_token() }}')">
                                     <i class="fas fa-toggle-on fa-xl " ></i><!-- Desativar -->
                                 </button>
                             @else
-                                <button class="btn btn-sm btn-danger ms-2" onclick="ativarInativarMed('{{$especialidade->esp_cod}}','S','{{csrf_token()}}')">
+                                <button class="btn btn-sm btn-danger ms-2" onclick="ativarInativarEspc('{{$especialidade->esp_cod}}','S','{{csrf_token()}}')">
                                     <i class="fas fa-toggle-off fa-xl"></i>   <!-- Ativar -->
                                 </button>
                             @endif
@@ -84,22 +84,22 @@
         <form id="editStatusEspecialidade" method="POST">
             @csrf
             @method('PUT') 
-            <input type="text" name="med_cod" id="edMED_COD" hidden>
-            <input type="text" name="status" id="Status" hidden>
+            <input type="text" name="espc_cod" id="espc_cod" hidden>
+            <input type="text" name="status" id="status" hidden>
             
 
         </form>
         <form  id="deletEspecialidade" method="POST" >
             @csrf
             @method('DELETE') 
-            <input type="text" name="med_cod" id="MED_COD" hidden>
+            <input type="text" name="espc_cod" id="MED_COD" hidden>
         </form>
         <div class=" justify-content-center">
-            {{-- {{ $query->links('pagination::bootstrap-4', ['next' => 'Próximo', 'previous' => 'Anterior'])}}  --}}
+            
         </div>
     </div>
 </div>
-
+{{ $especialidades->links('pagination::bootstrap-4', ['next' => 'Próximo', 'previous' => 'Anterior'])}}
 @include('especialidade.form');
 
 

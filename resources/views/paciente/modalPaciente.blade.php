@@ -23,7 +23,9 @@
                                 </div>
                                 
                                 <div class="col-md-3">
-                                    <label for="idade" class="form-label">Nascimento</label>
+                                    <label for="idade" class="form-label">Nascimento
+                                        <span style="color: red;">*</span>
+                                    </label>
                                     <input type="date" class="form-control" id="nascimento" name="nascimento" onblur="calcularIdade(this.value,'idade')" >
                                 </div>
                                 <div class="col-md-2">
