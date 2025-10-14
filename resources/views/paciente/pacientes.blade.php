@@ -58,7 +58,7 @@
                                 <i class="fas fa-toggle-on fa-xl " ></i>
                             </button>
                         @else
-                            <button class="btn btn-sm btn-success ms-2" onclick="ativarInativarRegistro('{{$paciente->pac_cod}}','S','{{csrf_token()}}')"title="Ativar">
+                            <button class="btn btn-sm btn-danger ms-2"" onclick="ativarInativarRegistro('{{$paciente->pac_cod}}','S','{{csrf_token()}}')"title="Ativar">
                                 <i class="fas fa-toggle-off fa-xl"  ></i>
                             </button>
                         @endif  
