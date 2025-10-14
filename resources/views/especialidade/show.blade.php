@@ -73,7 +73,7 @@
                             <button class="btn btn-sm btn-warning edit-btn ms-2" data-bs-toggle="modal" data-bs-target="#especialidadeModal"> 
                                 <i class="fa-solid fa-pen-to-square fa-xl" style="color: #ffffff;"></i><!-- Editar -->
                             </button>
-                            <button class="btn btn-sm btn-danger ms-2" onclick="excluirMedico('{{$especialidade->esp_cod}}')">
+                            <button class="btn btn-sm btn-danger ms-2" onclick="excluirEsc('{{$especialidade->esp_cod}}')">
                                 <i class="fa-solid fa-trash fa-xl" style="color: #ffffff;"></i><!-- Excluir -->
                             </button>
                         </td>
@@ -92,7 +92,7 @@
         <form  id="deletEspecialidade" method="POST" >
             @csrf
             @method('DELETE') 
-            <input type="text" name="espc_cod" id="MED_COD" hidden>
+            <input type="text" name="espc_cod" id="edEsp_cod" hidden>
         </form>
         <div class=" justify-content-center">
             
