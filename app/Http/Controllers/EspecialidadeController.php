@@ -40,7 +40,6 @@ class EspecialidadeController extends Controller{
         return view('especialidade.show',['especialidades' => $query->paginate(10)]);
    }
 
-
     public function updateStatus(Request $request)    {
         try{
              Especialidade::find($request->espc_cod)->update(['ativo' => $request->status]);
@@ -51,7 +50,14 @@ class EspecialidadeController extends Controller{
         }
      }
 
-
+     public function destroy(Request $request){
+        try {
+            Especialidade::destroy($request->espc_cod);
+            return back()->with('success', 'Registro Excluído com sucesso!');
+        } catch (QueryException $th) {
+            return back()->with('error', $th->getMessage());
+        }
+     }
 
      
 }
