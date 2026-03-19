@@ -7,8 +7,9 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="" method="POST">
+                    <form action="" method="POST" id='formMedico'>
                         @csrf
+                        <input type="text" name="med_cod" id="med_cod" hidden>
                         <div class="row mb-4">
                             <div class="col-md-7">
                                 <label for="nomeMedico" class="form-label">Nome</label>

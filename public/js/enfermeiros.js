@@ -26,3 +26,31 @@ function ativarInativarENF(enf_cod, status) {
     
 }
 
+function preencherDados(dados){
+    document.getElementById('enf_cod').value = dados.enf_cod;
+    document.getElementById('nomeEnf').value = dados.enf_nome;
+    document.getElementById('creEnf').value = dados.cre;
+    abrirModal();
+    
+}
+function abrirModal(modo){
+    let modal = new bootstrap.Modal(document.getElementById('enfModal'));
+    if(modo){
+       document.getElementById('formEnf').reset()
+    }
+    modal.show()
+}
+async function getEnfermeiro(enf_cod){
+    try{
+        let result = await (await fetch(`/enfermeiro/${enf_cod}`)).json()
+        console.log(result)
+        preencherDados(result);
+    }catch(erro){
+        Swal.fire({
+            title:'Aconteceu um erro inesperado. Caso o erro persista, contate o suporte.',
+            text: erro,
+            icon: 'error'
+        })
+    }
+    
+}

@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Models\Enfermeiro;
 use Illuminate\Database\QueryException;
 use App\Models\Paciente;
 use Illuminate\Support\Facades\DB;
@@ -10,29 +12,25 @@ use DateTime;
 
 class PacienteController extends Controller{
     public function index()    {
-        $paciente = Paciente::where('ativo' , '=','S')->orderBy('nome','asc')->paginate(10);
+        $paciente = Paciente::orderBy('nome','asc')->get();
         return view('paciente.pacientes', ['query' => $paciente]);
     }
 
-    public function create(Request $request)
-    {   
-       
-
-        
-        
+    public function getPaciente($idPaciente){
+        return response()->json(Paciente::find($idPaciente),200);
     }
+ 
+
     public function store(Request $request)    {
-    //     $dataNascimento = (new DateTime($request->nascimento))->setTime(0,0,0);       
-    //    if( $dataNascimento > (new DateTime())->setTime(0,0,0)){
-    //         return redirect()->back()->withInput()->with(['error'=>'A data de nascimento não pode ser maior que a data atual',]);
-    //    }
         try {
+            $cpf = str_replace(".","",str_replace("-","",$request->cpf));
             DB::beginTransaction();
             Paciente::updateOrCreate([
                 'pac_cod' => $request->pes_cod
             ],
             [
                 'nome' => $request->nome,
+                'cpf' => $cpf,
                 'filicao_1' => $request->filicao_1,
                 'filicao_2' => $request->filicao_2,
                 'cep' => $request->CEP,
@@ -105,5 +103,13 @@ class PacienteController extends Controller{
         }catch(QueryException $th){
               return redirect()->back()->with('error','Erro ao deletar o registro. '.$th->errorInfo[2]);
         }  
+    }
+    public function inativarPaciente(Request $request){
+        try{
+             Paciente::find($request->pac_cod)->update(['ativo' => $request->status]);
+             return back()->with('success','Status atualizado com sucesso');
+        }catch(QueryException $th){
+             return back()->with('error','Aconteceu um erro, tente novamente em alguns instantes');
+        }
     }
 }

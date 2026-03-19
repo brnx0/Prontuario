@@ -24,7 +24,7 @@
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0">Médicos</h2>
-        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#medicoModal">
+        <button type="button" class="btn btn-success" onclick="abrirModal(true)">
         <i class="fa-solid fa-plus fa-lg" style="color:rgb(245, 245, 245);"></i>
         </button>
     </div>
@@ -70,12 +70,12 @@
                                     <i class="fas fa-toggle-on fa-xl " ></i>
                                 </button>
                             @else
-                                <button class="btn btn-sm btn-success ms-2" onclick="ativarInativarMed('{{$medico->med_cod}}','S','{{csrf_token()}}')"title="Ativar">
+                                <button class="btn btn-sm btn-danger ms-2" onclick="ativarInativarMed('{{$medico->med_cod}}','S','{{csrf_token()}}')"title="Ativar">
                                     <i class="fas fa-toggle-off fa-xl"  ></i>
                                 </button>
                             @endif
                             
-                            <button class="btn btn-sm btn-warning edit-btn ms-2" data-bs-toggle="modal" data-bs-target="#pacienteModal" title="Editar"> 
+                            <button class="btn btn-sm btn-warning edit-btn ms-2" onclick="getMedico('{{$medico->med_cod}}')"  title="Editar"> 
                                 <i class="fa-solid fa-pen-to-square fa-xl" style="color: #ffffff;"></i>
                             </button>
                             <button class="btn btn-sm btn-danger ms-2" onclick="excluirMedico('{{$medico->med_cod}}')"title="Excluir">
@@ -91,8 +91,6 @@
             @method('PUT') 
             <input type="text" name="med_cod" id="edMED_COD" hidden>
             <input type="text" name="status" id="Status" hidden>
-            
-
         </form>
         <form  id="deletMedico" method="POST" >
             @csrf
@@ -100,7 +98,7 @@
             <input type="text" name="med_cod" id="MED_COD" hidden>
         </form>
         <div class=" justify-content-center">
-            {{-- {{ $query->links('pagination::bootstrap-4', ['next' => 'Próximo', 'previous' => 'Anterior'])}}  --}}
+            {{ $medicos->links('pagination::bootstrap-4', ['next' => 'Próximo', 'previous' => 'Anterior'])}}  
         </div>
     </div>
 </div>

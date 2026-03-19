@@ -20,7 +20,10 @@
 @endif
     
 
-<<div class="container mt-4">
+<div class="container mt-4">
+    {{-- <img src="{{ asset('assets/img/brasao-municipio.png') }}" class="logo" alt="Brasão"> --}}
+
+
     <form method="POST"  id="formAtendimento">
         @csrf
         <div class="row mb-3">
@@ -42,6 +45,12 @@
                                 @foreach ($pacientes as $paciente)
                                 <div class="option" onclick="selectOption(this,'{{$paciente->pac_cod}}','pac_cod','custom-select','dropdown')">{{$paciente->nome}}</div> 
                                 @endforeach 
+                                <div class="pagination-controls">
+                                    <span id="pageInfo"></span>
+                                    <i class="fa-solid fa-chevron-left" id="prevPage" onclick="prevPage('optionsContainer', 'pageInfo')"></i>
+                                    <i class="fa-solid fa-chevron-right" id="nextPage" onclick="nextPage('optionsContainer', 'pageInfo')"></i>
+                                </div>
+                                
 
                         </div>
                     </div>
@@ -69,8 +78,13 @@
                         <div class="options" id="optionsContainer01">
                             @foreach ($medicos as $medico)
                                 <div class="option" onclick="selectOption(this,'{{$medico->med_cod}}','med_cod','custom-select1','dropdown01')">{{$medico->med_nome}}</div> 
-                                
                             @endforeach
+                            <div class="pagination-controls">
+                                <span id="pageInfo"></span>
+                                <i class="fa-solid fa-chevron-left" onclick="prevPage('optionsContainer01', 'pageInfo')"></i>
+                                <i class="fa-solid fa-chevron-right" onclick="nextPage('optionsContainer01', 'pageInfo')"></i>
+                            </div>
+                    
                         </div>
                     </div>
                 </div>  
@@ -89,6 +103,16 @@
                             @foreach ($especialidades as $especialidade)
                                 <div class="option" onclick="selectOption(this,'{{$especialidade->esp_cod}}','esp_cod','custom-select2','dropdown02')">{{$especialidade->escp_desc}}</div>
                             @endforeach
+                            <div class="pagination-controls pagination">
+                                <a class="page-link" href="#" aria-label="Previous" onclick="prevPage('optionsContainer02', 'pageInfo')">
+                                    <span aria-hidden="true">&laquo;</span>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                                <a class="page-link" href="#" aria-label="Next" onclick="nextPage('optionsContainer02', 'pageInfo')">
+                                    <span aria-hidden="true">&raquo;</span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>  
@@ -107,9 +131,13 @@
                         <input type="text" id="filterInput" placeholder="Filtrar..." onkeyup="filterOptions(this,'optionsContainer03')" >
                         <div class="options" id="optionsContainer03">
                             @foreach ($enfermeiros as $enfermeiro)
-                                <div class="option" onclick="selectOption(this,'{{$enfermeiro->enf_cod}}','enfermeiro','custom-select3','dropdown03')">{{$enfermeiro->enf_nome}}</div> 
-                                
+                                <div class="option" onclick="selectOption(this,'{{$enfermeiro->enf_cod}}','enfermeiro','custom-select3','dropdown03')">{{$enfermeiro->enf_nome}}</div>  
                             @endforeach
+                            <div class="pagination-controls">
+                                <span id="pageInfo"></span>
+                                <i class="fa-solid fa-chevron-left" onclick="prevPage('optionsContainer03', 'pageInfo')"></i>
+                                <i class="fa-solid fa-chevron-right" onclick="nextPage('optionsContainer03', 'pageInfo')"></i>
+                            </div>
                         </div>
                     </div>
                 </div> 
@@ -119,7 +147,7 @@
         <div class="row mb-3">
             <div class="div col-md-12">
                 <label for="queixaSituacao">Situação/Queixa</label>
-                <input type="text" class="form-control" id="queixaSituacao" name="SITUACAO">
+                <input type="text" class="form-control" id="queixaSituacao" name="situacao">
             </div>
         </div>
         <div class="row mb-3">
@@ -161,11 +189,17 @@
         <div class="mb-4">
             <div class="col-sm-12 d-flex flex-column">
             <label class="label form-label text-nowrap">Descrição do Caso Clínico</label>
-            <textarea name="descricaoCaso" id="descricaoCaso"></textarea>
+            <textarea name="descricaoCaso" id="descricaoCaso" rows  ></textarea>
             </div>
         </div>
-        <div>
-            <button type="submit" class="btn btn-success" onclick="salvarAtendimento()">Salvar</button>
+        <input type="text" name="receituario" id ="receituario" hidden>
+        <label class="label  form-label text-noweap">Receituario </label>
+        <div class="mb-4" id="editorReceituario" >
+        </div>
+            
+
+        <div class="pb-2">
+            <button  class="btn btn-success" onclick="salvarAtendimento()">Salvar</button>
         </div>
     </form>
 </div>

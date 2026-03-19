@@ -1,9 +1,34 @@
+//Editor Receituario
+    const quill = new Quill('#editorReceituario', {
+        theme: 'snow',
+        placeholder: 'Digite os dados da receita'
+  });
+async function salvarAtendimento(){
+    const result = quill.root.innerHTML;
+    document.getElementById('receituario').value = result
+    console.log(result)
+   
+
+}
 
 function toggleDropdown(elemeto) {
+    document.querySelectorAll('.dropdown').forEach(dropdown => {
+        if (dropdown.id !== elemeto) {
+            dropdown.style.display = 'none';
+        }
+    });
     const dropdown = document.getElementById(elemeto);
     dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-    // document.getElementById('filterInput').focus();
 }
+document.addEventListener('click', function(event) {
+    const isDropdown = event.target.closest('.dropdown');
+    const isCustomSelect = event.target.closest('.custom-select');
+    if (!isDropdown && !isCustomSelect) {
+        document.querySelectorAll('.dropdown').forEach(dropdown => {
+            dropdown.style.display = 'none';
+        });
+    }
+});
 
 function selectOption(element,PAC_COD,input,elementoFiltro, elementDrop) {
     document.getElementById(elementoFiltro).textContent = element.textContent;

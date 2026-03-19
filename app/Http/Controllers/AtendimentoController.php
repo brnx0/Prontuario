@@ -13,6 +13,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Reports\FichaAtendimento;
+use App\Reports\Receituario;
 
 
 
@@ -22,9 +23,9 @@ class AtendimentoController extends Controller
      * Display a listing of the resource.
      */
     public function index($atend_cod =null){
+        try {
         if($atend_cod){
             $atendimento = Atendimento::with(['paciente','enfermeiro','medico', 'especialidade'])->find($atend_cod,$columns = ['*']);
-            
             return view("atendimento.show",[
                 'atendimento' => $atendimento, 
                 'paciente' => $atendimento->paciente,
@@ -47,8 +48,12 @@ class AtendimentoController extends Controller
                 'especialidades' => $especialidade
             ]);
         } 
+        } catch (\Throwable $th) {
+            return abort(404);
+        }
     }
     public function registroAtendimento($atend_cod){
+       
         try{
             $atendimento = Atendimento::select([
                 'atendimentos.atend_cod',
@@ -90,7 +95,7 @@ class AtendimentoController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request){
-
+     
         if(!$request){
             return redirect()->back()->with("error","");
         }
@@ -111,9 +116,11 @@ class AtendimentoController extends Controller
             'enf_cod'=> $request->enfermeiro,
             'esp_cod'=> $request->esp_cod,
             'med_cod' => $request->med_cod,
-            'pac_cod' => $request->pac_cod
+            'pac_cod' => $request->pac_cod,
+            'receituario' => $request->receituario
 
         ]);
+        
             DB::commit();  
         
         return redirect('/atendimento/'.$atend_cod->atend_cod);
