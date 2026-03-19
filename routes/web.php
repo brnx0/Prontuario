@@ -21,9 +21,11 @@ Route::get('/relatorio/{Codigo}', [AtendimentoController::class,'gerarfichaAtend
 Route::get('/receita/{Codigo}', [AtendimentoController::class,'gerarReceita']);
 
 /*Pacientes*/
+Route::get('/paciente/{idPaciente}', [PacienteController::class,'getPaciente']);
 Route::get('/paciente',[PacienteController::class, 'index'])->name('paciente.index');
 Route::post('/paciente', [PacienteController::class, 'store'])->name('paciente.store');
 Route::get('/paciente', [PacienteController::class,'filtro'])->name('filtrar.paciente');
+
 Route::delete('/paciente/{id}',[PacienteController::class,'destroy'])->name('deletarPaciente');
 Route::put('/paciente', [PacienteController::class,'inativarPaciente'])->name('inativarPaciente');
 

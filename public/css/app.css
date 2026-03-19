@@ -142,3 +142,44 @@ input[readonly],textarea[readonly]{
 .pagination-controls{
     padding-left: 8px;
 }
+
+/* Estilo customizado para a tabela DataTables */
+.dataTable-style {
+    margin-top: 15px !important; /* Adiciona um espaço acima da tabela */
+    border-collapse: collapse !important;
+    font-size: 0.95em; /* Diminui um pouco a fonte para mais espaço */
+}
+
+/* Estilo para a linha ao passar o mouse (melhora o padrão do Bootstrap) */
+.dataTable-style > tbody > tr:hover {
+    background-color: #f0f8ff !important; /* Cor suave ao passar o mouse */
+    color: #000; /* Cor do texto ao passar o mouse (se necessário) */
+    cursor: pointer; /* Indica que a linha é interativa */
+}
+
+/* Foco nas células (opcional, mas bom para destacar o conteúdo) */
+.dataTable-style td, 
+.dataTable-style th {
+    vertical-align: middle; /* Alinha o conteúdo da célula ao meio */
+    padding: 10px 12px !important; /* Um pouco mais de padding para respiro */
+}
+
+/* Estilo para o cabeçalho escuro */
+.dataTable-style thead.table-dark th {
+    background-color: #343a40; /* Garante o tom escuro */
+    color: #ffffff;
+    border-color: #454d55;
+    text-transform: uppercase; /* Deixa o texto do cabeçalho em maiúsculas */
+    font-weight: 600;
+}
+
+/* Estilo para os botões dentro da tabela */
+.dataTable-style td .btn {
+    margin-left: 2px;
+    margin-right: 2px;
+    transition: transform 0.2s;
+}
+
+.dataTable-style td .btn:hover {
+    transform: scale(1.05); /* Um pequeno zoom ao passar o mouse no botão */
+}
