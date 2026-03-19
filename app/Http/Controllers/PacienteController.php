@@ -12,8 +12,12 @@ use DateTime;
 
 class PacienteController extends Controller{
     public function index()    {
-        $paciente = Paciente::orderBy('nome','asc')->paginate(10);
+        $paciente = Paciente::orderBy('nome','asc')->get();
         return view('paciente.pacientes', ['query' => $paciente]);
+    }
+
+    public function getPaciente($idPaciente){
+        return response()->json(Paciente::find($idPaciente),200);
     }
  
 
