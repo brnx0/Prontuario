@@ -56,10 +56,42 @@
 
 <div class="modal fade" id="atendimentoModal" tabindex="-1" aria-labelledby="atendimentoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="atendimentoModalLabel">Detalhes do Atendimento</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="atendimentoModalLabel">Detalhes do Atendimento</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+         
+            <input type="text" name="atend_cod"  id="atend_cod"hidden>
+            
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="paciente" class="form-label">Paciente</label>
+                <input type="text" class="form-control" id="pacienteHistorico" disabled> 
+              </div>
+              <div class="col-md-4">
+                <label for="dtAtendimento" class="form-label" >Data do Atendimento</label>
+                <input type="" class="form-control" id="dtAtendimento" name="dtAtendimento"  readonly disabled>
+              </div>
+              <div class="col-md-2" id="btnImprimir">
+                <button class="btn btn-success" onclick="imprimirAtendimento('atend_cod')">
+                    Imprimir
+                </button>   
+    
+                
+              </div>
+            </div>
+  
+            <div class="row mb-3">
+              <div class="col-md-8">
+                <label for="medico" class="form-label">Médico(a)</label>
+                <input type="text" class="form-control" id="medicoHistorico" disabled> 
+              </div>
+              <div class="col-md-4">
+                <label for="especialidade" class="form-label">Especialidade</label>
+                <input type="text" class="form-control" id="especialistaHistorico" disabled> 
+              </div>
             </div>
             <div class="modal-body">
                 <input type="text" name="atend_cod"  id="atend_cod"hidden>
@@ -157,13 +189,18 @@
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
             
             </div>
+         
         </div>
+  
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+          
         </div>
     </div>
-    <div id=iframe>
+  </div>
+  <div id=iframe>
 
-    </div>
-</div>
+  </div>
 
 @endsection
 

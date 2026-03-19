@@ -78,76 +78,52 @@ async function preencherDados(dados){
     document.getElementById("temp").value = dados.temp;
 }
 async function imprimirAtendimento(atend) {
-    var codigo = document.getElementById(atend).value;
-    if(codigo){
-        window.open('/relatorio/'+codigo);
+    const codigo = document.getElementById(atend).value;
+    console.log(codigo)
+    if(!codigo){
+
     }
+    window.open('/relatorio/'+codigo);
+}
+//     try {
+//         const atend_id = 1;
+
+//         // Fazendo a requisição para obter o PDF
+//         const response = await fetch(`/relatorio/${atend_id}`, {
+//             method: 'GET'
+//         });
+
+//         const data = await response.json();
+
+//         // Criar o iframe com o PDF
+//         let iframe = await criarIframe(data.pdf);
+//         document.getElementById('iframePDF').contentWindow.print(); 
+
     
-}
-async function imprimirReceita(atend) {
-    var codigo = document.getElementById(atend).value;
-    if(codigo){
-        window.open('/receita/'+codigo);
-    }
-    
-}
 
+//     } catch (error) {
+//         Swal.fire({
+//             title: 'Aconteceu um erro ao gerar o relatório.',
+//             text: error,
+//             icon: 'error'
+//         });
+//     }
+// }
 
-const paginationData = {
-    optionsContainer: { currentPage: 1, itemsPerPage: 5 },      // Pacientes
-    optionsContainer01: { currentPage: 1, itemsPerPage: 5 },    // Médicos
-    optionsContainer02: { currentPage: 1, itemsPerPage: 5 },    // Especialidades
-    optionsContainer03: { currentPage: 1, itemsPerPage: 5 }     // Enfermeiros
-};
+// async function criarIframe(pdf) {
+//     const divPai = document.getElementById('iframe');  // A div onde o iframe será inserido
+//     divPai.innerHTML = '';  // Limpar conteúdo anterior do iframe
 
-// Função para exibir a página específica
-function showPage(containerId, container) {
-    const config = paginationData[containerId];
-    const options = container.querySelectorAll('.option');
-    const totalPages = Math.ceil(options.length / config.itemsPerPage);
+//     const iframe = document.createElement('iframe');
+//     iframe.style.display = 'none';  // Deixar o iframe oculto
+//     iframe.src = 'data:application/pdf;base64,' + pdf;  // Carregar o PDF base64 no iframe
+//     iframe.id = "iframePDF"
 
-    options.forEach((option, index) => {
-        option.style.display = (index >= (config.currentPage - 1) * config.itemsPerPage && index < config.currentPage * config.itemsPerPage)
-            ? "block"
-            : "none";
-    });
+//     divPai.appendChild(iframe);
 
-    const pageInfo = container.querySelector('.pageInfo');
-    if (pageInfo) {
-        pageInfo.innerText = `Página ${config.currentPage} de ${totalPages}`;
-    }
-}
-
-// Próxima página
-function nextPage(containerId) {
-    const container = document.getElementById(containerId);
-    const config = paginationData[containerId];
-    const options = container.querySelectorAll('.option');
-    const totalPages = Math.ceil(options.length / config.itemsPerPage);
-
-    if (config.currentPage < totalPages) {
-        config.currentPage++;
-        showPage(containerId, container);
-    }
-}
-
-// Página anterior
-function prevPage(containerId) {
-    const container = document.getElementById(containerId);
-    const config = paginationData[containerId];
-
-    if (config.currentPage > 1) {
-        config.currentPage--;
-        showPage(containerId, container);
-    }
-}
-
-// Inicializar a paginação ao carregar
-document.addEventListener("DOMContentLoaded", function () {
-    Object.keys(paginationData).forEach(containerId => {
-        const container = document.getElementById(containerId);
-        if (container) {
-            showPage(containerId, container);
-        }
-    });
-});
+//     // Retornar o iframe para ser usado após o carregamento
+//     return new Promise((resolve, reject) => {
+//         iframe.onload = () => resolve(iframe);  // Resolve a Promise quando o iframe carregar
+//         iframe.onerror = () => reject('Erro ao carregar o iframe');  // Rejeitar caso ocorra um erro
+//     });
+// }

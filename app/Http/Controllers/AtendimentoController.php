@@ -137,22 +137,12 @@ class AtendimentoController extends Controller
         }
     }
     public function gerarfichaAtendimento($atend_cod ){
+     
         try{
             $dados = $this->consultaFichaAtendimento($atend_cod);
+           
             $html = new FichaAtendimento();
             return $html->gerarHtmlAtendimento( json_encode($dados));
-        }catch(Exception $th) {
-            return false;
-        }
-        
-    }
-    public function gerarReceita($atend_cod ){
-        try{
-            ini_set('memory_limit', '512M');
-            set_time_limit(120);
-            $dados = $this->consultaFichaAtendimento($atend_cod);
-            $html = new Receituario();
-            return $html->gerarHtmlReceituario( json_encode($dados));
         }catch(Exception $th) {
             return false;
         }
@@ -176,8 +166,7 @@ class AtendimentoController extends Controller
             'atendimentos.temp',
             'atendimentos.kg',
             'atendimentos.hgt',
-            'atendimentos.desc_caso',
-            'atendimentos.receituario'
+            'atendimentos.desc_caso'
         ])
         ->leftJoin('pacientes', 'atendimentos.pac_cod', '=', 'pacientes.pac_cod')
         ->leftJoin('enfermeiros', 'atendimentos.enf_cod', '=', 'enfermeiros.enf_cod')
@@ -185,7 +174,10 @@ class AtendimentoController extends Controller
         ->leftJoin('especialidades', 'atendimentos.esp_cod', '=', 'especialidades.esp_cod')
         ->where('atendimentos.atend_cod', $atend_cod)
         ->first();
+        
         return response()->json($atendimento);
+        
+
     }
     public function show(Atendimento $atendimento)
     {
