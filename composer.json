@@ -11,11 +11,13 @@
     "require": {
         "php": "^8.2",
         "dompdf/dompdf": "^3.1",
+        "inertiajs/inertia-laravel": "*",
         "laravel/framework": "^11.31",
         "laravel/jetstream": "^5.3",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
-        "livewire/livewire": "^3.0"
+        "livewire/livewire": "^3.0",
+        "tightenco/ziggy": "*"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.14",

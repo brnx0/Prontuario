@@ -26,7 +26,7 @@ class AtendimentoController extends Controller
         try {
         if($atend_cod){
             $atendimento = Atendimento::with(['paciente','enfermeiro','medico', 'especialidade'])->find($atend_cod,$columns = ['*']);
-            return view("atendimento.show",[
+            return \Inertia\Inertia::render("Atendimento/Show",[
                 'atendimento' => $atendimento, 
                 'paciente' => $atendimento->paciente,
                 'medico' => $atendimento->medico,
@@ -40,9 +40,9 @@ class AtendimentoController extends Controller
             $especialidade = Especialidade::select()->where('ativo','=','S')->orderBy('escp_desc')->get();
             
 
-            return view("atendimento.atendimento",[
+            return \Inertia\Inertia::render("Atendimento/Index",[
                 'pacientes' => $pacientes, 
-                'data'=> (new datetime())->format('y-m-d h:i'),
+                'data'=> (new datetime())->format('Y-m-d H:i'),
                 'medicos' => $medicos,
                 'enfermeiros' => $enfermeiro,
                 'especialidades' => $especialidade
@@ -131,22 +131,38 @@ class AtendimentoController extends Controller
         }
     }
     public function historico(Request $request ){
-         if(!$request->nome && !$request->dtAtendimento){
-            $atendimento = Atendimento::with(['paciente','enfermeiro','medico', 'especialidade'])->paginate(10);
-            return view('atendimento.historico', ['atendimentos' =>$atendimento]);
-        }
-    }
-    public function gerarfichaAtendimento($atend_cod ){
-     
-        try{
-            $dados = $this->consultaFichaAtendimento($atend_cod);
-           
-            $html = new FichaAtendimento();
-            return $html->gerarHtmlAtendimento( json_encode($dados));
-        }catch(Exception $th) {
-            return false;
+        $query = Atendimento::with(['paciente','enfermeiro','medico', 'especialidade']);
+        
+        if ($request->nome) {
+            $query->whereHas('paciente', function($q) use ($request) {
+                $q->where('nome', 'LIKE', '%' . $request->nome . '%');
+            });
         }
         
+        if ($request->dtAtendimento) {
+            $query->whereDate('dt_atendimento', $request->dtAtendimento);
+        }
+        
+        return \Inertia\Inertia::render('Atendimento/Historico', [
+            'atendimentos' => $query->paginate(10)
+        ]);
+    }
+    public function gerarfichaAtendimento($atend_cod ){
+        try{
+            $dados = $this->consultaFichaAtendimento($atend_cod)->original;
+            return \Inertia\Inertia::render('Reports/FichaAtendimento', ['dados' => $dados]);
+        } catch (Exception $th) {
+            return response()->json(['error' => $th->getMessage() . " Line: " . $th->getLine()], 500);
+        }
+    }
+    
+    public function gerarReceita($atend_cod) {
+        try {
+            $dados = $this->consultaFichaAtendimento($atend_cod)->original;
+            return \Inertia\Inertia::render('Reports/Receituario', ['dados' => $dados]);
+        } catch (Exception $th) {
+            return response()->json(['error' => $th->getMessage() . " Line: " . $th->getLine()], 500);
+        }
     }
     public function consultaFichaAtendimento($atend_cod){
         $atendimento = Atendimento::select([
@@ -166,7 +182,8 @@ class AtendimentoController extends Controller
             'atendimentos.temp',
             'atendimentos.kg',
             'atendimentos.hgt',
-            'atendimentos.desc_caso'
+            'atendimentos.desc_caso',
+            'atendimentos.receituario'
         ])
         ->leftJoin('pacientes', 'atendimentos.pac_cod', '=', 'pacientes.pac_cod')
         ->leftJoin('enfermeiros', 'atendimentos.enf_cod', '=', 'enfermeiros.enf_cod')

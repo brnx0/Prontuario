@@ -11,79 +11,54 @@ class MedicoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()    {
-        $medico = Medico::orderBy('med_nome')->paginate(10);
-        return view('medicos.show',['medicos'=>$medico]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function getMedico($request)    {
-        try{
-            $medico = Medico::find($request, $columns = ['*']);
-            return json_encode($medico);
-        }catch(QueryException $th){
-            return json_encode($th);
+    public function index(Request $request) {
+        $query = Medico::query();
+        
+        if ($request->nome) {
+           $query->where('med_nome', 'LIKE', '%' . $request->nome . '%');
+        }
+        if ($request->crm) {
+            $query->where('crm', '=', $request->crm);
         }
         
+        $medicos = $query->orderBy('med_nome', 'asc')->paginate(10)->withQueryString();
+        return \Inertia\Inertia::render('Medico/Index', ['medicos' => $medicos]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)    {
-        try{
-            Medico::updateOrCreate(
-                [
-                'med_cod' =>$request->med_cod
-                ],
-                [
+    public function store(Request $request)
+    {
+        $request->validate([
+            'nomeMedico' => 'required',
+            'crmMedico' => 'required'
+        ]);
+
+        try {
+            Medico::create([
                 'med_nome' => $request->nomeMedico,
-                'crm' =>$request->crmMedico
-                ]
-            );
-            return back()->with('success', 'Salvo com sucesso!');
-        }catch(QueryException $th){
-            return back()->with('error', $th->getMessage());
+                'crm' => $request->crmMedico,
+            ]);
+            return back()->with('success', 'Médico cadastrado com sucesso!');
+        } catch (QueryException $th) {
+            return back()->with('error', 'Erro ao cadastrar: ' . $th->getMessage());
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Medico $medico)
+    public function update(Request $request, string $id)
     {
-        //
-    }
+        $request->validate([
+            'nomeMedico' => 'required',
+            'crmMedico' => 'required'
+        ]);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Medico $medico)
-    {
-        //
-    }
-    public function filtro (Request $request){
-
-        if(empty($request->nome) && empty($request->crm)  ){
-            return MedicoController::index();
+        try {
+            Medico::findOrFail($id)->update([
+                'med_nome' => $request->nomeMedico,
+                'crm' => $request->crmMedico,
+            ]);
+            return back()->with('success', 'Médico atualizado com sucesso!');
+        } catch (QueryException $th) {
+            return back()->with('error', 'Erro ao atualizar: ' . $th->getMessage());
         }
-        $query = Medico::query();
-        if($request->nome){
-           $query->where('med_nome','LIKE', '%'.$request->nome.'%');
-        }
-        if($request->crm){
-            $query->where('crm','=', $request->crm);
-         }
-    
-        return view('medicos.show',['medicos' => $query->paginate(10)]);
-   }
-
-  
-    public function update(Request $request, Medico $medico)
-    {
-        //
     }
     public function updateStatus(Request $request)    {
        try{
@@ -109,7 +84,7 @@ class MedicoController extends Controller
             return back()->with('success','Registro deletado.');
 
         }catch(QueryException $th){
-            return view('medicos.show')->with(['error', 'Não foi possivel excluir o registro, tente inativar']) ;
+            return back()->with('error', 'Não foi possivel excluir o registro, tente inativar');
 
         }
         //

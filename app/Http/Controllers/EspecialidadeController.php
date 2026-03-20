@@ -8,37 +8,48 @@ use Illuminate\Http\Request;
 
 class EspecialidadeController extends Controller{
 
-    public function index()    {
+    public function index(Request $request) {
+        $query = Especialidade::query();
         
-        $especialidade = Especialidade::orderBy('escp_desc')->paginate(10);
-        return view('especialidade.show',['especialidades'=>$especialidade]);
+        if ($request->escp_desc) {
+           $query->where('escp_desc', 'LIKE', '%' . $request->escp_desc . '%');
+        }
+        
+        $especialidades = $query->orderBy('escp_desc', 'asc')->paginate(10)->withQueryString();
+        return \Inertia\Inertia::render('Especialidade/Index', ['especialidades' => $especialidades]);
     }
 
-    public function store(Request $request){
-        try{
+    public function store(Request $request)
+    {
+        $request->validate([
+            'descEspc' => 'required'
+        ]);
+
+        try {
             Especialidade::create([
                 'escp_desc' => $request->descEspc
             ]);
-            return back()->with('success', 'Registro criado.');
-        }catch(QueryException $th){
-            return back()->with('error', $th->getMessage());
+            return back()->with('success', 'Especialidade cadastrada com sucesso!');
+        } catch (QueryException $th) {
+            return back()->with('error', 'Erro ao cadastrar: ' . $th->getMessage());
         }
-
     }
 
-    public function filtro (Request $request){
+    public function update(Request $request, string $id)
+    {
+        $request->validate([
+            'descEspc' => 'required'
+        ]);
 
-        if(empty($request->escp_desc) ){
-            return EspecialidadeController::index();
+        try {
+            Especialidade::findOrFail($id)->update([
+                'escp_desc' => $request->descEspc
+            ]);
+            return back()->with('success', 'Especialidade atualizada com sucesso!');
+        } catch (QueryException $th) {
+            return back()->with('error', 'Erro ao atualizar: ' . $th->getMessage());
         }
-        $query = Especialidade::query();
-        if($request->escp_desc){
-           $query->where('escp_desc','LIKE', '%'.$request->escp_desc.'%');
-        }
-       
-    
-        return view('especialidade.show',['especialidades' => $query->paginate(10)]);
-   }
+    }
 
     public function updateStatus(Request $request)    {
         try{
@@ -58,6 +69,4 @@ class EspecialidadeController extends Controller{
             return back()->with('error', $th->getMessage());
         }
      }
-
-     
 }

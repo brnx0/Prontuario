@@ -11,65 +11,22 @@ use Illuminate\Http\Request;
 use DateTime;
 
 class PacienteController extends Controller{
-    public function index()    {
-        $paciente = Paciente::orderBy('nome','asc')->get();
-        return view('paciente.pacientes', ['query' => $paciente]);
-    }
-
-    public function getPaciente($idPaciente){
-        return response()->json(Paciente::find($idPaciente),200);
-    }
- 
-
-    public function store(Request $request)    {
-        try {
-            $cpf = str_replace(".","",str_replace("-","",$request->cpf));
-            DB::beginTransaction();
-            Paciente::updateOrCreate([
-                'pac_cod' => $request->pes_cod
-            ],
-            [
-                'nome' => $request->nome,
-                'cpf' => $cpf,
-                'filicao_1' => $request->filicao_1,
-                'filicao_2' => $request->filicao_2,
-                'cep' => $request->CEP,
-                'nascimento' => $request->nascimento,
-                'logradouro' => $request->logradouro,
-                'cidade' => $request->cidade,
-                'uf'  => $request->uf,   
-                'tel_1' => $request->tel_1 ,
-                'tel_2' => $request->tel_2 ,
-                'email' => $request->email ,
-                'cartao_sus' => $request->cartao_sus ,
-                'prof_cod' => $request->prof_cod   
-            ]);
-            DB::commit();
-            return redirect('/paciente')->with('success','Sucesso!');
-
-        } catch (QueryException  $th) {
-            DB::rollBack();
-            return redirect('/paciente')->with('error','Erro ao criar o registro. '.$th ->getMessage());
-        }
-    }
-   public function filtro (Request $request){
-
-        if(empty($request->nome) && empty($request->cpf) && empty($request->filtroData) ){
-            return PacienteController::index();
-        }
+    public function index(Request $request) {
         $query = Paciente::query();
-        if($request->nome){
-           $query->where('nome','LIKE', '%'.$request->nome.'%');
+        
+        if ($request->nome) {
+           $query->where('nome', 'LIKE', '%' . $request->nome . '%');
         }
-        if($request->cpf){
-            $query->where('cpf','=', $request->cpf);
-         }
-         if($request->filtroData){
-            $query->where('nascimento','=', $request->filtroData,);
-         }
-    
-        return view('paciente.pacientes',['query' => $query->paginate(10)]);
-   }
+        if ($request->cpf) {
+            $query->where('cpf', '=', $request->cpf);
+        }
+        if ($request->filtroData) {
+            $query->where('nascimento', '=', $request->filtroData);
+        }
+        
+        $pacientes = $query->orderBy('nome', 'asc')->paginate(10)->withQueryString();
+        return \Inertia\Inertia::render('Paciente/Index', ['query' => $pacientes]);
+    }
    
     public function show(string $id)
     {
@@ -77,11 +34,35 @@ class PacienteController extends Controller{
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Store a newly created resource in storage.
      */
-    public function edit(string $id)
+    public function store(Request $request)
     {
-        //
+        $request->validate([
+            'nome' => 'required',
+            'nascimento' => 'required|date'
+        ]);
+
+        try {
+            Paciente::create([
+                'nome' => $request->nome,
+                'nascimento' => $request->nascimento,
+                'cpf' => $request->cpf,
+                'cartao_sus' => $request->cartao_sus,
+                'filicao_1' => $request->filicao_1,
+                'filicao_2' => $request->filicao_2,
+                'cep' => $request->cep,
+                'logradouro' => $request->logradouro,
+                'cidade' => $request->cidade,
+                'uf' => $request->uf,
+                'tel_1' => $request->tel_1,
+                'tel_2' => $request->tel_2,
+                'email' => $request->email,
+            ]);
+            return back()->with('success', 'Paciente cadastrado com sucesso!');
+        } catch (QueryException $th) {
+            return back()->with('error', 'Erro ao cadastrar: ' . $th->getMessage());
+        }
     }
 
     /**
@@ -89,7 +70,31 @@ class PacienteController extends Controller{
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'nome' => 'required',
+            'nascimento' => 'required|date'
+        ]);
+
+        try {
+            Paciente::findOrFail($id)->update([
+                'nome' => $request->nome,
+                'nascimento' => $request->nascimento,
+                'cpf' => $request->cpf,
+                'cartao_sus' => $request->cartao_sus,
+                'filicao_1' => $request->filicao_1,
+                'filicao_2' => $request->filicao_2,
+                'cep' => $request->cep,
+                'logradouro' => $request->logradouro,
+                'cidade' => $request->cidade,
+                'uf' => $request->uf,
+                'tel_1' => $request->tel_1,
+                'tel_2' => $request->tel_2,
+                'email' => $request->email,
+            ]);
+            return back()->with('success', 'Paciente atualizado com sucesso!');
+        } catch (QueryException $th) {
+            return back()->with('error', 'Erro ao atualizar: ' . $th->getMessage());
+        }
     }
 
     /**
