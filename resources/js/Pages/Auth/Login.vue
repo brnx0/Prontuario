@@ -121,7 +121,7 @@ onMounted(() => {
                         Acessar Prontuário
                     </button>
                     <p class="text-sm text-gray-500 dark:text-gray-400 text-center mt-6">
-                        Ambiente Seguro & Criptografado
+                        Juntos por uma saúde melhor!
                     </p>
                 </div>
             </form>
