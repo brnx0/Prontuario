@@ -2,27 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Medico;
+use App\Services\MedicoService;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class MedicoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(Request $request) {
-        $query = Medico::query();
-        
-        if ($request->nome) {
-           $query->where('med_nome', 'LIKE', '%' . $request->nome . '%');
-        }
-        if ($request->crm) {
-            $query->where('crm', '=', $request->crm);
-        }
-        
-        $medicos = $query->orderBy('med_nome', 'asc')->paginate(10)->withQueryString();
-        return \Inertia\Inertia::render('Medico/Index', ['medicos' => $medicos]);
+    protected $medicoService;
+
+    public function __construct(MedicoService $medicoService)
+    {
+        $this->medicoService = $medicoService;
+    }
+
+    public function index(Request $request) 
+    {
+        $medicos = $this->medicoService->getMedicos($request->all());
+        return Inertia::render('Medico/Index', ['medicos' => $medicos]);
     }
 
     public function store(Request $request)
@@ -33,10 +30,7 @@ class MedicoController extends Controller
         ]);
 
         try {
-            Medico::create([
-                'med_nome' => $request->nomeMedico,
-                'crm' => $request->crmMedico,
-            ]);
+            $this->medicoService->criarMedico($request->all());
             return back()->with('success', 'Médico cadastrado com sucesso!');
         } catch (QueryException $th) {
             return back()->with('error', 'Erro ao cadastrar: ' . $th->getMessage());
@@ -51,42 +45,33 @@ class MedicoController extends Controller
         ]);
 
         try {
-            Medico::findOrFail($id)->update([
-                'med_nome' => $request->nomeMedico,
-                'crm' => $request->crmMedico,
-            ]);
+            $this->medicoService->atualizarMedico($id, $request->all());
             return back()->with('success', 'Médico atualizado com sucesso!');
         } catch (QueryException $th) {
             return back()->with('error', 'Erro ao atualizar: ' . $th->getMessage());
         }
     }
-    public function updateStatus(Request $request)    {
-       try{
-           $med= Medico::find($request->med_cod)->update(['ativo' => $request->status]);
-          
+    
+    public function updateStatus(Request $request)    
+    {
+       try {
+            $this->medicoService->inativarMedico($request->med_cod, $request->status);
             return back()->with('success','Status atualizado com sucesso');
-
-       }catch(QueryException $th){
+       } catch(QueryException $th) {
             return back()->with('error','Aconteceu um erro, tente novamente em alguns instantes');
        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Request $request,)    {
-    
-        if(!$request->med_cod){
-            return back()->with('error','Aconteceu um erro,  Se o erro persistir, entre em contato com o suporte e informe a seguinte mensagem: BAD REQUEST:400');
+    public function destroy(Request $request)    
+    {
+        if(!$request->med_cod) {
+            return back()->with('error','Erro: Requisição inválida.');
         }
-        try{
-            Medico::destroy($request->med_cod);
+        try {
+            $this->medicoService->deletarMedico($request->med_cod);
             return back()->with('success','Registro deletado.');
-
-        }catch(QueryException $th){
+        } catch(QueryException $th) {
             return back()->with('error', 'Não foi possivel excluir o registro, tente inativar');
-
         }
-        //
     }
 }

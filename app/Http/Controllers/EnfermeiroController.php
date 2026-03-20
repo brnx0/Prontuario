@@ -2,47 +2,38 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Enfermeiro;
+use App\Services\EnfermeiroService;
 use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
+use Inertia\Inertia;
 
 class EnfermeiroController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(Request $request) {
-        $enfermeiros = Enfermeiro::query();
-        
-        if ($request->filtroNome) {
-           $enfermeiros->where('enf_nome', 'LIKE', '%' . $request->filtroNome . '%');
-        }
-        if ($request->filtroCRE) {
-            $enfermeiros->where('cre', '=', $request->filtroCRE);
-        }
-        
-        return \Inertia\Inertia::render('Enfermeiro/Index', [
-            'enfermeiros' => $enfermeiros->orderBy('enf_nome', 'asc')->paginate(10)->withQueryString()
+    protected $enfermeiroService;
+
+    public function __construct(EnfermeiroService $enfermeiroService)
+    {
+        $this->enfermeiroService = $enfermeiroService;
+    }
+
+    public function index(Request $request) 
+    {
+        $enfermeiros = $this->enfermeiroService->getEnfermeiros($request->all());
+        return Inertia::render('Enfermeiro/Index', [
+            'enfermeiros' => $enfermeiros
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function getEnfermeiro($request)    {
-        try{
-            $enfermeiro = Enfermeiro::find($request, $columns = ['*']);
-         
+    public function getEnfermeiro($request)    
+    {
+        try {
+            $enfermeiro = $this->enfermeiroService->getEnfermeiro($request);
             return json_encode($enfermeiro);
-        }catch(QueryException $th){
-            return json_encode($th);
+        } catch(\Exception $th) {
+            return json_encode(['error' => $th->getMessage()]);
         }
-        
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -51,35 +42,13 @@ class EnfermeiroController extends Controller
         ]);
 
         try {
-            Enfermeiro::create([
-                'enf_nome' => $request->nomeEnf,
-                'cre' => $request->creEnf
-            ]);
+            $this->enfermeiroService->criarEnfermeiro($request->all());
             return back()->with('success', 'Enfermeiro(a) cadastrado(a) com sucesso!');
         } catch (QueryException $th) {
             return back()->with('error', 'Erro ao cadastrar: ' . $th->getMessage());
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Enfermeiro $enfermeiro)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Enfermeiro $enfermeiro)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         $request->validate([
@@ -88,41 +57,33 @@ class EnfermeiroController extends Controller
         ]);
 
         try {
-            Enfermeiro::findOrFail($id)->update([
-                'enf_nome' => $request->nomeEnf,
-                'cre' => $request->creEnf
-            ]);
+            $this->enfermeiroService->atualizarEnfermeiro($id, $request->all());
             return back()->with('success', 'Enfermeiro(a) atualizado(a) com sucesso!');
         } catch (QueryException $th) {
             return back()->with('error', 'Erro ao atualizar: ' . $th->getMessage());
         }
     }
-    public function updateStatus(Request $request)    {
-        try{
-            Enfermeiro::find($request->enf_cod)->update(['ativo' => $request->status]);
+    
+    public function updateStatus(Request $request)    
+    {
+        try {
+            $this->enfermeiroService->inativarEnfermeiro($request->enf_cod, $request->status);
             return back()->with('success','Status atualizado com sucesso');
- 
-        }catch(QueryException $th){
-            return back()->with('error','x');
+        } catch(QueryException $th) {
+            return back()->with('error','Erro ao processar');
         }
-     }
- 
+    }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Request $request, Enfermeiro $enfermeiro)    {
+    public function destroy(Request $request)    
+    {
         if(!$request->enf_cod){
-            return back()->with('error','Aconteceu um erro,  Se o erro persistir, entre em contato com o suporte e informe a seguinte mensagem: BAD REQUEST:400');
+            return back()->with('error','Erro: Requisição inválida.');
         }
         try{
-            Enfermeiro::destroy($request->enf_cod);
+            $this->enfermeiroService->deletarEnfermeiro($request->enf_cod);
             return back()->with('success','Registro deletado.');
-
         }catch(QueryException $th){
             return back()->with('error', 'Não foi possivel excluir o registro, tente inativar');
-
         }
-        //
     }
 }
