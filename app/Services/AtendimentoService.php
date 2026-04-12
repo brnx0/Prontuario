@@ -57,7 +57,7 @@ class AtendimentoService
 
     public function getHistoricoFiltrado(array $filtros)
     {
-        $query = Atendimento::with(['paciente', 'enfermeiro', 'medico', 'especialidade']);
+        $query = Atendimento::with(['paciente', 'enfermeiro', 'medico', 'especialidade'])->orderBy('dt_atendimento', 'desc');
         
         if (!empty($filtros['nome'])) {
             $query->whereHas('paciente', function($q) use ($filtros) {
