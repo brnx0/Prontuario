@@ -1,0 +1,55 @@
+name: Deploy to Hostinger
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Obter o código do servidor
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, gd, iconv, json, libxml, mbstring, openssl, pcre, phar, session, tokenizer, xml, xmlwriter, fileinfo
+          coverage: none
+
+      - name: 📦 Instalar dependências backend (Composer)
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+
+      - name: 📦 Instalar dependências frontend (NPM)
+        run: npm ci
+
+      - name: 🏗️ Compilar frontend (Vite)
+        run: npm run build
+
+      # Como você usa a hospedagem básica sem SSH, faremos o deploy via FTP
+      - name: 🚀 Upload via FTP para Hostinger
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }} # Ex: ftp.seusite.com.br
+          username: ${{ secrets.FTP_USERNAME }} # Ex: u123456789
+          password: ${{ secrets.FTP_PASSWORD }} # Senha do FTP
+          local-dir: ./ # Diretório local a ser enviado
+          server-dir: /public_html/ # Pasta no servidor onde o site ficará
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            .env
+            .env.example
+            README.md
+            docker-compose.yml
+            phpunit.xml
+            **/.github/**
