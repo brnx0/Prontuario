@@ -10,46 +10,70 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Obter o código do servidor
+      - name: Obter o código
         uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: "8.2"
-          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, gd, iconv, json, libxml, mbstring, openssl, pcre, phar, session, tokenizer, xml, xmlwriter, fileinfo
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, dom, filter, gd, json, openssl, pcre, session, tokenizer, fileinfo
           coverage: none
 
-      - name: 📦 Instalar dependências backend (Composer)
-        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
+      - name: Instalar dependências backend (produção)
+        run: composer install --no-dev --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
 
-      - name: 🟢 Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: "npm"
 
-      - name: 📦 Instalar dependências frontend (NPM)
+      - name: Instalar dependências frontend
         run: npm ci
 
-      - name: 🏗️ Compilar frontend (Vite)
+      - name: Compilar frontend (Vite)
         run: npm run build
 
-      # Como você usa a hospedagem básica sem SSH, faremos o deploy via FTP
-      - name: 🚀 Upload via FTP para Hostinger
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      - name: Preparar .env de produção
+        run: |
+          echo "${{ secrets.ENV_PRODUCTION }}" > .env
+
+      - name: Gerar cache de produção
+        run: |
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache
+
+      - name: Upload via FTP para Hostinger
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ secrets.FTP_SERVER }} # Ex: ftp.seusite.com.br
-          username: ${{ secrets.FTP_USERNAME }} # Ex: u123456789
-          password: ${{ secrets.FTP_PASSWORD }} # Senha do FTP
-          local-dir: ./ # Diretório local a ser enviado
-          server-dir: /public_html/ # Pasta no servidor onde o site ficará
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./
+          server-dir: /public_html/v2/
           exclude: |
             **/.git*
             **/.git*/**
             **/node_modules/**
-            .env
-            .env.example
-            README.md
-            docker-compose.yml
-            phpunit.xml
+            **/tests/**
             **/.github/**
+            .env.example
+            .editorconfig
+            README.md
+            phpunit.xml
+            docker-compose.yml
+            webpack.mix.cjs
+            vite.config.js
+            tsconfig.json
+            tsconfig.node.json
+            postcss.config.js
+            tailwind.config.js
+            package.json
+            package-lock.json
+            Prontuario.rar
+            **/storage/logs/**
+            **/storage/framework/cache/data/**
+            **/storage/framework/sessions/**
+            **/storage/framework/views/**
