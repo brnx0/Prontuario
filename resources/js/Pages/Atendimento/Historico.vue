@@ -42,6 +42,16 @@ const imprimirReceita = (cod: number) => {
     <AppLayout>
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                  <!-- Banner de Consulta -->
+                <div class="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6 flex items-center gap-3">
+                    <svg class="h-6 w-6 text-blue-500 dark:text-blue-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div>
+                        <p class="text-sm font-semibold text-blue-800 dark:text-blue-300">Modo Consulta</p>
+                        <p class="text-xs text-blue-600 dark:text-blue-400">Esta tela é apenas para visualização de registros. Nenhuma alteração pode ser realizada.</p>
+                    </div>
+                </div>
                 <!-- Filters -->
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg p-6 mb-6">
                     <form @submit.prevent="submitFilter" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
