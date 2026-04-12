@@ -40,12 +40,6 @@ jobs:
         env:
           ENV_PRODUCTION: ${{ secrets.ENV_PRODUCTION }}
 
-      - name: Gerar cache de produção
-        run: |
-          php artisan config:cache
-          php artisan route:cache
-          php artisan view:cache
-
       - name: Upload via FTP para Hostinger
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
