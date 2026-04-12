@@ -10,6 +10,7 @@ const page = usePage();
 const route = (window as any).route;
 
 const user = page.props.auth?.user || { name: 'User' };
+console.log(page.props)
 
 const logout = () => {
     // using Inertia post
