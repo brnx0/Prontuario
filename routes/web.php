@@ -4,6 +4,7 @@ use App\Http\Controllers\EnfermeiroController;
 use App\Http\Controllers\EspecialidadeController;
 use App\Http\Controllers\MedicoController;
 use App\Http\Controllers\PacienteController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use Illuminate\Support\Facades\Route;
 
@@ -57,6 +58,14 @@ Route::post('/especialidade',[EspecialidadeController::class,'store'])->name('')
 Route::put('/especialidade/{id}',[EspecialidadeController::class,'update']);
 Route::delete('/especialidade',[EspecialidadeController::class,'destroy'])->name('');
 Route::PUT('/especialidade',[EspecialidadeController::class,'updateStatus']);
+
+/*Admin - Gerenciamento de Usuários*/
+Route::middleware(['admin'])->group(function () {
+    Route::get('/admin/usuarios', [UserController::class, 'index'])->name('admin.usuarios');
+    Route::post('/admin/usuarios', [UserController::class, 'store'])->name('admin.usuarios.store');
+    Route::put('/admin/usuarios/{id}', [UserController::class, 'update'])->name('admin.usuarios.update');
+    Route::delete('/admin/usuarios', [UserController::class, 'destroy'])->name('admin.usuarios.destroy');
+});
 });
 
 // Route::get('/', function () {
