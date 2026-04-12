@@ -65,8 +65,8 @@ class AtendimentoService
             });
         }
         
-        if (!empty($filtros['dtAtendimento'])) {
-            $query->whereDate('dt_atendimento', $filtros['dtAtendimento']);
+        if (!empty($filtros['dataAtendimento'])) {
+            $query->whereDate('dt_atendimento', $filtros['dataAtendimento']);
         }
         
         return $query->paginate(10);
