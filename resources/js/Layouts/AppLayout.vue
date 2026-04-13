@@ -2,6 +2,8 @@
 import { ref } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import NavLink from '@/Components/NavLink.vue';
+import NavDropdown from '@/Components/NavDropdown.vue';
+import DropdownLink from '@/Components/DropdownLink.vue';
 
 const showingNavigationDropdown = ref(false);
 const page = usePage();
@@ -88,30 +90,39 @@ watch(() => page.props.flash, (flash: any) => {
 
                             <!-- Navigation Links -->
                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <!-- <NavLink :href="route ? route('dashboard') : '/dashboard'" :active="route ? route().current('dashboard') : false">
-                                    Dashboard 
-                                </NavLink> -->
-                                <NavLink href="/atendimento" :active="route ? route().current('atendimento') : false">
-                                    Novo Atendimento 
+                                <NavLink :href="route ? route('dashboard') : '/dashboard'" :active="route ? route().current('dashboard') : false">
+                                    Dashboard
                                 </NavLink>
-                                <NavLink href="/historico" :active="route ? route().current('historico') : false">
-                                    Histórico
-                                </NavLink>
-                                <NavLink href="/paciente" :active="route ? route().current('paciente') : false">
-                                    Pacientes
-                                </NavLink>
-                                <NavLink href="/medico" :active="route ? route().current('medico') : false">
-                                    Médicos
-                                </NavLink>
-                                <NavLink href="/enfermeiro" :active="route ? route().current('enfermeiro') : false">
-                                    Enfermeiros
-                                </NavLink>
-                                <NavLink href="/especialidade" :active="route ? route().current('especialidade') : false">
-                                    Especialidades
-                                </NavLink>
-                                <NavLink v-if="user.is_admin" href="/admin/usuarios" :active="route ? route().current('admin.usuarios') : false">
-                                    Usuários
-                                </NavLink>
+
+                                <NavDropdown label="Atendimentos" :active="route ? (route().current('atendimento') || route().current('historico')) : false">
+                                    <DropdownLink href="/atendimento" :active="route ? route().current('atendimento') : false">
+                                        Novo Atendimento
+                                    </DropdownLink>
+                                    <DropdownLink href="/historico" :active="route ? route().current('historico') : false">
+                                        Histórico
+                                    </DropdownLink>
+                                </NavDropdown>
+
+                                <NavDropdown label="Cadastros" :active="route ? (route().current('paciente') || route().current('medico') || route().current('enfermeiro') || route().current('especialidade')) : false">
+                                    <DropdownLink href="/paciente" :active="route ? route().current('paciente') : false">
+                                        Pacientes
+                                    </DropdownLink>
+                                    <DropdownLink href="/medico" :active="route ? route().current('medico') : false">
+                                        Médicos
+                                    </DropdownLink>
+                                    <DropdownLink href="/enfermeiro" :active="route ? route().current('enfermeiro') : false">
+                                        Enfermeiros
+                                    </DropdownLink>
+                                    <DropdownLink href="/especialidade" :active="route ? route().current('especialidade') : false">
+                                        Especialidades
+                                    </DropdownLink>
+                                </NavDropdown>
+
+                                <NavDropdown v-if="user.is_admin" label="Administração" :active="route ? route().current('admin.usuarios') : false">
+                                    <DropdownLink href="/admin/usuarios" :active="route ? route().current('admin.usuarios') : false">
+                                        Usuários
+                                    </DropdownLink>
+                                </NavDropdown>
                             </div>
                         </div>
 
@@ -146,30 +157,41 @@ watch(() => page.props.flash, (flash: any) => {
                 <!-- Responsive Navigation Menu -->
                 <div :class="{ 'block': showingNavigationDropdown, 'hidden': !showingNavigationDropdown }" class="sm:hidden">
                     <div class="pt-2 pb-3 space-y-1">
-                        <!-- <Link :href="route ? route('dashboard') : '/dashboard'" class="block w-full ps-3 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 focus:outline-none focus:text-gray-800 dark:focus:text-gray-200 focus:bg-gray-50 dark:focus:bg-gray-700 focus:border-gray-300 dark:focus:border-gray-600 transition duration-150 ease-in-out">
+                        <Link :href="route ? route('dashboard') : '/dashboard'" class="block w-full ps-3 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600">
                             Dashboard
-                        </Link> -->
-                        <Link href="/atendimento" class="block w-full ps-3 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600">
+                        </Link>
+
+                        <!-- Atendimentos -->
+                        <div class="ps-3 pe-4 py-2 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Atendimentos</div>
+                        <Link href="/atendimento" class="block w-full ps-6 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600">
                             Novo Atendimento
                         </Link>
-                        <Link href="/historico" class="block w-full ps-3 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600">
+                        <Link href="/historico" class="block w-full ps-6 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600">
                             Histórico
                         </Link>
-                        <Link href="/paciente" class="block w-full ps-3 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600">
+
+                        <!-- Cadastros -->
+                        <div class="ps-3 pe-4 py-2 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Cadastros</div>
+                        <Link href="/paciente" class="block w-full ps-6 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600">
                             Pacientes
                         </Link>
-                        <Link href="/medico" class="block w-full ps-3 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600">
+                        <Link href="/medico" class="block w-full ps-6 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600">
                             Médicos
                         </Link>
-                        <Link href="/enfermeiro" class="block w-full ps-3 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600">
+                        <Link href="/enfermeiro" class="block w-full ps-6 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600">
                             Enfermeiros
                         </Link>
-                        <Link href="/especialidade" class="block w-full ps-3 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600">
+                        <Link href="/especialidade" class="block w-full ps-6 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600">
                             Especialidades
                         </Link>
-                        <Link v-if="user.is_admin" href="/admin/usuarios" class="block w-full ps-3 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600">
-                            Usuários
-                        </Link>
+
+                        <!-- Administração -->
+                        <template v-if="user.is_admin">
+                            <div class="ps-3 pe-4 py-2 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Administração</div>
+                            <Link href="/admin/usuarios" class="block w-full ps-6 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600">
+                                Usuários
+                            </Link>
+                        </template>
                     </div>
 
                     <!-- Responsive Settings Options -->
