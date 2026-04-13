@@ -8,6 +8,7 @@ use App\Models\Especialidade;
 use App\Models\Medico;
 use App\Models\Paciente;
 use DateTime;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Exception;
 
@@ -20,13 +21,18 @@ class AtendimentoService
 
     public function getOpcoesFormulario()
     {
-        return [
-            'enfermeiros' => Enfermeiro::select('enf_cod', 'enf_nome')->where('ativo', 'S')->orderBy('enf_nome', 'asc')->get(),
-            'pacientes' => Paciente::select('pac_cod', 'nome')->where('ativo', 'S')->orderBy('nome', 'asc')->get(),
-            'medicos' => Medico::select()->where('ativo', 'S')->orderBy('med_nome')->get(),
-            'especialidades' => Especialidade::select()->where('ativo', 'S')->orderBy('escp_desc')->get(),
-            'data' => (new DateTime())->format('Y-m-d H:i')
-        ];
+        $opcoes = Cache::remember('formulario_opcoes', 86400, function () {
+            return [
+                'enfermeiros' => Enfermeiro::select('enf_cod', 'enf_nome')->where('ativo', 'S')->orderBy('enf_nome', 'asc')->get(),
+                'pacientes' => Paciente::select('pac_cod', 'nome')->where('ativo', 'S')->orderBy('nome', 'asc')->get(),
+                'medicos' => Medico::select('med_cod', 'med_nome', 'crm', 'ativo')->where('ativo', 'S')->orderBy('med_nome')->get(),
+                'especialidades' => Especialidade::select('esp_cod', 'escp_desc', 'ativo')->where('ativo', 'S')->orderBy('escp_desc')->get(),
+            ];
+        });
+
+        $opcoes['data'] = (new DateTime())->format('Y-m-d H:i');
+
+        return $opcoes;
     }
 
     public function getRegistroAtendimento($atend_cod)
@@ -58,17 +64,17 @@ class AtendimentoService
     public function getHistoricoFiltrado(array $filtros)
     {
         $query = Atendimento::with(['paciente', 'enfermeiro', 'medico', 'especialidade'])->orderBy('dt_atendimento', 'desc');
-        
+
         if (!empty($filtros['nome'])) {
             $query->whereHas('paciente', function($q) use ($filtros) {
                 $q->where('nome', 'LIKE', '%' . $filtros['nome'] . '%');
             });
         }
-        
+
         if (!empty($filtros['dataAtendimento'])) {
             $query->whereDate('dt_atendimento', $filtros['dataAtendimento']);
         }
-        
+
         return $query->paginate(10);
     }
 
@@ -123,13 +129,22 @@ class AtendimentoService
                 'pac_cod'         => $dados['pac_cod'] ?? null,
                 'receituario'     => $dados['receituario'] ?? null
             ]);
-            
+
             DB::commit();
             return $atendimento;
-            
+
         } catch (Exception $th) {
             DB::rollBack();
             throw $th;
         }
+    }
+
+    /**
+     * Limpa o cache das opções do formulário.
+     * Chamar quando criar/editar/excluir cadastros.
+     */
+    public static function limparCacheOpcoes(): void
+    {
+        Cache::forget('formulario_opcoes');
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Paciente;
+use App\Services\AtendimentoService;
 use Exception;
 
 class PacienteService
@@ -26,6 +27,7 @@ class PacienteService
 
     public function criarPaciente(array $dados)
     {
+        AtendimentoService::limparCacheOpcoes();
         return Paciente::create([
             'nome' => $dados['nome'],
             'nascimento' => $dados['nascimento'],
@@ -45,6 +47,7 @@ class PacienteService
 
     public function atualizarPaciente(string $id, array $dados)
     {
+        AtendimentoService::limparCacheOpcoes();
         $paciente = Paciente::findOrFail($id);
         $paciente->update([
             'nome' => $dados['nome'],
@@ -66,11 +69,13 @@ class PacienteService
 
     public function deletarPaciente(string $id)
     {
+        AtendimentoService::limparCacheOpcoes();
         return Paciente::destroy($id);
     }
 
     public function inativarPaciente($pac_cod, $status)
     {
+        AtendimentoService::limparCacheOpcoes();
         $paciente = Paciente::findOrFail($pac_cod);
         $paciente->update(['ativo' => $status]);
         return $paciente;

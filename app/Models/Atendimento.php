@@ -41,7 +41,7 @@ class Atendimento extends Model{
         return $this->belongsTo(Enfermeiro::class,'enf_cod','enf_cod');
     }
     public function especialidade(){
-        return $this->belongsTo(Especialidade::class,'esp_cod');
+        return $this->belongsTo(Especialidade::class,'esp_cod','esp_cod');
     }
     //
 }

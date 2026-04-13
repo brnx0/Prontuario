@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Enfermeiro;
+use App\Services\AtendimentoService;
 
 class EnfermeiroService
 {
@@ -27,6 +28,7 @@ class EnfermeiroService
 
     public function criarEnfermeiro(array $dados)
     {
+        AtendimentoService::limparCacheOpcoes();
         return Enfermeiro::create([
             'enf_nome' => $dados['nomeEnf'],
             'cre' => $dados['creEnf']
@@ -35,6 +37,7 @@ class EnfermeiroService
 
     public function atualizarEnfermeiro(string $id, array $dados)
     {
+        AtendimentoService::limparCacheOpcoes();
         $enfermeiro = Enfermeiro::findOrFail($id);
         $enfermeiro->update([
             'enf_nome' => $dados['nomeEnf'],
@@ -45,6 +48,7 @@ class EnfermeiroService
 
     public function inativarEnfermeiro($id, $status)
     {
+        AtendimentoService::limparCacheOpcoes();
         $enfermeiro = Enfermeiro::findOrFail($id);
         $enfermeiro->update(['ativo' => $status]);
         return $enfermeiro;
@@ -52,6 +56,7 @@ class EnfermeiroService
 
     public function deletarEnfermeiro($id)
     {
+        AtendimentoService::limparCacheOpcoes();
         return Enfermeiro::destroy($id);
     }
 }

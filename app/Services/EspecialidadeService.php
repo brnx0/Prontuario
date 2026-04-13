@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Especialidade;
+use App\Services\AtendimentoService;
 
 class EspecialidadeService
 {
@@ -19,6 +20,7 @@ class EspecialidadeService
 
     public function criarEspecialidade(array $dados)
     {
+        AtendimentoService::limparCacheOpcoes();
         return Especialidade::create([
             'escp_desc' => $dados['descEspc']
         ]);
@@ -26,6 +28,7 @@ class EspecialidadeService
 
     public function atualizarEspecialidade(string $id, array $dados)
     {
+        AtendimentoService::limparCacheOpcoes();
         $especialidade = Especialidade::findOrFail($id);
         $especialidade->update([
             'escp_desc' => $dados['descEspc']
@@ -35,6 +38,7 @@ class EspecialidadeService
 
     public function inativarEspecialidade($id, $status)
     {
+        AtendimentoService::limparCacheOpcoes();
         $especialidade = Especialidade::findOrFail($id);
         $especialidade->update(['ativo' => $status]);
         return $especialidade;
@@ -42,6 +46,7 @@ class EspecialidadeService
 
     public function deletarEspecialidade($id)
     {
+        AtendimentoService::limparCacheOpcoes();
         return Especialidade::destroy($id);
     }
 }

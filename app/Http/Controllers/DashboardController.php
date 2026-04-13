@@ -9,6 +9,7 @@ use App\Models\Enfermeiro;
 use App\Models\Especialidade;
 use Inertia\Inertia;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
@@ -42,75 +43,70 @@ class DashboardController extends Controller
             $query->where('enf_cod', $request->enf_cod);
         }
 
-        // Métricas Totais
+        // Metricas Totais
         $totalAtendimentos = (clone $query)->count();
         $uniquePacientes = (clone $query)->distinct('pac_cod')->count('pac_cod');
 
-        // Média de Atendimentos por Dia
+        // Media de Atendimentos por Dia
         $startDate = $request->filled('start_date') ? Carbon::parse($request->start_date) : (clone $query)->min('dt_atendimento');
         $endDate = $request->filled('end_date') ? Carbon::parse($request->end_date) : (clone $query)->max('dt_atendimento');
-        
+
         $startDate = $startDate ? Carbon::parse($startDate) : Carbon::today();
         $endDate = $endDate ? Carbon::parse($endDate) : Carbon::today();
-        
-        $days = max(1, $startDate->diffInDays($endDate) + 1); // +1 because same day = 1 day of work
+
+        $days = max(1, $startDate->diffInDays($endDate) + 1);
         $avgPorDia = round($totalAtendimentos / $days, 2);
 
-        // Agrupamentos com Eager Loading para nomes
+        // Agrupamentos com leftJoin (1 query cada, sem N+1)
         $porEspecialidade = (clone $query)
-            ->with('especialidade')
-            ->select('esp_cod', DB::raw('count(*) as total'))
-            ->groupBy('esp_cod')
+            ->select('especialidades.escp_desc as name', DB::raw('count(*) as total'))
+            ->leftJoin('especialidades', 'atendimentos.esp_cod', '=', 'especialidades.esp_cod')
+            ->groupBy('especialidades.escp_desc')
             ->get()
-            ->map(function ($item) {
-                return [
-                    'name' => $item->especialidade ? $item->especialidade->escp_desc : 'Sem Especialidade',
-                    'total' => $item->total
-                ];
-            });
+            ->map(fn ($item) => [
+                'name' => $item->name ?? 'Sem Especialidade',
+                'total' => $item->total,
+            ]);
 
         $porMedico = (clone $query)
-            ->with('medico')
-            ->select('med_cod', DB::raw('count(*) as total'))
-            ->groupBy('med_cod')
+            ->select('medicos.med_nome as name', DB::raw('count(*) as total'))
+            ->leftJoin('medicos', 'atendimentos.med_cod', '=', 'medicos.med_cod')
+            ->groupBy('medicos.med_nome')
             ->get()
-            ->map(function ($item) {
-                return [
-                    'name' => $item->medico ? $item->medico->med_nome : 'Sem Médico',
-                    'total' => $item->total
-                ];
-            });
+            ->map(fn ($item) => [
+                'name' => $item->name ?? 'Sem Medico',
+                'total' => $item->total,
+            ]);
 
         $porEnfermeiro = (clone $query)
-            ->with('enfermeiro')
-            ->select('enf_cod', DB::raw('count(*) as total'))
-            ->groupBy('enf_cod')
+            ->select('enfermeiros.enf_nome as name', DB::raw('count(*) as total'))
+            ->leftJoin('enfermeiros', 'atendimentos.enf_cod', '=', 'enfermeiros.enf_cod')
+            ->groupBy('enfermeiros.enf_nome')
             ->get()
-            ->map(function ($item) {
-                return [
-                    'name' => $item->enfermeiro ? $item->enfermeiro->enf_nome : 'Sem Enfermeiro',
-                    'total' => $item->total
-                ];
-            });
+            ->map(fn ($item) => [
+                'name' => $item->name ?? 'Sem Enfermeiro',
+                'total' => $item->total,
+            ]);
 
-        $medicos = Medico::select('med_cod as id', 'med_nome as name')->get();
-        $enfermeiros = Enfermeiro::select('enf_cod as id', 'enf_nome as name')->get();
-        $especialidades = Especialidade::select('esp_cod as id', 'escp_desc as name')->get();
+        // Cache das opcoes de filtro do dashboard (raramente mudam)
+        $options = Cache::remember('dashboard_options', 86400, function () {
+            return [
+                'medicos' => Medico::select('med_cod as id', 'med_nome as name')->orderBy('med_nome')->get(),
+                'enfermeiros' => Enfermeiro::select('enf_cod as id', 'enf_nome as name')->orderBy('enf_nome')->get(),
+                'especialidades' => Especialidade::select('esp_cod as id', 'escp_desc as name')->orderBy('escp_desc')->get(),
+            ];
+        });
 
         return Inertia::render('Dashboard', [
             'metrics' => [
                 'totalAtendimentos' => $totalAtendimentos,
                 'uniquePacientes' => $uniquePacientes,
                 'avgPorDia' => $avgPorDia,
-                'porEspecialidade' => $porEspecialidade, // list of obj: {name, total}
+                'porEspecialidade' => $porEspecialidade,
                 'porMedico' => $porMedico,
                 'porEnfermeiro' => $porEnfermeiro,
             ],
-            'options' => [
-                'medicos' => $medicos,
-                'enfermeiros' => $enfermeiros,
-                'especialidades' => $especialidades,
-            ],
+            'options' => $options,
             'filters' => $request->only(['start_date', 'end_date', 'esp_cod', 'med_cod', 'enf_cod'])
         ]);
     }

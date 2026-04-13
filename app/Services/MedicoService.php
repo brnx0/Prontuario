@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Medico;
+use App\Services\AtendimentoService;
 
 class MedicoService
 {
@@ -22,6 +23,7 @@ class MedicoService
 
     public function criarMedico(array $dados)
     {
+        AtendimentoService::limparCacheOpcoes();
         return Medico::create([
             'med_nome' => $dados['nomeMedico'],
             'crm' => $dados['crmMedico'],
@@ -30,6 +32,7 @@ class MedicoService
 
     public function atualizarMedico(string $id, array $dados)
     {
+        AtendimentoService::limparCacheOpcoes();
         $medico = Medico::findOrFail($id);
         $medico->update([
             'med_nome' => $dados['nomeMedico'],
@@ -40,6 +43,7 @@ class MedicoService
 
     public function inativarMedico($id, $status)
     {
+        AtendimentoService::limparCacheOpcoes();
         $medico = Medico::findOrFail($id);
         $medico->update(['ativo' => $status]);
         return $medico;
@@ -47,6 +51,7 @@ class MedicoService
 
     public function deletarMedico($id)
     {
+        AtendimentoService::limparCacheOpcoes();
         return Medico::destroy($id);
     }
 }
