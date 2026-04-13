@@ -48,6 +48,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./
           server-dir: /public_html/v2/
+          dangerous-clean-slate: true
           exclude: |
             **/.git*
             **/.git*/**
@@ -68,7 +69,6 @@ jobs:
             package.json
             package-lock.json
             Prontuario.rar
-            **/vendor/**
             **/storage/logs/**
             **/storage/framework/cache/data/**
             **/storage/framework/sessions/**
