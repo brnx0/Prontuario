@@ -66,7 +66,7 @@ const deleteEspecialidade = (id: string | number) => {
 };
 
 const toggleStatus = (id: string | number, status: string) => {
-    router.put('/especialidade', { espc_cod: id, status: status });
+    router.put('/especialidade-status', { espc_cod: id, status: status });
 };
 
 const saveEspecialidade = () => {

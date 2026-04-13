@@ -69,7 +69,7 @@ const deleteEnfermeiro = (id: string | number) => {
 };
 
 const toggleStatus = (id: string | number, status: string) => {
-    router.put('/enfermeiro', { enf_cod: id, status: status });
+    router.put('/enfermeiro-status', { enf_cod: id, status: status });
 };
 
 const saveEnfermeiro = () => {

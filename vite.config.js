@@ -23,4 +23,14 @@ export default defineConfig({
             '@': '/resources/js',
         },
     },
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    'vendor': ['vue', '@inertiajs/vue3'],
+                    'sweetalert': ['sweetalert2'],
+                },
+            },
+        },
+    },
 });

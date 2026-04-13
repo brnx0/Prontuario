@@ -69,7 +69,7 @@ const deleteMedico = (id: string | number) => {
 };
 
 const toggleStatus = (id: string | number, status: string) => {
-    router.put('/medico', { med_cod: id, status: status });
+    router.put('/medico-status', { med_cod: id, status: status });
 };
 
 const saveMedico = () => {

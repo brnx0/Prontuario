@@ -103,7 +103,7 @@ const deletePaciente = (id: string | number) => {
 };
 
 const toggleStatus = (id: string | number, status: string) => {
-    router.put('/paciente', { pac_cod: id, status: status });
+    router.put('/paciente-status', { pac_cod: id, status: status });
 };
 
 const savePaciente = () => {
