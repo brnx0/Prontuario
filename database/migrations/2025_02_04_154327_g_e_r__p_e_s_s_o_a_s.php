@@ -60,15 +60,15 @@ return new class extends Migration
         $table->uuid('atend_cod')->primary();
         $table->datetime('dt_atendimento');
         $table->string('situacao_queixa')->nullable();
-        $table->decimal('mmhg')->nullable();
-        $table->decimal('bpm')->nullable();
-        $table->decimal('rpm')->nullable();
-        $table->decimal('spo2')->nullable();
-        $table->decimal('temp')->nullable();
-        $table->decimal('kg')->nullable();
-        $table->decimal('hgt')->nullable();
-        $table->longtext('desc_caso')->nullable();
-        $table->longtext('receituario')->nullable();
+        $table->string('mmhg')->nullable()->length(8);
+        $table->string('bpm')->nullable()->length(8);
+        $table->string('rpm')->nullable()->length(8);
+        $table->string('spo2')->nullable()->length(8);
+        $table->string('temp')->nullable()->length(8);
+        $table->string('kg')->nullable()->length(8);
+        $table->string('hgt')->nullable()->length(8);
+        $table->longtext('desc_caso')->nullable()->length(2000);
+        $table->longtext('receituario')->nullable()->length(2000);
         });
 
 

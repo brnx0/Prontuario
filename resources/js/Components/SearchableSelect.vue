@@ -7,6 +7,10 @@ const props = defineProps<{
     labelKey: string;
     valueKey: string;
     placeholder?: string;
+    label?: string;
+    required?: boolean;
+    error?: string;
+    onSelect?: (option: any) => void;
 }>();
 
 const emit = defineEmits(['update:modelValue']);
@@ -30,6 +34,7 @@ const selectedOption = computed(() => {
 
 const selectOption = (option: any) => {
     emit('update:modelValue', option[props.valueKey]);
+    props.onSelect?.(option);
     isOpen.value = false;
     searchQuery.value = '';
 };
@@ -60,11 +65,21 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <div class="relative w-full" ref="selectRef">
+    <div class="w-full" ref="selectRef">
+        <!-- Label -->
+        <label v-if="label" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            {{ label }}
+            <span v-if="required" class="text-red-500"> *</span>
+        </label>
+
         <!-- Selected Value Display -->
-        <div 
+        <div class="relative">
+        <div
             @click="toggleOpen"
-            class="mt-1 flex items-center justify-between w-full rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 bg-white px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer text-gray-700 dark:text-gray-300 min-h-[42px]"
+            class="mt-1 flex items-center justify-between w-full rounded-md border bg-white px-3 py-2 text-sm shadow-sm focus:outline-none cursor-pointer min-h-[42px]"
+            :class="error
+                ? 'border-red-500 dark:border-red-500 focus:border-red-500 focus:ring-red-500 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                : 'border-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-gray-700 dark:text-gray-300'"
         >
             <span v-if="selectedOption" class="truncate font-medium">{{ selectedOption[labelKey] }}</span>
             <span v-else class="text-gray-400">{{ placeholder || 'Selecione...' }}</span>
@@ -77,13 +92,13 @@ onUnmounted(() => {
         <!-- Dropdown Options -->
         <transition leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100" leave-to-class="opacity-0">
             <div v-if="isOpen" class="absolute z-10 mt-1 w-full rounded-md bg-white dark:bg-gray-800 shadow-xl border border-gray-200 dark:border-gray-700">
-                <div class="p-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-750">
-                    <input 
-                        type="text" 
-                        v-model="searchQuery" 
+                <div class="p-2 border-b border-gray-200 dark:border-gray-700 dark:bg-gray-750">
+                    <input
+                        type="text"
+                        v-model="searchQuery"
                         ref="searchInputRef"
                         class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                        placeholder="Pesquisar..." 
+                        placeholder="Pesquisar..."
                         @click.stop
                     />
                 </div>
@@ -91,8 +106,8 @@ onUnmounted(() => {
                     <li v-if="filteredOptions.length === 0" class="cursor-default select-none py-2 px-4 text-gray-500 dark:text-gray-400">
                         Nenhum resultado encontrado.
                     </li>
-                    <li 
-                        v-for="option in filteredOptions" 
+                    <li
+                        v-for="option in filteredOptions"
                         :key="option[valueKey]"
                         @click="selectOption(option)"
                         class="relative cursor-pointer select-none py-2.5 pl-4 pr-9 hover:bg-indigo-600 hover:text-white text-gray-900 dark:text-gray-200 group"
@@ -101,7 +116,7 @@ onUnmounted(() => {
                         <span class="block truncate font-normal" :class="{'font-semibold': modelValue === option[valueKey]}">
                             {{ option[labelKey] }}
                         </span>
-                        
+
                         <span v-if="modelValue === option[valueKey]" class="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600 group-hover:text-white">
                             <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
@@ -111,5 +126,9 @@ onUnmounted(() => {
                 </ul>
             </div>
         </transition>
+        </div>
+
+        <!-- Error Message -->
+        <p v-if="error" class="mt-1 text-sm text-red-600 dark:text-red-400">{{ error }}</p>
     </div>
 </template>

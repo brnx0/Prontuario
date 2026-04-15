@@ -20,12 +20,10 @@ defineProps<{
                 Detalhes do Atendimento #{{ atendimento?.atend_cod }}
             </h2>
         </template>
-
+z   
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg p-6">
-                    <p class="text-gray-500 mb-4">Página de detalhes migrada para Vue.</p>
-                    
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg p-6">   
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <h3 class="font-bold text-gray-700 dark:text-gray-300">Paciente</h3>
@@ -46,7 +44,7 @@ defineProps<{
                     </div>
 
                     <div class="mt-6">
-                        <Link href="/atendimento" class="text-indigo-600 hover:text-indigo-900">Voltar para a Lista</Link>
+                        <Link href="/historico" class="text-indigo-600 hover:text-indigo-900">Voltar para a Lista</Link>
                     </div>
                 </div>
             </div>
