@@ -29,12 +29,20 @@ const form = useForm({
     descricaoCaso: '',
     receituario: ''
 });
+// Cria um objeto reativo onde a chave é o nome do campo e o valor é a mensagem de erro
+const errors = ref<Record<string, string>>({})
+const validateForm = () =>{
+    errors.value = {};
+    !form.pac_cod ? errors.value.paciente = 'Paciente é obrigatório' : null;
+    !form.dtAtendimento ? errors.value.dtAtendimento = 'Data do Atendimento é obrigatório' : null;
+    return Object.keys(errors.value).length === 0
+}
 
 const submitAtendimento = () => {
+    if(!validateForm()) return;
     form.post('/atendimento', {
         preserveScroll: true,
         onSuccess: () => {
-            // Form is successfully submitted and toast will appear via AppLayout
             form.reset('situacao', 'mmhg', 'bpm', 'rpm', 'spo2', 'temp', 'kg', 'hgt', 'descricaoCaso', 'receituario');
         }
     });
@@ -43,14 +51,7 @@ const submitAtendimento = () => {
 
 <template>
     <Head title="Novo Atendimento" />
-
     <AppLayout>
-        <!-- <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                Novo Atendimento
-            </h2>
-        </template> -->
-
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg p-8">
@@ -59,15 +60,16 @@ const submitAtendimento = () => {
                         <!-- Primeira Linha -->
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
                             <div class="md:col-span-3">
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                    Paciente <span class="text-red-500">*</span>
-                                </label>
-                                <SearchableSelect 
+                                <SearchableSelect
                                     v-model="form.pac_cod"
                                     :options="pacientes"
                                     labelKey="nome"
                                     valueKey="pac_cod"
                                     placeholder="🔍 Buscar paciente..."
+                                    label="Paciente"
+                                    :required="true"
+                                    :error="errors.paciente"
+                                    :onSelect="()=> delete errors.paciente"
                                 />
                             </div>
                             <div>
@@ -81,36 +83,39 @@ const submitAtendimento = () => {
                         <!-- Segunda Linha -->
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                             <div class="md:col-span-2">
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Médico(a)</label>
-                                <SearchableSelect 
+                                <SearchableSelect
                                     v-model="form.med_cod"
                                     :options="medicos"
                                     labelKey="med_nome"
                                     valueKey="med_cod"
                                     placeholder="🔍 Buscar médico(a)..."
+                                    label="Médico(a)"
+                                
                                 />
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Especialidade</label>
-                                <SearchableSelect 
+                                <SearchableSelect
                                     v-model="form.esp_cod"
                                     :options="especialidades"
                                     labelKey="escp_desc"
                                     valueKey="esp_cod"
                                     placeholder="🔍 Buscar especialidade..."
+                                    label="Especialidade"
+                                
                                 />
                             </div>
                         </div>
 
                         <!-- Terceira Linha -->
                         <div class="mb-6">
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Enfermeiro(a)</label>
-                            <SearchableSelect 
+                            <SearchableSelect
                                 v-model="form.enfermeiro"
                                 :options="enfermeiros"
                                 labelKey="enf_nome"
                                 valueKey="enf_cod"
                                 placeholder="🔍 Buscar enfermeiro(a)..."
+                                label="Enfermeiro(a)"
+                           
                             />
                         </div>
 
@@ -124,44 +129,44 @@ const submitAtendimento = () => {
                         <div class="grid grid-cols-2 md:grid-cols-7 gap-4 mb-6">
                             <div>
                                 <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">Pressão (mmHg)</label>
-                                <input v-model="form.mmhg" type="text" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm">
+                                <input v-model="form.mmhg" type="text" maxlength="8" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm">
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">FC (bpm)</label>
-                                <input v-model="form.bpm" type="text" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm">
+                                <input v-model="form.bpm" type="text"  maxlength="8"  class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm">
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">FC (rpm)</label>
-                                <input v-model="form.rpm" type="text" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm">
+                                <input v-model="form.rpm" type="text" maxlength="8"  class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm">
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">SPO2 (%)</label>
-                                <input v-model="form.spo2" type="text" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm">
+                                <input v-model="form.spo2" type="text" maxlength="8"  class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm">
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">Temp &deg;C</label>
-                                <input v-model="form.temp" type="text" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm">
+                                <input v-model="form.temp" type="text" maxlength="8"  class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm">
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">Peso (Kg)</label>
-                                <input v-model="form.kg" type="text" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm">
+                                <input v-model="form.kg" type="text" maxlength="8"  class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm">
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">HGT (mg/dl)</label>
-                                <input v-model="form.hgt" type="text" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm">
+                                <input v-model="form.hgt" type="text" maxlength="8"  class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm">
                             </div>
                         </div>
 
                         <!-- Descrição do Caso Textarea -->
                         <div class="mb-6">
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Descrição do Caso Clínico</label>
-                            <textarea v-model="form.descricaoCaso" rows="4" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm"></textarea>
+                            <textarea v-model="form.descricaoCaso" rows="4"  maxlength="2000" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm"></textarea>
                         </div>
 
                         <!-- Receituario -->
                         <div class="mb-6">
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Receituário</label>
-                            <textarea v-model="form.receituario" rows="4" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm placeholder-gray-400" placeholder="Escreva a receita médica aqui..."></textarea>
+                            <textarea v-model="form.receituario" rows="4" maxlength="2000"  class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm placeholder-gray-400" placeholder="Escreva a receita médica aqui..."></textarea>
                         </div>
 
                         <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
