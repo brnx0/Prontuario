@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\EspecialidadeService;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -30,6 +31,7 @@ class EspecialidadeController extends Controller
 
         try {
             $this->especialidadeService->criarEspecialidade($request->all());
+            Cache::forget('dashboard_options');
             return back()->with('success', 'Especialidade cadastrada com sucesso!');
         } catch (QueryException $th) {
             return back()->with('error', 'Erro ao cadastrar: ' . $th->getMessage());
@@ -44,6 +46,7 @@ class EspecialidadeController extends Controller
 
         try {
             $this->especialidadeService->atualizarEspecialidade($id, $request->all());
+            Cache::forget('dashboard_options');
             return back()->with('success', 'Especialidade atualizada com sucesso!');
         } catch (QueryException $th) {
             return back()->with('error', 'Erro ao atualizar: ' . $th->getMessage());
@@ -53,10 +56,11 @@ class EspecialidadeController extends Controller
     public function updateStatus(Request $request)    
     {
         try {
-             $this->especialidadeService->inativarEspecialidade($request->espc_cod, $request->status);
-             return back()->with('success','Status atualizado com sucesso');
+            $this->especialidadeService->inativarEspecialidade($request->espc_cod, $request->status);
+            Cache::forget('dashboard_options');
+            return back()->with('success','Status atualizado com sucesso');
         } catch(QueryException $th) {
-             return back()->with('error','Aconteceu um erro, tente novamente em alguns instantes');
+            return back()->with('error','Aconteceu um erro, tente novamente em alguns instantes');
         }
     }
 
@@ -64,6 +68,7 @@ class EspecialidadeController extends Controller
     {
         try {
             $this->especialidadeService->deletarEspecialidade($request->espc_cod);
+            Cache::forget('dashboard_options');
             return back()->with('success', 'Registro Excluído com sucesso!');
         } catch (QueryException $th) {
             return back()->with('error', $th->getMessage());

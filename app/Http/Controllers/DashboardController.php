@@ -24,23 +24,23 @@ class DashboardController extends Controller
             ]);
         }
 
-        $query = Atendimento::query();
+        $query = Atendimento::query()->from('atendimentos as atend');
 
         // Aplicar Filtros
         if ($request->filled('start_date')) {
-            $query->whereDate('dt_atendimento', '>=', $request->start_date);
+            $query->whereDate('atend.dt_atendimento', '>=', $request->start_date);
         }
         if ($request->filled('end_date')) {
-            $query->whereDate('dt_atendimento', '<=', $request->end_date);
+            $query->whereDate('atend.dt_atendimento', '<=', $request->end_date);
         }
         if ($request->filled('esp_cod')) {
-            $query->where('esp_cod', $request->esp_cod);
+            $query->where('atend.esp_cod', $request->esp_cod);
         }
         if ($request->filled('med_cod')) {
-            $query->where('med_cod', $request->med_cod);
+            $query->where('atend.med_cod', $request->med_cod);
         }
         if ($request->filled('enf_cod')) {
-            $query->where('enf_cod', $request->enf_cod);
+            $query->where('atend.enf_cod', $request->enf_cod);
         }
 
         // Metricas Totais
@@ -59,9 +59,9 @@ class DashboardController extends Controller
 
         // Agrupamentos com leftJoin (1 query cada, sem N+1)
         $porEspecialidade = (clone $query)
-            ->select('especialidades.escp_desc as name', DB::raw('count(*) as total'))
-            ->leftJoin('especialidades', 'atendimentos.esp_cod', '=', 'especialidades.esp_cod')
-            ->groupBy('especialidades.escp_desc')
+            ->select('escp_desc as name', DB::raw('count(*) as total'))
+            ->leftJoin('especialidades as espec', 'atend.esp_cod', '=', 'espec.esp_cod')
+            ->groupBy('espec.escp_desc')
             ->get()
             ->map(fn ($item) => [
                 'name' => $item->name ?? 'Sem Especialidade',
@@ -69,9 +69,9 @@ class DashboardController extends Controller
             ]);
 
         $porMedico = (clone $query)
-            ->select('medicos.med_nome as name', DB::raw('count(*) as total'))
-            ->leftJoin('medicos', 'atendimentos.med_cod', '=', 'medicos.med_cod')
-            ->groupBy('medicos.med_nome')
+            ->select('med.med_nome as name', DB::raw('count(*) as total'))
+            ->leftJoin('medicos as med', 'atend.med_cod', '=', 'med.med_cod')
+            ->groupBy('med.med_nome')
             ->get()
             ->map(fn ($item) => [
                 'name' => $item->name ?? 'Sem Medico',
@@ -79,9 +79,9 @@ class DashboardController extends Controller
             ]);
 
         $porEnfermeiro = (clone $query)
-            ->select('enfermeiros.enf_nome as name', DB::raw('count(*) as total'))
-            ->leftJoin('enfermeiros', 'atendimentos.enf_cod', '=', 'enfermeiros.enf_cod')
-            ->groupBy('enfermeiros.enf_nome')
+            ->select('enf_nome as name', DB::raw('count(*) as total'))
+            ->leftJoin('enfermeiros as enf', 'atend.enf_cod', '=', 'enf.enf_cod')
+            ->groupBy('enf.enf_nome')
             ->get()
             ->map(fn ($item) => [
                 'name' => $item->name ?? 'Sem Enfermeiro',

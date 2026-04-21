@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\MedicoService;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 
 class MedicoController extends Controller
@@ -31,6 +32,7 @@ class MedicoController extends Controller
 
         try {
             $this->medicoService->criarMedico($request->all());
+            Cache::forget('dashboard_options');
             return back()->with('success', 'Médico cadastrado com sucesso!');
         } catch (QueryException $th) {
             return back()->with('error', 'Erro ao cadastrar: ' . $th->getMessage());
@@ -46,6 +48,7 @@ class MedicoController extends Controller
 
         try {
             $this->medicoService->atualizarMedico($id, $request->all());
+            Cache::forget('dashboard_options');
             return back()->with('success', 'Médico atualizado com sucesso!');
         } catch (QueryException $th) {
             return back()->with('error', 'Erro ao atualizar: ' . $th->getMessage());
@@ -56,6 +59,7 @@ class MedicoController extends Controller
     {
        try {
             $this->medicoService->inativarMedico($request->med_cod, $request->status);
+            Cache::forget('dashboard_options');
             return back()->with('success','Status atualizado com sucesso');
        } catch(QueryException $th) {
             return back()->with('error','Aconteceu um erro, tente novamente em alguns instantes');
@@ -69,6 +73,7 @@ class MedicoController extends Controller
         }
         try {
             $this->medicoService->deletarMedico($request->med_cod);
+            Cache::forget('dashboard_options');
             return back()->with('success','Registro deletado.');
         } catch(QueryException $th) {
             return back()->with('error', 'Não foi possivel excluir o registro, tente inativar');
