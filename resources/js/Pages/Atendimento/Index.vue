@@ -19,6 +19,7 @@ const form = useForm({
     esp_cod: '',
     enfermeiro: '',
     situacao: '',
+    cid10: '',
     mmhg: '',
     bpm: '',
     rpm: '',
@@ -52,6 +53,12 @@ const submitAtendimento = () => {
 <template>
     <Head title="Novo Atendimento" />
     <AppLayout>
+        <template #header>
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                Novo Atendimento
+            </h2>
+        </template>
+
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg p-8">
@@ -74,7 +81,7 @@ const submitAtendimento = () => {
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                    Data do Atendimento <span class="text-red-500">*</span>
+                                    Data do Atendimento
                                 </label>
                                 <input v-model="form.dtAtendimento" type="datetime-local" required class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm">
                             </div>
@@ -119,10 +126,16 @@ const submitAtendimento = () => {
                             />
                         </div>
 
-                        <!-- Situação / Queixa -->
-                        <div class="mb-6">
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Situação/Queixa</label>
-                            <input v-model="form.situacao" type="text" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm">
+                        <!-- Situação / Queixa e CID-10 -->
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                            <div class="md:col-span-3">
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Situação/Queixa</label>
+                                <input v-model="form.situacao" type="text" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">CID-10</label>
+                                <input v-model="form.cid10" type="text" maxlength="10" placeholder="Ex: J11, K21.0" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm">
+                            </div>
                         </div>
 
                         <!-- Sinais Vitais -->
@@ -136,7 +149,7 @@ const submitAtendimento = () => {
                                 <input v-model="form.bpm" type="text"  maxlength="8"  class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm">
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">FC (rpm)</label>
+                                <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">FR (rpm)</label>
                                 <input v-model="form.rpm" type="text" maxlength="8"  class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm">
                             </div>
                             <div>

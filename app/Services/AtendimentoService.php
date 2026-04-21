@@ -75,7 +75,25 @@ class AtendimentoService
             $query->whereDate('dt_atendimento', $filtros['dataAtendimento']);
         }
 
+        if (!empty($filtros['med_cod'])) {
+            $query->where('med_cod', $filtros['med_cod']);
+        }
+
+        if (!empty($filtros['esp_cod'])) {
+            $query->where('esp_cod', $filtros['esp_cod']);
+        }
+
         return $query->paginate(10);
+    }
+
+    public function getOpcoesHistorico(): array
+    {
+        return Cache::remember('historico_opcoes', 86400, function () {
+            return [
+                'medicos'       => Medico::select('med_cod', 'med_nome')->where('ativo', 'S')->orderBy('med_nome')->get(),
+                'especialidades' => Especialidade::select('esp_cod', 'escp_desc')->where('ativo', 'S')->orderBy('escp_desc')->get(),
+            ];
+        });
     }
 
     public function getFichaAtendimento($atend_cod)
@@ -127,7 +145,8 @@ class AtendimentoService
                 'esp_cod'         => $dados['esp_cod'] ?? null,
                 'med_cod'         => $dados['med_cod'] ?? null,
                 'pac_cod'         => $dados['pac_cod'] ?? null,
-                'receituario'     => $dados['receituario'] ?? null
+                'receituario'     => $dados['receituario'] ?? null,
+                'cid10'           => $dados['cid10'] ?? null
             ]);
 
             DB::commit();

@@ -76,8 +76,11 @@ class AtendimentoController extends Controller
     public function historico(Request $request)
     {
         $atendimentos = $this->atendimentoService->getHistoricoFiltrado($request->all());
+        $opcoes = $this->atendimentoService->getOpcoesHistorico();
         return Inertia::render('Atendimento/Historico', [
-            'atendimentos' => $atendimentos
+            'atendimentos' => $atendimentos,
+            'medicos'       => $opcoes['medicos'],
+            'especialidades' => $opcoes['especialidades'],
         ]);
     }
 

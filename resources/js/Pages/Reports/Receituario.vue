@@ -23,13 +23,15 @@ onMounted(() => {
 </script>
 
 <template>
+
     <Head title="Receituário" />
 
     <!-- Print Control Bar (Hidden when printing) -->
     <div class="print:hidden bg-gray-100 p-4 flex justify-between items-center shadow-md mb-8">
         <div>
             <h2 class="text-lg font-bold text-gray-700">Modo de Impressão</h2>
-            <p class="text-sm text-gray-500 mt-1"><i class="fa-solid fa-pen"></i> Você pode clicar em qualquer texto abaixo para editar livremente antes de imprimir.</p>
+            <p class="text-sm text-gray-500 mt-1"><i class="fa-solid fa-pen"></i> Você pode clicar em qualquer texto
+                abaixo para editar livremente antes de imprimir.</p>
         </div>
         <div class="space-x-2">
             <button @click="fechar" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
@@ -42,8 +44,9 @@ onMounted(() => {
     </div>
 
     <!-- Printable Area -->
-    <div contenteditable="true" spellcheck="false" class="max-w-4xl mx-auto p-12 bg-white text-black font-sans leading-relaxed outline-none focus:ring-2 focus:ring-blue-300 print:focus:ring-0 rounded mt-4">
-        
+    <div contenteditable="true" spellcheck="false"
+        class="max-w-4xl mx-auto p-12 bg-white text-black font-sans leading-relaxed outline-none focus:ring-2 focus:ring-blue-300 print:focus:ring-0 rounded mt-4">
+
         <!-- Header -->
         <div class="flex items-center justify-center mb-8 border-b-2 border-black pb-4">
             <img src="/assets/img/brasao-municipio.png" alt="Brasão" class="h-24 mr-6" />
@@ -83,6 +86,9 @@ onMounted(() => {
         padding: 0;
         background-color: white;
     }
-    @page { margin: 2cm; }
+
+    @page {
+        margin: 2cm;
+    }
 }
 </style>
