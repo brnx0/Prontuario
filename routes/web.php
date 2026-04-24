@@ -2,6 +2,7 @@
 use App\Http\Controllers\AtendimentoController;
 use App\Http\Controllers\EnfermeiroController;
 use App\Http\Controllers\EspecialidadeController;
+use App\Http\Controllers\MddaController;
 use App\Http\Controllers\MedicoController;
 use App\Http\Controllers\PacienteController;
 use App\Http\Controllers\UserController;
@@ -51,6 +52,15 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/especialidade/{id}',[EspecialidadeController::class,'update'])->name('especialidade.update');
     Route::delete('/especialidade',[EspecialidadeController::class,'destroy'])->name('especialidade.destroy');
     Route::put('/especialidade-status',[EspecialidadeController::class,'updateStatus'])->name('especialidade.status');
+
+    /**MDDA */
+    Route::get('/mdda', [MddaController::class, 'index'])->name('mdda.index');
+    Route::get('/mdda/novo', [MddaController::class, 'create'])->name('mdda.create');
+    Route::post('/mdda', [MddaController::class, 'store'])->name('mdda.store');
+    Route::get('/mdda/{id}/editar', [MddaController::class, 'edit'])->name('mdda.edit');
+    Route::put('/mdda/{id}', [MddaController::class, 'update'])->name('mdda.update');
+    Route::post('/mdda/{id}/finalizar', [MddaController::class, 'finalizar'])->name('mdda.finalizar');
+    Route::get('/mdda/{id}/imprimir', [MddaController::class, 'print'])->name('mdda.print');
 
     /**Dashboard */
     Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
