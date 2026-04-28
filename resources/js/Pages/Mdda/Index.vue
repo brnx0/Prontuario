@@ -33,7 +33,7 @@ defineProps<{ relatorios: Paginate<Relatorio> }>();
                     MDDA — Monitorização das Doenças Diarreicas Agudas
                 </h2>
                 <a href="/mdda/novo"
-                    class="bg-green-600 hover:bg-green-700 text-white text-sm font-bold py-2 px-5 rounded shadow transition">
+                    class="ml-3 bg-green-600 hover:bg-green-700 text-white text-sm font-bold py-2 px-5 rounded shadow transition">
                     + Novo Relatório
                 </a>
             </div>
@@ -61,7 +61,7 @@ defineProps<{ relatorios: Paginate<Relatorio> }>();
                         </thead>
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                             <tr v-for="rel in relatorios.data" :key="rel.id"
-                                class="hover:bg-gray-50 dark:hover:bg-gray-750 transition">
+                                class="hover:bg-gray-50 dark:hover:bg-gray-700 transition">
                                 <td class="px-6 py-3 font-semibold">{{ rel.semana_epidemiologica }}</td>
                                 <td class="px-6 py-3">{{ rel.ano }}</td>
                                 <td class="px-6 py-3">{{ rel.municipio || '—' }}</td>

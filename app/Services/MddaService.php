@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Helpers\EpidemiologicalWeek;
 use App\Models\Atendimento;
+use App\Models\Especialidade;
 use App\Models\MddaCaso;
 use App\Models\MddaRelatorio;
 use Carbon\Carbon;
@@ -38,13 +39,19 @@ class MddaService
     {
         $range = EpidemiologicalWeek::getRange($semana, $ano);
 
-        return Atendimento::with('paciente')
+        $especialidades = Especialidade::where('incluir_mdda', 'S')->pluck('esp_cod');
+
+        $query = Atendimento::with('paciente')
             ->whereBetween('dt_atendimento', [
                 $range['start']->format('Y-m-d H:i:s'),
                 $range['end']->format('Y-m-d H:i:s'),
-            ])
-            ->orderBy('dt_atendimento')
-            ->get();
+            ]);
+
+        if ($especialidades->isNotEmpty()) {
+            $query->whereIn('esp_cod', $especialidades);
+        }
+
+        return $query->orderBy('dt_atendimento')->get();
     }
 
     public function calcularFaixaEtaria(Atendimento $atendimento): array

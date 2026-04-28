@@ -107,7 +107,17 @@ const removeLinha = (index: number) => {
     form.casos.forEach((c: any, i: number) => { c.numero_ordem = i + 1; });
 };
 
-const salvar = () => { form.put(`/mdda/${props.relatorio.id}`); };
+const errosValidacao = ref<string[]>([]);
+
+const salvar = () => {
+    errosValidacao.value = [];
+    form.casos.forEach((caso: MddaCaso, i: number) => {
+        if (!caso.data_atendimento) errosValidacao.value.push(`Linha ${i + 1}: data de atendimento é obrigatória.`);
+        if (!caso.nome_paciente?.trim()) errosValidacao.value.push(`Linha ${i + 1}: nome do paciente é obrigatório.`);
+    });
+    if (errosValidacao.value.length > 0) return;
+    form.put(`/mdda/${props.relatorio.id}`);
+};
 
 const finalizar = () => {
     if (confirm('Deseja finalizar este relatório?')) {
@@ -164,7 +174,7 @@ const finalizar = () => {
                         <!-- Responsável -->
                         <div>
                             <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Responsável</label>
-                            <input v-model="form.responsavel_nome" type="text"
+                            <input v-model="form.responsavel_nome" type="text" maxlength="255"
                                 class="block w-full rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-sm shadow-sm" />
                         </div>
                     </div>
@@ -199,23 +209,27 @@ const finalizar = () => {
                                     <th class="border border-gray-300 dark:border-gray-600 px-2 py-1 text-left min-w-[180px]">Procedência</th>
                                     <th class="border border-gray-300 dark:border-gray-600 px-2 py-1 text-left w-24">Zona</th>
                                     <th class="border border-gray-300 dark:border-gray-600 px-2 py-1 text-left w-28">Data Sintomas</th>
-                                    <th class="border border-gray-300 dark:border-gray-600 px-2 py-1 text-left w-20">Plano</th>
+                                    <th class="border border-gray-300 dark:border-gray-600 px-2 py-1 text-left w-28">Plano</th>
                                     <th class="border border-gray-300 dark:border-gray-600 px-2 py-1 w-8"></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr v-for="(caso, index) in form.casos" :key="index"
-                                    class="hover:bg-gray-50 dark:hover:bg-gray-750">
+                                    class="hover:bg-gray-50 dark:hover:bg-gray-700">
                                     <td class="border border-gray-200 dark:border-gray-600 px-2 py-1 text-center text-gray-500">
                                         {{ caso.numero_ordem }}
                                     </td>
                                     <td class="border border-gray-200 dark:border-gray-600 px-1 py-1">
                                         <input v-model="caso.data_atendimento" type="date"
-                                            class="w-full text-xs rounded border-0 bg-transparent dark:text-white focus:ring-1 focus:ring-blue-500 px-1" />
+                                            :readonly="!!caso.atendimento_id"
+                                            :class="caso.atendimento_id ? 'bg-gray-100 dark:bg-gray-600 cursor-not-allowed text-gray-500 dark:text-gray-400' : 'bg-transparent dark:text-white'"
+                                            class="w-full text-xs rounded border-0 focus:ring-1 focus:ring-blue-500 px-1" />
                                     </td>
                                     <td class="border border-gray-200 dark:border-gray-600 px-1 py-1">
-                                        <input v-model="caso.nome_paciente" type="text" required
-                                            class="w-full text-xs rounded border-0 bg-transparent dark:text-white focus:ring-1 focus:ring-blue-500 px-1" />
+                                        <input v-model="caso.nome_paciente" type="text" required maxlength="255"
+                                            :readonly="!!caso.atendimento_id"
+                                            :class="caso.atendimento_id ? 'bg-gray-100 dark:bg-gray-600 cursor-not-allowed text-gray-500 dark:text-gray-400' : 'bg-transparent dark:text-white'"
+                                            class="w-full text-xs rounded border-0 focus:ring-1 focus:ring-blue-500 px-1" />
                                     </td>
                                     <td class="border border-gray-200 dark:border-gray-600 px-1 py-1">
                                         <select v-model="caso.faixa_etaria"
@@ -228,11 +242,11 @@ const finalizar = () => {
                                         </select>
                                     </td>
                                     <td class="border border-gray-200 dark:border-gray-600 px-1 py-1">
-                                        <input v-model="caso.idade_display" type="text" placeholder="ex: 8 meses"
+                                        <input v-model="caso.idade_display" type="text" placeholder="ex: 8 meses" maxlength="255"
                                             class="w-full text-xs rounded border-0 bg-transparent dark:text-white focus:ring-1 focus:ring-blue-500 px-1" />
                                     </td>
                                     <td class="border border-gray-200 dark:border-gray-600 px-1 py-1">
-                                        <input v-model="caso.procedencia" type="text" placeholder="Rua, Bairro..."
+                                        <input v-model="caso.procedencia" type="text" placeholder="Rua, Bairro..." maxlength="255"
                                             class="w-full text-xs rounded border-0 bg-transparent dark:text-white focus:ring-1 focus:ring-blue-500 px-1" />
                                     </td>
                                     <td class="border border-gray-200 dark:border-gray-600 px-1 py-1">
@@ -271,6 +285,15 @@ const finalizar = () => {
                     <div class="mt-4 text-xs text-gray-400 dark:text-gray-500 space-y-0.5">
                         <p>* Faixa etária: em dias até 1 mês, em meses até 1 ano, em anos para os demais.</p>
                         <p>** Plano A = sem desidratação/domiciliar; B = desidratação/observação (TRO); C = grave/reidratação venosa.</p>
+                    </div>
+
+                    <!-- Erros de validação -->
+                    <div v-if="errosValidacao.length > 0"
+                        class="mt-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-300 dark:border-red-700 rounded text-sm text-red-700 dark:text-red-300">
+                        <p class="font-semibold mb-1">Corrija os seguintes erros antes de salvar:</p>
+                        <ul class="list-disc list-inside space-y-0.5">
+                            <li v-for="erro in errosValidacao" :key="erro">{{ erro }}</li>
+                        </ul>
                     </div>
 
                     <!-- Ações -->

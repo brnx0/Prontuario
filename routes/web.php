@@ -52,6 +52,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/especialidade/{id}',[EspecialidadeController::class,'update'])->name('especialidade.update');
     Route::delete('/especialidade',[EspecialidadeController::class,'destroy'])->name('especialidade.destroy');
     Route::put('/especialidade-status',[EspecialidadeController::class,'updateStatus'])->name('especialidade.status');
+    Route::put('/especialidade-mdda',[EspecialidadeController::class,'updateMdda'])->name('especialidade.mdda');
 
     /**MDDA */
     Route::get('/mdda', [MddaController::class, 'index'])->name('mdda.index');

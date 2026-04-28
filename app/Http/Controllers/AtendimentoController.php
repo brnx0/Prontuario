@@ -62,6 +62,17 @@ class AtendimentoController extends Controller
             return redirect()->back()->with("error", "Requisição vazia.");
         }
 
+        $request->validate([
+            'pac_cod'       => 'required|string',
+            'dtAtendimento' => 'required|date',
+            'esp_cod'       => 'required|string|exists:especialidades,esp_cod',
+        ], [
+            'pac_cod.required'       => 'Paciente é obrigatório.',
+            'dtAtendimento.required' => 'Data do atendimento é obrigatória.',
+            'esp_cod.required'       => 'Especialidade é obrigatória.',
+            'esp_cod.exists'         => 'Especialidade inválida.',
+        ]);
+
         try {
             $atendimento = $this->atendimentoService->criarAtendimento($request->all());
             return redirect('/atendimento/'.$atendimento->atend_cod);

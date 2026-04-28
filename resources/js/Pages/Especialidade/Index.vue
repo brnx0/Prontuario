@@ -24,7 +24,8 @@ const formTitle = ref('Nova Especialidade');
 
 const form = useForm({
     espc_cod: '',
-    descEspc: ''
+    descEspc: '',
+    incluirMdda: false,
 });
 
 const isEditing = ref(false);
@@ -42,6 +43,7 @@ const editEspecialidade = (esp: any) => {
     formTitle.value = 'Editar Especialidade';
     form.espc_cod = esp.esp_cod || esp.espc_cod;
     form.descEspc = esp.escp_desc;
+    form.incluirMdda = esp.incluir_mdda === 'S';
     form.clearErrors();
     showModal.value = true;
 };
@@ -69,24 +71,28 @@ const toggleStatus = (id: string | number, status: string) => {
     router.put('/especialidade-status', { espc_cod: id, status: status });
 };
 
+const toggleMdda = (id: string | number, atual: string) => {
+    router.put('/especialidade-mdda', {
+        espc_cod: id,
+        incluir_mdda: atual === 'S' ? 'N' : 'S',
+    });
+};
+
 const saveEspecialidade = () => {
+    const payload = {
+        descEspc: form.descEspc,
+        incluirMdda: form.incluirMdda ? 'S' : 'N',
+    };
+
     if (isEditing.value) {
-        form.put(`/especialidade/${form.espc_cod}`, {
+        form.transform(() => ({ ...payload, espc_cod: form.espc_cod })).put(`/especialidade/${form.espc_cod}`, {
             preserveScroll: true,
-            onSuccess: () => {
-                showModal.value = false;
-                form.reset();
-                form.clearErrors();
-            }
+            onSuccess: () => { showModal.value = false; form.reset(); form.clearErrors(); }
         });
     } else {
-        form.post('/especialidade', {
+        form.transform(() => payload).post('/especialidade', {
             preserveScroll: true,
-            onSuccess: () => {
-                showModal.value = false;
-                form.reset();
-                form.clearErrors();
-            }
+            onSuccess: () => { showModal.value = false; form.reset(); form.clearErrors(); }
         });
     }
 };
@@ -136,26 +142,49 @@ const saveEspecialidade = () => {
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                             <thead class="bg-gray-50 dark:bg-gray-900">
                                 <tr>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Especialidade</th>
-                                    <th
-                                        class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Ações</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Especialidade
+                                    </th>
+                                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        MDDA
+                                    </th>
+                                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Ações
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                                 <tr v-for="esp in dataLists" :key="esp.esp_cod">
-                                    <td class="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">{{
-                                        esp.escp_desc }}
+                                    <td class="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
+                                        {{ esp.escp_desc }}
                                     </td>
+
+                                    <!-- Toggle MDDA -->
+                                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                                        <button
+                                            @click="toggleMdda(esp.esp_cod || esp.espc_cod, esp.incluir_mdda)"
+                                            :title="esp.incluir_mdda === 'S' ? 'Incluído no MDDA — clique para remover' : 'Não incluído no MDDA — clique para adicionar'"
+                                            :class="esp.incluir_mdda === 'S'
+                                                ? 'bg-green-100 text-green-700 dark:bg-green-800 dark:text-green-100 hover:bg-green-200'
+                                                : 'bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-500 hover:bg-gray-200'"
+                                            class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full transition"
+                                        >
+                                            <span
+                                                :class="esp.incluir_mdda === 'S' ? 'bg-green-500' : 'bg-gray-400'"
+                                                class="w-2 h-2 rounded-full inline-block"
+                                            ></span>
+                                            {{ esp.incluir_mdda === 'S' ? 'Incluída' : 'Não incluída' }}
+                                        </button>
+                                    </td>
+
                                     <td class="px-6 py-4 whitespace-nowrap text-center space-x-2 flex justify-center">
                                         <button v-if="esp.ativo === 'S'"
                                             @click="toggleStatus(esp.esp_cod || esp.espc_cod, 'N')"
                                             class="text-green-600 bg-green-100 hover:bg-green-200 p-2 rounded">
                                             Ativo
                                         </button>
-                                        <button v-else @click="toggleStatus(esp.esp_cod || esp.espc_cod, 'S')"
+                                        <button v-else
+                                            @click="toggleStatus(esp.esp_cod || esp.espc_cod, 'S')"
                                             class="text-red-600 bg-red-100 hover:bg-red-200 p-2 rounded">
                                             Inativo
                                         </button>
@@ -174,7 +203,6 @@ const saveEspecialidade = () => {
                             </tbody>
                         </table>
                     </div>
-                    <!-- Pagination Component -->
                     <div class="px-6 py-4 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
                         <Pagination :links="especialidades.links" />
                     </div>
@@ -183,16 +211,12 @@ const saveEspecialidade = () => {
         </div>
 
         <!-- Modal -->
-        <div v-if="showModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog"
-            aria-modal="true">
+        <div v-if="showModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @click="showModal = false">
-                </div>
-
+                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @click="showModal = false"></div>
                 <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
-                <div
-                    class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full">
+                <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full">
                     <form @submit.prevent="saveEspecialidade">
                         <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                             <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white" id="modal-title">
@@ -200,17 +224,33 @@ const saveEspecialidade = () => {
                             </h3>
 
                             <div class="mt-4">
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Descrição
-                                </label>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Descrição</label>
                                 <input v-model="form.descEspc" type="text" required
                                     class="mt-1 block w-full border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded-md shadow-sm">
-                                <p v-if="form.errors.descEspc" class="mt-1 text-sm text-red-500">{{ form.errors.descEspc
-                                    }}</p>
+                                <p v-if="form.errors.descEspc" class="mt-1 text-sm text-red-500">{{ form.errors.descEspc }}</p>
+                            </div>
+
+                            <!-- Checkbox MDDA -->
+                            <div class="mt-5">
+                                <label class="flex items-center gap-3 cursor-pointer select-none">
+                                    <input
+                                        type="checkbox"
+                                        v-model="form.incluirMdda"
+                                        class="rounded border-gray-300 dark:border-gray-600 text-green-600 shadow-sm w-4 h-4"
+                                    />
+                                    <span class="text-sm text-gray-700 dark:text-gray-300">
+                                        Incluir no relatório MDDA
+                                    </span>
+                                </label>
+                                <p class="text-xs text-gray-400 dark:text-gray-500 mt-1 ml-7">
+                                    Atendimentos desta especialidade serão importados ao gerar o Impresso I.
+                                </p>
                             </div>
                         </div>
+
                         <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                             <button type="submit" :disabled="form.processing"
-                                class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">
+                                class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 sm:ml-3 sm:w-auto sm:text-sm">
                                 Salvar
                             </button>
                             <button type="button" @click="showModal = false"

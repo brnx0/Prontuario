@@ -6,13 +6,13 @@ import { ref, watch, computed } from 'vue';
 const props = defineProps<{
     semanaAtual: number;
     anoAtual: number;
+    nomeUsuario: string;
 }>();
 
 function getStartOfSE1(year: number): Date {
     const jan4 = new Date(year, 0, 4);
-    const dow = jan4.getDay();
     const se1 = new Date(jan4);
-    se1.setDate(jan4.getDate() - dow);
+    se1.setDate(jan4.getDate() - jan4.getDay());
     return se1;
 }
 
@@ -20,22 +20,15 @@ function calcularSE(dateStr: string): { semana: number; ano: number } | null {
     if (!dateStr) return null;
     const [y, m, d] = dateStr.split('-').map(Number);
     const date = new Date(y, m - 1, d);
-
     const se1 = getStartOfSE1(date.getFullYear());
 
     if (date < se1) {
         const prevSe1 = getStartOfSE1(date.getFullYear() - 1);
-        const weeks = Math.floor((date.getTime() - prevSe1.getTime()) / (7 * 86400000));
-        return { semana: weeks + 1, ano: date.getFullYear() - 1 };
+        return { semana: Math.floor((date.getTime() - prevSe1.getTime()) / (7 * 86400000)) + 1, ano: date.getFullYear() - 1 };
     }
-
     const nextSe1 = getStartOfSE1(date.getFullYear() + 1);
-    if (date >= nextSe1) {
-        return { semana: 1, ano: date.getFullYear() + 1 };
-    }
-
-    const weeks = Math.floor((date.getTime() - se1.getTime()) / (7 * 86400000));
-    return { semana: weeks + 1, ano: date.getFullYear() };
+    if (date >= nextSe1) return { semana: 1, ano: date.getFullYear() + 1 };
+    return { semana: Math.floor((date.getTime() - se1.getTime()) / (7 * 86400000)) + 1, ano: date.getFullYear() };
 }
 
 function formatDate(date: Date): string {
@@ -65,7 +58,7 @@ watch(dataSemana, (val) => {
 const form = useForm({
     semana_epidemiologica: props.semanaAtual,
     ano: props.anoAtual,
-    responsavel_nome: '',
+    responsavel_nome: props.nomeUsuario,
 });
 
 const submit = () => {
@@ -87,12 +80,11 @@ const submit = () => {
                 <div class="bg-white dark:bg-gray-800 shadow-xl sm:rounded-lg p-8">
 
                     <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">
-                        Selecione qualquer dia da semana desejada. A Semana Epidemiológica será calculada automaticamente.
+                        Selecione qualquer dia da semana desejada. Os atendimentos serão filtrados pelas especialidades
+                        marcadas em <a href="/especialidade" class="text-blue-600 hover:underline">Especialidades</a>.
                     </p>
 
                     <form @submit.prevent="submit">
-
-                        <!-- Date picker -->
                         <div class="mb-6">
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Data da semana
@@ -105,17 +97,14 @@ const submit = () => {
                             />
                         </div>
 
-                        <!-- SE calculada -->
-                        <div v-if="seCalculada" class="mb-6 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-md border border-blue-200 dark:border-blue-800">
+                        <div v-if="seCalculada"
+                            class="mb-6 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-md border border-blue-200 dark:border-blue-800">
                             <p class="text-sm font-semibold text-blue-800 dark:text-blue-200">
                                 SE {{ seCalculada.semana }} / {{ seCalculada.ano }}
                             </p>
-                            <p class="text-xs text-blue-600 dark:text-blue-400 mt-0.5">
-                                {{ rangeLabel }}
-                            </p>
+                            <p class="text-xs text-blue-600 dark:text-blue-400 mt-0.5">{{ rangeLabel }}</p>
                         </div>
 
-                        <!-- Responsável -->
                         <div class="mb-8">
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Responsável

@@ -27,8 +27,9 @@ class MddaController extends Controller
     public function create()
     {
         return Inertia::render('Mdda/Create', [
-            'semanaAtual' => EpidemiologicalWeek::getCurrent(),
-            'anoAtual'    => EpidemiologicalWeek::getCurrentYear(),
+            'semanaAtual'   => EpidemiologicalWeek::getCurrent(),
+            'anoAtual'      => EpidemiologicalWeek::getCurrentYear(),
+            'nomeUsuario'   => auth()->user()?->name ?? '',
         ]);
     }
 

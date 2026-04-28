@@ -112,6 +112,12 @@ watch(() => page.props.flash, (flash: any) => {
                                     </DropdownLink>
                                 </NavDropdown>
 
+                                <NavDropdown label="Relatórios" :active="page.url.startsWith('/mdda')">
+                                    <DropdownLink href="/mdda" :active="page.url === '/mdda'">
+                                        MDDA
+                                    </DropdownLink>
+                                </NavDropdown>
+
                                 <NavDropdown v-if="user.is_admin" label="Administração" :active="route ? route().current('admin.usuarios') : false">
                                     <DropdownLink href="/admin/usuarios" :active="route ? route().current('admin.usuarios') : false">
                                         Usuários
@@ -177,6 +183,12 @@ watch(() => page.props.flash, (flash: any) => {
                         </Link>
                         <Link href="/especialidade" class="block w-full ps-6 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600">
                             Especialidades
+                        </Link>
+
+                        <!-- Relatórios -->
+                        <div class="ps-3 pe-4 py-2 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Relatórios</div>
+                        <Link href="/mdda" class="block w-full ps-6 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600">
+                            MDDA
                         </Link>
 
                         <!-- Administração -->
