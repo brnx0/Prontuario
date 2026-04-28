@@ -34,7 +34,7 @@ class MddaController extends Controller
     }
 
     private const MUNICIPIO     = 'PREFEITURA MUNICIPAL DE SANTO AMARO';
-    private const UNIDADE_SAUDE = 'POLICLÍNICA MUNICIPAL REGIS PACHECO';
+    private const UNIDADE_SAUDE = 'VIGILÂNCIA EPIDEMIOLÓGICA (VIEP)';
 
     public function store(Request $request)
     {
