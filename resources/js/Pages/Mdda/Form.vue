@@ -92,6 +92,16 @@ watch(dataSemana, (val) => {
     }
 });
 
+// Atualiza o formulário quando o Inertia trouxer novos dados do servidor
+// (ex: após sincronização de atendimentos)
+watch(() => props.relatorio, (novo) => {
+    form.semana_epidemiologica = novo.semana_epidemiologica;
+    form.ano = novo.ano;
+    form.responsavel_nome = novo.responsavel_nome;
+    form.casos = novo.casos.map(c => ({ ...c }));
+    dataSemana.value = seToDateStr(novo.semana_epidemiologica, novo.ano);
+}, { deep: true });
+
 const addLinha = () => {
     form.casos.push({
         id: null, atendimento_id: null,
@@ -123,6 +133,16 @@ const finalizar = () => {
     if (confirm('Deseja finalizar este relatório?')) {
         router.post(`/mdda/${props.relatorio.id}/finalizar`);
     }
+};
+
+const sincronizando = ref(false);
+
+const sincronizar = () => {
+    if (!confirm('Sincronizar buscará atendimentos novos da semana e os adicionará ao relatório sem remover os registros existentes. Continuar?')) return;
+    sincronizando.value = true;
+    router.post(`/mdda/${props.relatorio.id}/sincronizar`, {}, {
+        onFinish: () => { sincronizando.value = false; },
+    });
 };
 </script>
 
@@ -301,6 +321,11 @@ const finalizar = () => {
                         <button type="button" @click="salvar" :disabled="form.processing"
                             class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded shadow disabled:opacity-50 transition">
                             Salvar
+                        </button>
+                        <button type="button" @click="sincronizar" :disabled="sincronizando || form.processing"
+                            class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-6 rounded shadow disabled:opacity-50 transition"
+                            title="Adiciona atendimentos novos da semana sem remover os registros existentes">
+                            {{ sincronizando ? 'Sincronizando...' : 'Sincronizar Atendimentos' }}
                         </button>
                         <button type="button" @click="finalizar"
                             :disabled="relatorio.status === 'finalizado' || form.processing"

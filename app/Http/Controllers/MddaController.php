@@ -126,6 +126,22 @@ class MddaController extends Controller
         }
     }
 
+    public function sincronizar(string $id)
+    {
+        try {
+            $relatorio = MddaRelatorio::findOrFail($id);
+            $novos = $this->mddaService->sincronizarCasos($relatorio);
+
+            $mensagem = $novos > 0
+                ? "{$novos} novo(s) atendimento(s) adicionado(s) ao relatório."
+                : 'Nenhum atendimento novo encontrado para esta semana.';
+
+            return redirect("/mdda/{$relatorio->id}/editar")->with('success', $mensagem);
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', 'Erro ao sincronizar: ' . $e->getMessage());
+        }
+    }
+
     public function print(string $id)
     {
         try {

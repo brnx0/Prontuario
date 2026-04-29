@@ -61,6 +61,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/mdda/{id}/editar', [MddaController::class, 'edit'])->name('mdda.edit');
     Route::put('/mdda/{id}', [MddaController::class, 'update'])->name('mdda.update');
     Route::post('/mdda/{id}/finalizar', [MddaController::class, 'finalizar'])->name('mdda.finalizar');
+    Route::post('/mdda/{id}/sincronizar', [MddaController::class, 'sincronizar'])->name('mdda.sincronizar');
     Route::get('/mdda/{id}/imprimir', [MddaController::class, 'print'])->name('mdda.print');
 
     /**Dashboard */
