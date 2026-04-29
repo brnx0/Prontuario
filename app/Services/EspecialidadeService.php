@@ -22,7 +22,8 @@ class EspecialidadeService
     {
         AtendimentoService::limparCacheOpcoes();
         return Especialidade::create([
-            'escp_desc' => $dados['descEspc']
+            'escp_desc'    => $dados['descEspc'],
+            'incluir_mdda' => $dados['incluirMdda'] ?? 'N',
         ]);
     }
 
@@ -31,9 +32,15 @@ class EspecialidadeService
         AtendimentoService::limparCacheOpcoes();
         $especialidade = Especialidade::findOrFail($id);
         $especialidade->update([
-            'escp_desc' => $dados['descEspc']
+            'escp_desc'    => $dados['descEspc'],
+            'incluir_mdda' => $dados['incluirMdda'] ?? $especialidade->incluir_mdda,
         ]);
         return $especialidade;
+    }
+
+    public function toggleMdda(string $id, string $valor): void
+    {
+        Especialidade::findOrFail($id)->update(['incluir_mdda' => $valor]);
     }
 
     public function inativarEspecialidade($id, $status)

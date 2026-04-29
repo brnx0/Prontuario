@@ -36,6 +36,7 @@ const validateForm = () =>{
     errors.value = {};
     !form.pac_cod ? errors.value.paciente = 'Paciente é obrigatório' : null;
     !form.dtAtendimento ? errors.value.dtAtendimento = 'Data do Atendimento é obrigatório' : null;
+    !form.esp_cod ? errors.value.especialidade = 'Especialidade é obrigatória' : null;
     return Object.keys(errors.value).length === 0
 }
 
@@ -108,7 +109,9 @@ const submitAtendimento = () => {
                                     valueKey="esp_cod"
                                     placeholder="🔍 Buscar especialidade..."
                                     label="Especialidade"
-                                
+                                    :required="true"
+                                    :error="errors.especialidade"
+                                    :onSelect="() => delete errors.especialidade"
                                 />
                             </div>
                         </div>

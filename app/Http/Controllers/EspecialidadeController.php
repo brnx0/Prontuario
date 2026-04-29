@@ -53,7 +53,7 @@ class EspecialidadeController extends Controller
         }
     }
 
-    public function updateStatus(Request $request)    
+    public function updateStatus(Request $request)
     {
         try {
             $this->especialidadeService->inativarEspecialidade($request->espc_cod, $request->status);
@@ -61,6 +61,16 @@ class EspecialidadeController extends Controller
             return back()->with('success','Status atualizado com sucesso');
         } catch(QueryException $th) {
             return back()->with('error','Aconteceu um erro, tente novamente em alguns instantes');
+        }
+    }
+
+    public function updateMdda(Request $request)
+    {
+        try {
+            $this->especialidadeService->toggleMdda($request->espc_cod, $request->incluir_mdda);
+            return back()->with('success', 'Configuração MDDA atualizada.');
+        } catch (QueryException $th) {
+            return back()->with('error', 'Erro ao atualizar: ' . $th->getMessage());
         }
     }
 

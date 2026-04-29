@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str; 
 
 class Especialidade extends Model{
-    protected $fillable = ['escp_desc','ativo'];
+    protected $fillable = ['escp_desc', 'ativo', 'incluir_mdda'];
     const updated_at = null;
     const created_at = null;
     protected $primaryKey = 'esp_cod';

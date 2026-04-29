@@ -1,39 +1,39 @@
 <script setup lang="ts">
-import AppLayout from '@/Layouts/AppLayout.vue';
-import { Head, useForm, router } from '@inertiajs/vue3';
-import { ref, computed } from 'vue';
-import Pagination from '@/Components/Pagination.vue';
-import Swal from 'sweetalert2';
+import AppLayout from "@/Layouts/AppLayout.vue";
+import { Head, useForm, router } from "@inertiajs/vue3";
+import { ref, computed } from "vue";
+import Pagination from "@/Components/Pagination.vue";
+import Swal from "sweetalert2";
 
 const props = defineProps<{
     enfermeiros: any;
 }>();
 
-const dataLists = computed(() => Array.isArray(props.enfermeiros) ? props.enfermeiros : (props.enfermeiros.data || []));
+const dataLists = computed(() => (Array.isArray(props.enfermeiros) ? props.enfermeiros : props.enfermeiros.data || []));
 
 const filterForm = useForm({
-    filtroNome: '',
-    filtroCRE: ''
+    filtroNome: "",
+    filtroCRE: "",
 });
 
 const submitFilter = () => {
-    filterForm.get('/enfermeiro', { preserveState: true });
+    filterForm.get("/enfermeiro", { preserveState: true });
 };
 
 const showModal = ref(false);
-const formTitle = ref('Cadastro de Enfermeiro');
+const formTitle = ref("Cadastro de Enfermeiro");
 
 const form = useForm({
-    enf_cod: '',
-    nomeEnf: '',
-    creEnf: ''
+    enf_cod: "",
+    nomeEnf: "",
+    creEnf: "",
 });
 
 const isEditing = ref(false);
 
 const openCreateModal = () => {
     isEditing.value = false;
-    formTitle.value = 'Cadastro de Enfermeiro';
+    formTitle.value = "Cadastro de Enfermeiro";
     form.reset();
     form.clearErrors();
     showModal.value = true;
@@ -41,7 +41,7 @@ const openCreateModal = () => {
 
 const editEnfermeiro = (enfermeiro: any) => {
     isEditing.value = true;
-    formTitle.value = 'Editar Enfermeiro';
+    formTitle.value = "Editar Enfermeiro";
     form.enf_cod = enfermeiro.enf_cod;
     form.nomeEnf = enfermeiro.enf_nome;
     form.creEnf = enfermeiro.cre;
@@ -51,16 +51,16 @@ const editEnfermeiro = (enfermeiro: any) => {
 
 const deleteEnfermeiro = (id: string | number) => {
     Swal.fire({
-        title: 'Tem certeza?',
+        title: "Tem certeza?",
         text: "Este enfermeiro será deletado definitivamente!",
-        icon: 'warning',
+        icon: "warning",
         showCancelButton: true,
-        confirmButtonColor: '#dc2626',
-        cancelButtonColor: '#6b7280',
-        confirmButtonText: 'Sim, deletar!',
-        cancelButtonText: 'Cancelar',
-        background: document.documentElement.classList.contains('dark') ? '#1f2937' : '#fff',
-        color: document.documentElement.classList.contains('dark') ? '#fff' : '#1f2937'
+        confirmButtonColor: "#dc2626",
+        cancelButtonColor: "#6b7280",
+        confirmButtonText: "Sim, deletar!",
+        cancelButtonText: "Cancelar",
+        background: document.documentElement.classList.contains("dark") ? "#1f2937" : "#fff",
+        color: document.documentElement.classList.contains("dark") ? "#fff" : "#1f2937",
     }).then((result) => {
         if (result.isConfirmed) {
             router.delete(`/enfermeiro`, { data: { enf_cod: id } });
@@ -69,7 +69,7 @@ const deleteEnfermeiro = (id: string | number) => {
 };
 
 const toggleStatus = (id: string | number, status: string) => {
-    router.put('/enfermeiro-status', { enf_cod: id, status: status });
+    router.put("/enfermeiro-status", { enf_cod: id, status: status });
 };
 
 const saveEnfermeiro = () => {
@@ -80,32 +80,30 @@ const saveEnfermeiro = () => {
                 showModal.value = false;
                 form.reset();
                 form.clearErrors();
-            }
+            },
         });
     } else {
-        form.post('/enfermeiro', {
+        form.post("/enfermeiro", {
             preserveScroll: true,
             onSuccess: () => {
                 showModal.value = false;
                 form.reset();
                 form.clearErrors();
-            }
+            },
         });
     }
 };
 </script>
 
 <template>
-
     <Head title="Enfermeiros" />
 
     <AppLayout>
         <template #header>
             <div class="flex justify-between w-full items-center">
-                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                    Enfermeiros
-                </h2>
-                <button @click="openCreateModal"
+                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Enfermeiros</h2>
+                <button
+                    @click="openCreateModal"
                     class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded shadow">
                     Adicionar +
                 </button>
@@ -114,24 +112,28 @@ const saveEnfermeiro = () => {
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-
                 <!-- Filters -->
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg p-6 mb-6">
                     <form @submit.prevent="submitFilter" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nome</label>
-                            <input v-model="filterForm.filtroNome" type="text"
+                            <input
+                                v-model="filterForm.filtroNome"
+                                type="text"
                                 class="mt-1 block w-full rounded-md border-gray-300 dark:bg-gray-700 dark:text-white"
-                                placeholder="Digite um nome">
+                                placeholder="Digite um nome" />
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">CRE</label>
-                            <input v-model="filterForm.filtroCRE" type="text"
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Coren</label>
+                            <input
+                                v-model="filterForm.filtroCRE"
+                                type="text"
                                 class="mt-1 block w-full rounded-md border-gray-300 dark:bg-gray-700 dark:text-white"
-                                placeholder="Digite o CRE">
+                                placeholder="Digite o Coren" />
                         </div>
                         <div>
-                            <button type="submit"
+                            <button
+                                type="submit"
                                 class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow">
                                 Filtrar
                             </button>
@@ -147,38 +149,48 @@ const saveEnfermeiro = () => {
                                 <tr>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Nome do Enfermeiro</th>
+                                        Nome do Enfermeiro
+                                    </th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        CRE</th>
+                                        Coren
+                                    </th>
                                     <th
                                         class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Ações</th>
+                                        Ações
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                                 <tr v-for="enf in dataLists" :key="enf.enf_cod">
-                                    <td class="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">{{
-                                        enf.enf_nome }}
+                                    <td class="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
+                                        {{ enf.enf_nome }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">{{ enf.cre
-                                        }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
+                                        {{ enf.cre }}
+                                    </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-center space-x-2 flex justify-center">
-                                        <button v-if="enf.ativo === 'S'" @click="toggleStatus(enf.enf_cod, 'N')"
+                                        <button
+                                            v-if="enf.ativo === 'S'"
+                                            @click="toggleStatus(enf.enf_cod, 'N')"
                                             class="text-green-600 bg-green-100 hover:bg-green-200 p-2 rounded">
                                             Ativo
                                         </button>
-                                        <button v-else @click="toggleStatus(enf.enf_cod, 'S')"
+                                        <button
+                                            v-else
+                                            @click="toggleStatus(enf.enf_cod, 'S')"
                                             class="text-red-600 bg-red-100 hover:bg-red-200 p-2 rounded">
                                             Inativo
                                         </button>
 
-                                        <button @click="editEnfermeiro(enf)"
+                                        <button
+                                            @click="editEnfermeiro(enf)"
                                             class="text-yellow-600 bg-yellow-100 hover:bg-yellow-200 p-2 rounded">
                                             Editar
                                         </button>
 
-                                        <button @click="deleteEnfermeiro(enf.enf_cod)"
+                                        <button
+                                            @click="deleteEnfermeiro(enf.enf_cod)"
                                             class="text-white bg-red-600 hover:bg-red-700 p-2 rounded">
                                             Deletar
                                         </button>
@@ -196,11 +208,16 @@ const saveEnfermeiro = () => {
         </div>
 
         <!-- Modal -->
-        <div v-if="showModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog"
+        <div
+            v-if="showModal"
+            class="fixed inset-0 z-50 overflow-y-auto"
+            aria-labelledby="modal-title"
+            role="dialog"
             aria-modal="true">
             <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @click="showModal = false">
-                </div>
+                <div
+                    class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+                    @click="showModal = false"></div>
 
                 <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
@@ -214,31 +231,44 @@ const saveEnfermeiro = () => {
 
                             <div class="mt-4 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
                                 <div class="sm:col-span-4">
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nome
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                        >Nome
                                     </label>
-                                    <input v-model="form.nomeEnf" type="text" required
-                                        class="mt-1 block w-full border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded-md shadow-sm">
-                                    <p v-if="form.errors.nomeEnf" class="mt-1 text-sm text-red-500">{{
-                                        form.errors.nomeEnf }}
+                                    <input
+                                        v-model="form.nomeEnf"
+                                        type="text"
+                                        required
+                                        class="mt-1 block w-full border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded-md shadow-sm" />
+                                    <p v-if="form.errors.nomeEnf" class="mt-1 text-sm text-red-500">
+                                        {{ form.errors.nomeEnf }}
                                     </p>
                                 </div>
 
                                 <div class="sm:col-span-2">
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">CRE</label>
-                                    <input v-model="form.creEnf" type="text" required
-                                        class="mt-1 block w-full border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded-md shadow-sm">
-                                    <p v-if="form.errors.creEnf" class="mt-1 text-sm text-red-500">{{ form.errors.creEnf
-                                        }}</p>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                        >Coren</label
+                                    >
+                                    <input
+                                        v-model="form.creEnf"
+                                        type="text"
+                                        required
+                                        class="mt-1 block w-full border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded-md shadow-sm" />
+                                    <p v-if="form.errors.creEnf" class="mt-1 text-sm text-red-500">
+                                        {{ form.errors.creEnf }}
+                                    </p>
                                 </div>
                             </div>
                         </div>
                         <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                            <button type="submit" :disabled="form.processing"
+                            <button
+                                type="submit"
+                                :disabled="form.processing"
                                 class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">
                                 Salvar
                             </button>
-                            <button type="button" @click="showModal = false"
+                            <button
+                                type="button"
+                                @click="showModal = false"
                                 class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white dark:bg-gray-800 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
                                 Cancelar
                             </button>
@@ -247,6 +277,5 @@ const saveEnfermeiro = () => {
                 </div>
             </div>
         </div>
-
     </AppLayout>
 </template>
