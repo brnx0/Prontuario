@@ -40,17 +40,18 @@ class MddaService
         $range = EpidemiologicalWeek::getRange($semana, $ano);
 
         $especialidades = Especialidade::where('incluir_mdda', 'S')->pluck('esp_cod');
-
+     
         $query = Atendimento::with('paciente')
             ->whereBetween('dt_atendimento', [
                 $range['start']->format('Y-m-d H:i:s'),
                 $range['end']->format('Y-m-d H:i:s'),
             ]);
-
+        
         if ($especialidades->isNotEmpty()) {
             $query->whereIn('esp_cod', $especialidades);
         }
 
+        
         return $query->orderBy('dt_atendimento')->get();
     }
 
@@ -140,6 +141,52 @@ class MddaService
                 ]);
             }
         });
+    }
+
+    public function sincronizarCasos(MddaRelatorio $relatorio): int
+    {
+        $atendimentos = $this->extrairDaSemana(
+            $relatorio->semana_epidemiologica,
+            $relatorio->ano
+        );
+
+        $idsExistentes = $relatorio->casos()
+            ->whereNotNull('atendimento_id')
+            ->pluck('atendimento_id')
+            ->flip();
+
+        $novos = $atendimentos->filter(
+            fn($a) => !$idsExistentes->has((string) $a->atend_cod)
+        );
+
+        if ($novos->isEmpty()) {
+            return 0;
+        }
+
+        $proximaOrdem = ($relatorio->casos()->max('numero_ordem') ?? 0) + 1;
+
+        DB::transaction(function () use ($relatorio, $novos, &$proximaOrdem) {
+            foreach ($novos as $atendimento) {
+                $faixa = $this->calcularFaixaEtaria($atendimento);
+                $dtAtend = Carbon::parse($atendimento->getRawOriginal('dt_atendimento'));
+
+                MddaCaso::create([
+                    'mdda_relatorio_id'       => $relatorio->id,
+                    'atendimento_id'          => $atendimento->atend_cod,
+                    'numero_ordem'            => $proximaOrdem++,
+                    'data_atendimento'        => $dtAtend->format('Y-m-d'),
+                    'nome_paciente'           => $atendimento->paciente?->nome ?? '',
+                    'procedencia'             => null,
+                    'faixa_etaria'            => $faixa['faixa'],
+                    'idade_display'           => $faixa['display'],
+                    'zona'                    => 'IGN',
+                    'data_primeiros_sintomas' => null,
+                    'plano_tratamento'        => 'IGN',
+                ]);
+            }
+        });
+
+        return $novos->count();
     }
 
     public function prepararParaFrontend(MddaRelatorio $relatorio): array
