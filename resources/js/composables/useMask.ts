@@ -25,3 +25,15 @@ export function maskCep(value: string): string {
         .slice(0, 8)
         .replace(/(\d{5})(\d)/, '$1-$2');
 }
+
+export function maskDate(value: string): string {
+    return value
+        .replace(/\D/g, '')
+        .slice(0, 8)
+        .replace(/(\d{2})(\d)/, '$1/$2')
+        .replace(/(\d{2})(\d)/, '$1/$2');
+}
+
+export function useMask() {
+    return { maskCpf, maskPhone, maskCep, maskDate };
+}

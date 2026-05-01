@@ -4,8 +4,8 @@ import { Head, useForm, router } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 import Pagination from '@/Components/Pagination.vue';
 import Swal from 'sweetalert2';
-import { maskCpf, maskPhone, maskCep } from '@/composables/useMask';
-
+import {useMask} from '../../composables/useMask';
+const {maskCpf, maskPhone, maskCep, maskDate} = useMask()
 const props = defineProps<{
     query: any;
 }>();
@@ -172,6 +172,11 @@ const savePaciente = () => {
         });
     }
 };
+const formatarData = (data: string)=> {
+  if (!data) return;
+  const [dia, mes, ano] = data.split('-')
+  return `${dia}/${mes}/${ano}`
+}
 </script>
 
 <template>
@@ -265,8 +270,8 @@ const savePaciente = () => {
                                     <td class="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">{{
                                         paciente.cpf }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">{{ new
-                                        Date(paciente.nascimento).toLocaleDateString('pt-BR') }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
+                                        {{ paciente.nascimento ? formatarData(paciente.nascimento) : '-' }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">{{
                                         paciente.cartao_sus || paciente.sus }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-center space-x-2 flex justify-center">
