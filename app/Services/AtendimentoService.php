@@ -71,8 +71,12 @@ class AtendimentoService
             });
         }
 
-        if (!empty($filtros['dataAtendimento'])) {
-            $query->whereDate('dt_atendimento', $filtros['dataAtendimento']);
+        if (!empty($filtros['dataInicio'])) {
+            $query->whereDate('dt_atendimento', '>=', $filtros['dataInicio']);
+        }
+
+        if (!empty($filtros['dataFim'])) {
+            $query->whereDate('dt_atendimento', '<=', $filtros['dataFim']);
         }
 
         if (!empty($filtros['med_cod'])) {
@@ -94,6 +98,31 @@ class AtendimentoService
                 'especialidades' => Especialidade::select('esp_cod', 'escp_desc')->where('ativo', 'S')->orderBy('escp_desc')->get(),
             ];
         });
+    }
+
+    public function getHistoricoParaExportar(array $filtros)
+    {
+        $query = Atendimento::with(['paciente', 'medico', 'especialidade'])->orderBy('dt_atendimento', 'desc');
+
+        if (!empty($filtros['nome'])) {
+            $query->whereHas('paciente', function($q) use ($filtros) {
+                $q->where('nome', 'LIKE', '%' . $filtros['nome'] . '%');
+            });
+        }
+        if (!empty($filtros['dataInicio'])) {
+            $query->whereDate('dt_atendimento', '>=', $filtros['dataInicio']);
+        }
+        if (!empty($filtros['dataFim'])) {
+            $query->whereDate('dt_atendimento', '<=', $filtros['dataFim']);
+        }
+        if (!empty($filtros['med_cod'])) {
+            $query->where('med_cod', $filtros['med_cod']);
+        }
+        if (!empty($filtros['esp_cod'])) {
+            $query->where('esp_cod', $filtros['esp_cod']);
+        }
+
+        return $query->get();
     }
 
     public function getFichaAtendimento($atend_cod)

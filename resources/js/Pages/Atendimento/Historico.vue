@@ -16,12 +16,19 @@ const dataLists = computed(() =>
         : props.atendimentos?.data || [],
 );
 
+const total = computed(() => props.atendimentos?.total ?? dataLists.value.length);
+
 const filterForm = useForm({
     nome: "",
-    dataAtendimento: "",
+    dataInicio: "",
+    dataFim: "",
     med_cod: "",
     esp_cod: "",
 });
+
+const hasActiveFilters = computed(() =>
+    !!(filterForm.nome || filterForm.dataInicio || filterForm.dataFim || filterForm.med_cod || filterForm.esp_cod)
+);
 
 const submitFilter = () => {
     filterForm.get("/historico", { preserveState: true });
@@ -29,10 +36,21 @@ const submitFilter = () => {
 
 const clearFilter = () => {
     filterForm.nome = "";
-    filterForm.dataAtendimento = "";
+    filterForm.dataInicio = "";
+    filterForm.dataFim = "";
     filterForm.med_cod = "";
     filterForm.esp_cod = "";
     filterForm.get("/historico", { preserveState: true });
+};
+
+const exportarPDF = () => {
+    const params = new URLSearchParams();
+    if (filterForm.nome) params.append("nome", filterForm.nome);
+    if (filterForm.dataInicio) params.append("dataInicio", filterForm.dataInicio);
+    if (filterForm.dataFim) params.append("dataFim", filterForm.dataFim);
+    if (filterForm.med_cod) params.append("med_cod", filterForm.med_cod);
+    if (filterForm.esp_cod) params.append("esp_cod", filterForm.esp_cod);
+    window.open(`/historico-exportar?${params.toString()}`, "_blank");
 };
 
 const showModal = ref(false);
@@ -43,82 +61,121 @@ const abrirAtendimento = (atendimento: any) => {
     showModal.value = true;
 };
 
-const imprimirFicha = (cod: number) => {
+const imprimirFicha = (cod: string) => {
     window.open(`/relatorio/${cod}`, "_blank");
 };
 
-const imprimirReceita = (cod: number) => {
+const imprimirReceita = (cod: string) => {
     window.open(`/receita/${cod}`, "_blank");
 };
 
-
+const formatDate = (dt: string) => {
+    if (!dt) return "-";
+    const d = new Date(dt.replace(" ", "T"));
+    if (isNaN(d.getTime())) return dt;
+    return (
+        d.toLocaleDateString("pt-BR") +
+        " " +
+        d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
+    );
+};
 </script>
 
 <template>
-
     <Head title="Histórico de Atendimentos" />
 
     <AppLayout>
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <!-- Banner de Consulta -->
-                <div
-                    class="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6 flex items-center gap-3">
-                    <svg class="h-6 w-6 text-blue-500 dark:text-blue-400 flex-shrink-0" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
+        <div class="py-8">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+
+                <!-- Page Header -->
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
-                        <p class="text-sm font-semibold text-blue-800 dark:text-blue-300">Modo Consulta</p>
-                        <p class="text-xs text-blue-600 dark:text-blue-400">Esta tela é apenas para visualização de
-                            registros. Nenhuma alteração pode ser realizada.</p>
+                        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Histórico de Atendimentos</h1>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                            Visualização somente leitura dos registros de atendimento.
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-3 flex-shrink-0">
+                        <span
+                            class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300">
+                            {{ total }} registro{{ total !== 1 ? 's' : '' }}
+                        </span>
+                        <button @click="exportarPDF"
+                            class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold py-2 px-4 rounded-lg shadow-sm transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            Exportar PDF
+                        </button>
                     </div>
                 </div>
 
                 <!-- Filters -->
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg p-6 mb-6">
+                <div
+                    class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-5">
+                    <div class="flex items-center gap-2 mb-4">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z" />
+                        </svg>
+                        <h2 class="text-sm font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                            Filtros
+                        </h2>
+                        <span v-if="hasActiveFilters"
+                            class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400">
+                            Ativo
+                        </span>
+                    </div>
                     <form @submit.prevent="submitFilter"
-                        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+                        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         <div class="lg:col-span-2">
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nome do
-                                Paciente</label>
+                            <label
+                                class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Paciente</label>
                             <input v-model="filterForm.nome" type="text"
-                                class="mt-1 block w-full rounded-md border-gray-300 dark:bg-gray-700 dark:text-white"
-                                placeholder="Digite o nome" />
+                                class="block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                placeholder="Nome do paciente..." />
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Data do
-                                Atendimento</label>
-                            <input v-model="filterForm.dataAtendimento" type="date"
-                                class="mt-1 block w-full rounded-md border-gray-300 dark:bg-gray-700 dark:text-white" />
+                            <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Data
+                                Início</label>
+                            <input v-model="filterForm.dataInicio" type="date"
+                                class="block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500" />
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Médico</label>
+                            <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Data
+                                Fim</label>
+                            <input v-model="filterForm.dataFim" type="date"
+                                :min="filterForm.dataInicio || undefined"
+                                class="block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500" />
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Médico</label>
                             <select v-model="filterForm.med_cod"
-                                class="mt-1 block w-full rounded-md border-gray-300 dark:bg-gray-700 dark:text-white">
-                                <option value="">Todos</option>
+                                class="block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                <option value="">Todos os médicos</option>
                                 <option v-for="m in medicos" :key="m.med_cod" :value="m.med_cod">{{ m.med_nome }}
                                 </option>
                             </select>
                         </div>
                         <div>
                             <label
-                                class="block text-sm font-medium text-gray-700 dark:text-gray-300">Especialidade</label>
+                                class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Especialidade</label>
                             <select v-model="filterForm.esp_cod"
-                                class="mt-1 block w-full rounded-md border-gray-300 dark:bg-gray-700 dark:text-white">
-                                <option value="">Todas</option>
-                                <option v-for="e in especialidades" :key="e.esp_cod" :value="e.esp_cod">{{ e.escp_desc
-                                }}</option>
+                                class="block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                <option value="">Todas as especialidades</option>
+                                <option v-for="e in especialidades" :key="e.esp_cod" :value="e.esp_cod">{{
+                                    e.escp_desc }}</option>
                             </select>
                         </div>
-                        <div class="lg:col-span-2 flex gap-2">
+                        <div class="lg:col-span-2 flex gap-2 items-end">
                             <button type="submit"
-                                class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow">
+                                class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 px-4 rounded-lg shadow-sm transition-colors">
                                 Filtrar
                             </button>
                             <button type="button" @click="clearFilter"
-                                class="flex-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-bold py-2 px-4 rounded shadow">
+                                class="flex-1 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-semibold py-2 px-4 rounded-lg transition-colors">
                                 Limpar
                             </button>
                         </div>
@@ -126,35 +183,69 @@ const imprimirReceita = (cod: number) => {
                 </div>
 
                 <!-- Table -->
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
+                <div
+                    class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                            <thead class="bg-gray-50 dark:bg-gray-900">
-                                <tr>
+                            <thead>
+                                <tr class="bg-gray-50 dark:bg-gray-900/50">
                                     <th
-                                        class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-20">
-                                        Visualizar</th>
+                                        class="px-4 py-3 text-center text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider w-12">
+                                        N°</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Nome do Paciente</th>
+                                        class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                        Paciente</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Data do Atendimento</th>
+                                        class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
+                                        Data</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                         Médico</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Queixa Relatada</th>
+                                        class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                        Especialidade</th>
+                                    <th
+                                        class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                        Queixa</th>
+                                    <th
+                                        class="px-4 py-3 text-center text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider w-20">
+                                        Ações</th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                <tr v-for="at in dataLists" :key="at.atend_cod"
-                                    class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                            <tbody class="divide-y divide-gray-100 dark:divide-gray-700/50">
+                                <tr v-for="(at, idx) in dataLists" :key="at.atend_cod"
+                                    class="hover:bg-blue-50/40 dark:hover:bg-blue-900/10 transition-colors">
+                                    <td
+                                        class="px-4 py-3 text-center text-xs text-gray-400 dark:text-gray-500 font-medium">
+                                        {{ ((atendimentos?.current_page ?? 1) - 1) * (atendimentos?.per_page ?? 10) + idx + 1 }}
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <span
+                                            class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ at.paciente?.nome || "N/A" }}</span>
+                                    </td>
+                                    <td class="px-4 py-3 whitespace-nowrap">
+                                        <span class="text-sm text-gray-700 dark:text-gray-300">{{ formatDate(at.dt_atendimento) }}</span>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <span class="text-sm text-gray-700 dark:text-gray-300">{{ at.medico?.med_nome || '-' }}</span>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <span v-if="at.especialidade?.escp_desc"
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300">
+                                            {{ at.especialidade.escp_desc }}
+                                        </span>
+                                        <span v-else class="text-xs text-gray-400">-</span>
+                                    </td>
+                                    <td class="px-4 py-3 max-w-xs">
+                                        <span
+                                            class="text-sm text-gray-600 dark:text-gray-400 line-clamp-1">{{ at.situacao_queixa || '-' }}</span>
+                                    </td>
+                                    <td class="px-4 py-3 text-center">
                                         <button @click="abrirAtendimento(at)"
-                                            class="text-blue-500 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 p-2 rounded transition">
-                                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-900/40 dark:text-blue-400 transition-colors"
+                                            title="Ver detalhes">
+                                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                                                stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -162,205 +253,196 @@ const imprimirReceita = (cod: number) => {
                                             </svg>
                                         </button>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">{{
-                                        at.paciente?.nome || "N/A" }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">{{
-                                        at.dt_atendimento }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">{{
-                                        at.medico?.med_nome || '-' }}</td>
-                                    <td class="px-6 py-4 text-gray-900 dark:text-gray-100 truncate max-w-xs">{{
-                                        at.situacao_queixa }}</td>
                                 </tr>
                                 <tr v-if="dataLists.length === 0">
-                                    <td colspan="5" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
-                                        Nenhum registro encontrado.
+                                    <td colspan="7" class="px-6 py-16 text-center">
+                                        <div class="flex flex-col items-center gap-3">
+                                            <svg class="w-14 h-14 text-gray-300 dark:text-gray-600" fill="none"
+                                                viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                            </svg>
+                                            <p class="text-gray-500 dark:text-gray-400 font-medium">Nenhum registro
+                                                encontrado</p>
+                                            <p class="text-sm text-gray-400 dark:text-gray-500">Tente ajustar os
+                                                filtros de busca</p>
+                                        </div>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
-                    <!-- Pagination -->
-                    <div class="px-6 py-4 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+                    <div
+                        class="px-5 py-3 bg-gray-50 dark:bg-gray-900/30 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between gap-4">
+                        <span class="text-xs text-gray-500 dark:text-gray-400 flex-shrink-0">
+                            Página {{ atendimentos?.current_page ?? 1 }} de {{ atendimentos?.last_page ?? 1 }}
+                        </span>
                         <Pagination :links="atendimentos.links" />
                     </div>
                 </div>
+
             </div>
         </div>
 
         <!-- Modal -->
-        <div v-if="showModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog"
-            aria-modal="true" @keydown.esc.window="showModal = false">
-            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @click="showModal = false">
-                </div>
-                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <Transition enter-active-class="ease-out duration-200" enter-from-class="opacity-0"
+            enter-to-class="opacity-100" leave-active-class="ease-in duration-150" leave-from-class="opacity-100"
+            leave-to-class="opacity-0">
+            <div v-if="showModal" class="fixed inset-0 z-50 overflow-y-auto"
+                @keydown.esc.window="showModal = false">
+                <div class="flex items-center justify-center min-h-screen px-4 py-6">
+                    <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" @click="showModal = false"></div>
 
-                <div
-                    class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
-                    <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                        <div
-                            class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-4 mb-4">
-                            <h3 class="text-xl leading-6 font-medium text-gray-900 dark:text-white" id="modal-title">
-                                Detalhes do Atendimento #{{ activeAtendimento.atend_cod }}
-                            </h3>
-                            <button @click="showModal = false" class="text-gray-400 hover:text-gray-500">
-                                <span class="sr-only">Fechar</span>
-                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </div>
+                    <div
+                        class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-4xl overflow-hidden">
 
-                        <div class="space-y-4">
-                            <!-- Paciente, Data, Ações de Impressão -->
-                            <div class="grid grid-cols-1 sm:grid-cols-12 gap-4">
-                                <div class="col-span-12 sm:col-span-7">
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Paciente</label>
-                                    <input type="text" disabled :value="activeAtendimento.paciente?.nome"
-                                        class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300" />
+                        <!-- Modal Header -->
+                        <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4">
+                            <div class="flex items-center justify-between gap-4">
+                                <div class="min-w-0">
+                                    <h3 class="text-base font-semibold text-white truncate">
+                                        {{ activeAtendimento.paciente?.nome || 'Detalhes do Atendimento' }}
+                                    </h3>
+                                    <p class="text-blue-200 text-xs mt-0.5">{{ formatDate(activeAtendimento.dt_atendimento) }}</p>
                                 </div>
-                                <div class="col-span-12 sm:col-span-3">
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Data do
-                                        Atendimento</label>
-                                    <input type="text" disabled :value="activeAtendimento.dt_atendimento"
-                                        class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300" />
-                                </div>
-                                <div class="col-span-12 sm:col-span-2 flex flex-col justify-end space-y-2">
+                                <div class="flex items-center gap-2 flex-shrink-0">
                                     <button @click="imprimirFicha(activeAtendimento.atend_cod)"
-                                        class="bg-green-600 hover:bg-green-700 text-white p-2 rounded shadow w-full flex items-center justify-center gap-2"
-                                        title="Imprimir Ficha">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        class="inline-flex items-center gap-1.5 bg-white/20 hover:bg-white/30 text-white text-xs font-medium py-1.5 px-3 rounded-lg transition-colors">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z">
-                                            </path>
+                                                d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
                                         </svg>
                                         Ficha
                                     </button>
                                     <button @click="imprimirReceita(activeAtendimento.atend_cod)"
-                                        class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded shadow w-full flex items-center justify-center gap-2"
-                                        title="Imprimir Receita">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        class="inline-flex items-center gap-1.5 bg-white/20 hover:bg-white/30 text-white text-xs font-medium py-1.5 px-3 rounded-lg transition-colors">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                                            </path>
+                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                         </svg>
                                         Receita
                                     </button>
+                                    <button @click="showModal = false"
+                                        class="w-8 h-8 inline-flex items-center justify-center rounded-lg bg-white/20 hover:bg-white/30 text-white transition-colors">
+                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- Médico, Especialidade -->
-                            <div class="grid grid-cols-1 sm:grid-cols-12 gap-4">
-                                <div class="col-span-12 sm:col-span-8">
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Médico(a)</label>
-                                    <input type="text" disabled :value="activeAtendimento.medico?.med_nome"
-                                        class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300" />
-                                </div>
-                                <div class="col-span-12 sm:col-span-4">
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Especialidade</label>
-                                    <input type="text" disabled :value="activeAtendimento.especialidade?.escp_desc"
-                                        class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300" />
-                                </div>
-                            </div>
+                        <!-- Modal Body -->
+                        <div class="p-6 space-y-5 max-h-[72vh] overflow-y-auto">
 
-                            <!-- Enfermeiro -->
+                            <!-- Equipe Médica -->
                             <div>
-                                <label
-                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300">Enfermeiro(a)</label>
-                                <input type="text" disabled :value="activeAtendimento.enfermeiro?.enf_nome"
-                                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300" />
+                                <h4
+                                    class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">
+                                    Equipe Médica</h4>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                    <div class="bg-gray-50 dark:bg-gray-700/40 rounded-xl p-3">
+                                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Médico(a)</p>
+                                        <p class="text-sm font-medium text-gray-900 dark:text-white">{{
+                                            activeAtendimento.medico?.med_nome || '-' }}</p>
+                                    </div>
+                                    <div class="bg-gray-50 dark:bg-gray-700/40 rounded-xl p-3">
+                                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Especialidade</p>
+                                        <p class="text-sm font-medium text-gray-900 dark:text-white">{{
+                                            activeAtendimento.especialidade?.escp_desc || '-' }}</p>
+                                    </div>
+                                    <div class="bg-gray-50 dark:bg-gray-700/40 rounded-xl p-3">
+                                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Enfermeiro(a)</p>
+                                        <p class="text-sm font-medium text-gray-900 dark:text-white">{{
+                                            activeAtendimento.enfermeiro?.enf_nome || '-' }}</p>
+                                    </div>
+                                </div>
                             </div>
 
-                            <!-- Situação/Queixa e CID-10 -->
-                            <div class="grid grid-cols-1 sm:grid-cols-12 gap-4">
-                                <div class="col-span-12 sm:col-span-9">
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Situação/Queixa</label>
-                                    <input type="text" disabled :value="activeAtendimento.situacao_queixa"
-                                        class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300" />
-                                </div>
-                                <div class="col-span-12 sm:col-span-3">
-                                    <label
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">CID-10</label>
-                                    <input type="text" disabled :value="activeAtendimento.cid10"
-                                        class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300" />
+                            <!-- Clínico -->
+                            <div>
+                                <h4
+                                    class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">
+                                    Informações Clínicas</h4>
+                                <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                                    <div class="sm:col-span-3 bg-gray-50 dark:bg-gray-700/40 rounded-xl p-3">
+                                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Situação / Queixa</p>
+                                        <p class="text-sm text-gray-900 dark:text-white">{{
+                                            activeAtendimento.situacao_queixa || '-' }}</p>
+                                    </div>
+                                    <div class="bg-gray-50 dark:bg-gray-700/40 rounded-xl p-3">
+                                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">CID-10</p>
+                                        <p class="text-sm font-mono font-bold text-gray-900 dark:text-white">{{
+                                            activeAtendimento.cid10 || '-' }}</p>
+                                    </div>
                                 </div>
                             </div>
 
                             <!-- Sinais Vitais -->
-                            <div class="grid grid-cols-2 md:grid-cols-7 gap-4">
-                                <div>
-                                    <label
-                                        class="block text-xs font-medium text-gray-700 dark:text-gray-300">Pressão</label>
-                                    <input type="text" disabled :value="activeAtendimento.mmhg"
-                                        class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-center" />
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">FC
-                                        (bpm)</label>
-                                    <input type="text" disabled :value="activeAtendimento.bpm"
-                                        class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-center" />
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">FR
-                                        (rpm)</label>
-                                    <input type="text" disabled :value="activeAtendimento.rpm"
-                                        class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-center" />
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">SPO2
-                                        (%)</label>
-                                    <input type="text" disabled :value="activeAtendimento.spo2"
-                                        class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-center" />
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">Temp
-                                        °C</label>
-                                    <input type="text" disabled :value="activeAtendimento.temp"
-                                        class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-center" />
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">Peso
-                                        (Kg)</label>
-                                    <input type="text" disabled :value="activeAtendimento.kg"
-                                        class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-center" />
-                                </div>
-                                <div>
-                                    <label
-                                        class="block text-xs font-medium text-gray-700 dark:text-gray-300">HGT</label>
-                                    <input type="text" disabled :value="activeAtendimento.hgt"
-                                        class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-center" />
+                            <div>
+                                <h4
+                                    class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">
+                                    Sinais Vitais</h4>
+                                <div class="grid grid-cols-4 sm:grid-cols-7 gap-2">
+                                    <div v-for="sinal in [
+                                        { label: 'Pressão', unit: 'mmHg', value: activeAtendimento.mmhg },
+                                        { label: 'FC', unit: 'bpm', value: activeAtendimento.bpm },
+                                        { label: 'FR', unit: 'rpm', value: activeAtendimento.rpm },
+                                        { label: 'SPO2', unit: '%', value: activeAtendimento.spo2 },
+                                        { label: 'Temp', unit: '°C', value: activeAtendimento.temp },
+                                        { label: 'Peso', unit: 'kg', value: activeAtendimento.kg },
+                                        { label: 'HGT', unit: 'mg/dl', value: activeAtendimento.hgt },
+                                    ]" :key="sinal.label"
+                                        class="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-2.5 text-center">
+                                        <p class="text-xs text-blue-500 dark:text-blue-400 font-semibold">{{
+                                            sinal.label }}</p>
+                                        <p class="text-base font-bold text-gray-900 dark:text-white mt-0.5">{{
+                                            sinal.value || '-' }}</p>
+                                        <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{{ sinal.unit }}</p>
+                                    </div>
                                 </div>
                             </div>
 
                             <!-- Descrição e Receituário -->
-                            <div>
-                                <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">Descrição do
-                                    Caso</label>
-                                <textarea rows="3" disabled :value="activeAtendimento.desc_caso"
-                                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300"></textarea>
-                            </div>
-                            <div>
-                                <label
-                                    class="block text-xs font-medium text-gray-700 dark:text-gray-300">Receituário</label>
-                                <textarea rows="3" disabled :value="activeAtendimento.receituario"
-                                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300"></textarea>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <h4
+                                        class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">
+                                        Descrição do Caso</h4>
+                                    <div
+                                        class="bg-gray-50 dark:bg-gray-700/40 rounded-xl p-3 min-h-[80px]">
+                                        <p class="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{{
+                                            activeAtendimento.desc_caso || 'Não informado' }}</p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4
+                                        class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">
+                                        Receituário</h4>
+                                    <div
+                                        class="bg-gray-50 dark:bg-gray-700/40 rounded-xl p-3 min-h-[80px]">
+                                        <p class="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{{
+                                            activeAtendimento.receituario || 'Não informado' }}</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div
-                        class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse border-t border-gray-200 dark:border-gray-600">
-                        <button type="button" @click="showModal = false"
-                            class="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white dark:bg-gray-800 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 sm:w-auto sm:text-sm">
-                            Fechar
-                        </button>
+
+                        <!-- Modal Footer -->
+                        <div
+                            class="px-6 py-4 bg-gray-50 dark:bg-gray-900/30 border-t border-gray-200 dark:border-gray-700 flex justify-end">
+                            <button @click="showModal = false"
+                                class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
+                                Fechar
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </Transition>
+
     </AppLayout>
 </template>

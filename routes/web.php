@@ -28,6 +28,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/atendimento/{ATEND_COD?}',[AtendimentoController::class,'index'])->name('atendimento');
     Route::post('/atendimento', [AtendimentoController::class,'store'])->name('atendimento.store');
     Route::get('/historico', [AtendimentoController::class,'historico'])->name('historico');
+    Route::get('/historico-exportar', [AtendimentoController::class,'exportarHistorico'])->name('historico.exportar');
     Route::get('/historico/{ATEND_COD}', [AtendimentoController::class,'registroAtendimento'])->name('historico.show');
 
     /**Medico */

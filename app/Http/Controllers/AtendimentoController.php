@@ -96,6 +96,30 @@ class AtendimentoController extends Controller
     }
 
     /**
+     * Exporta o histórico filtrado como relatório imprimível (PDF via browser).
+     */
+    public function exportarHistorico(Request $request)
+    {
+        $dados = $this->atendimentoService->getHistoricoParaExportar($request->all());
+        $opcoes = $this->atendimentoService->getOpcoesHistorico();
+        $filtros = $request->only(['nome', 'dataInicio', 'dataFim', 'med_cod', 'esp_cod']);
+
+        if (!empty($filtros['med_cod'])) {
+            $medico = collect($opcoes['medicos'])->firstWhere('med_cod', $filtros['med_cod']);
+            $filtros['med_nome'] = $medico?->med_nome ?? null;
+        }
+        if (!empty($filtros['esp_cod'])) {
+            $esp = collect($opcoes['especialidades'])->firstWhere('esp_cod', $filtros['esp_cod']);
+            $filtros['esp_nome'] = $esp?->escp_desc ?? null;
+        }
+
+        return Inertia::render('Reports/HistoricoAtendimentos', [
+            'dados'   => $dados,
+            'filtros' => $filtros,
+        ]);
+    }
+
+    /**
      * Carrega a visão de Impressão (Ficha de Atendimento).
      */
     public function gerarfichaAtendimento($atend_cod)
