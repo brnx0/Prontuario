@@ -5,10 +5,12 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str; 
+use Illuminate\Support\Str;
+use App\Models\Medico;
+use App\Models\Enfermeiro;
 
 class Paciente extends Model{
-    protected $fillable = ['nome','cpf','filicao_1','filicao_2','cep','logradouro','nascimento','cidade','uf','tel_1','tel_2','email','alergias','medicamentos','cartao_sus','prof_cod','ativo'];
+    protected $fillable = ['nome','cpf','filicao_1','filicao_2','cep','logradouro','nascimento','cidade','uf','tel_1','tel_2','email','alergias','medicamentos','cartao_sus','profissao','prof_cod','ativo','situacao','cid10','mmhg','bpm','rpm','spo2','temp','kg','hgt','descricao_caso','sintomas','med_cod','enf_cod'];
     const updated_at = null;
     const created_at = null;
     protected $primaryKey = 'pac_cod';
@@ -37,6 +39,14 @@ class Paciente extends Model{
     }
     public function atendimento(){
         return $this->hasMany(Atendimento::class,'pac_cod','pac_cod');
+    }
+
+    public function medico(){
+        return $this->belongsTo(Medico::class,'med_cod','med_cod');
+    }
+
+    public function enfermeiro(){
+        return $this->belongsTo(Enfermeiro::class,'enf_cod','enf_cod');
     }
 
 }

@@ -17,7 +17,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/receita/{Codigo}', [AtendimentoController::class,'gerarReceita'])->name('receita');
 
     /*Pacientes*/
-    Route::get('/paciente/{idPaciente}', [PacienteController::class,'getPaciente'])->name('paciente.show');
+    Route::get('/paciente/create', [PacienteController::class, 'create'])->name('paciente.create');
+    Route::get('/paciente/verificar-duplicata', [PacienteController::class, 'verificarDuplicata'])->name('paciente.duplicata');
+    Route::get('/paciente-exportar', [PacienteController::class, 'exportarHistorico'])->name('paciente.exportar');
+    Route::get('/paciente-ficha/{id}', [PacienteController::class, 'exportarFicha'])->name('paciente.ficha');
+    Route::get('/paciente/{idPaciente}', [PacienteController::class, 'show'])->name('paciente.show');
     Route::get('/paciente',[PacienteController::class, 'index'])->name('paciente');
     Route::post('/paciente', [PacienteController::class, 'store'])->name('paciente.store');
     Route::put('/paciente/{id}', [PacienteController::class, 'update'])->name('paciente.update');

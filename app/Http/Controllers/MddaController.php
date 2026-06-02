@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\EpidemiologicalWeek;
 use App\Models\MddaRelatorio;
+use App\Models\Paciente;
 use App\Services\MddaService;
 use Exception;
 use Illuminate\Http\Request;
@@ -31,6 +32,13 @@ class MddaController extends Controller
             'anoAtual'      => EpidemiologicalWeek::getCurrentYear(),
             'nomeUsuario'   => auth()->user()?->name ?? '',
         ]);
+    }
+
+    private function getPacientesAtivos(): \Illuminate\Support\Collection
+    {
+        return Paciente::where('ativo', 'S')
+            ->orderBy('nome')
+            ->get(['pac_cod', 'nome', 'nascimento']);
     }
 
     private const MUNICIPIO     = 'PREFEITURA MUNICIPAL DE SANTO AMARO';
@@ -65,7 +73,7 @@ class MddaController extends Controller
             return redirect("/mdda/{$relatorio->id}/editar")
                 ->with($result['isNew'] ? 'success' : 'info',
                     $result['isNew']
-                        ? 'Relatório criado com os atendimentos da semana.'
+                        ? 'Relatório criado. Adicione os pacientes manualmente.'
                         : 'Já existe um relatório para esta semana. Redirecionado para edição.');
         } catch (Exception $e) {
             return redirect()->back()->with('error', 'Erro ao criar relatório: ' . $e->getMessage());
@@ -80,6 +88,7 @@ class MddaController extends Controller
 
             return Inertia::render('Mdda/Form', [
                 'relatorio' => $dados,
+                'pacientes' => $this->getPacientesAtivos(),
             ]);
         } catch (Exception $e) {
             return abort(404);

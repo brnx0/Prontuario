@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use App\Models\Paciente;
 
 class MddaCaso extends Model
 {
@@ -17,6 +18,7 @@ class MddaCaso extends Model
         'id',
         'mdda_relatorio_id',
         'atendimento_id',
+        'pac_cod',
         'numero_ordem',
         'data_atendimento',
         'nome_paciente',
@@ -46,5 +48,10 @@ class MddaCaso extends Model
     public function atendimento()
     {
         return $this->belongsTo(Atendimento::class, 'atendimento_id', 'atend_cod');
+    }
+
+    public function paciente()
+    {
+        return $this->belongsTo(Paciente::class, 'pac_cod', 'pac_cod');
     }
 }

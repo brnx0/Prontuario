@@ -91,33 +91,8 @@ class MddaService
 
     public function popularCasos(MddaRelatorio $relatorio): void
     {
-        $atendimentos = $this->extrairDaSemana(
-            $relatorio->semana_epidemiologica,
-            $relatorio->ano
-        );
-
-        DB::transaction(function () use ($relatorio, $atendimentos) {
-            $relatorio->casos()->delete();
-
-            foreach ($atendimentos as $index => $atendimento) {
-                $faixa = $this->calcularFaixaEtaria($atendimento);
-                $dtAtend = Carbon::parse($atendimento->getRawOriginal('dt_atendimento'));
-
-                MddaCaso::create([
-                    'mdda_relatorio_id'     => $relatorio->id,
-                    'atendimento_id'        => $atendimento->atend_cod,
-                    'numero_ordem'          => $index + 1,
-                    'data_atendimento'      => $dtAtend->format('Y-m-d'),
-                    'nome_paciente'         => $atendimento->paciente?->nome ?? '',
-                    'procedencia'           => null,
-                    'faixa_etaria'          => $faixa['faixa'],
-                    'idade_display'         => $faixa['display'],
-                    'zona'                  => 'IGN',
-                    'data_primeiros_sintomas' => null,
-                    'plano_tratamento'      => 'IGN',
-                ]);
-            }
-        });
+        // Atendimentos removidos do sistema. Relatório criado em branco.
+        $relatorio->casos()->delete();
     }
 
     public function syncCasos(MddaRelatorio $relatorio, array $casos): void
@@ -129,6 +104,7 @@ class MddaService
                 MddaCaso::create([
                     'mdda_relatorio_id'       => $relatorio->id,
                     'atendimento_id'          => $caso['atendimento_id'] ?? null,
+                    'pac_cod'                 => $caso['pac_cod'] ?? null,
                     'numero_ordem'            => $index + 1,
                     'data_atendimento'        => $caso['data_atendimento'],
                     'nome_paciente'           => $caso['nome_paciente'],
@@ -204,6 +180,7 @@ class MddaService
             'casos'                 => $relatorio->casos->map(fn($c) => [
                 'id'                      => $c->id,
                 'atendimento_id'          => $c->atendimento_id,
+                'pac_cod'                 => $c->pac_cod,
                 'numero_ordem'            => $c->numero_ordem,
                 'data_atendimento'        => $c->data_atendimento,
                 'nome_paciente'           => $c->nome_paciente,

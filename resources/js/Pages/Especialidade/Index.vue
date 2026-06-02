@@ -138,11 +138,11 @@ const saveEspecialidade = () => {
 
                 <!-- Table -->
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                    <div>
+                        <table class="w-full divide-y divide-gray-200 dark:divide-gray-700 table-fixed">
                             <thead class="bg-gray-50 dark:bg-gray-900">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-full">
                                         Especialidade
                                     </th>
                                     <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -155,7 +155,7 @@ const saveEspecialidade = () => {
                             </thead>
                             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                                 <tr v-for="esp in dataLists" :key="esp.esp_cod">
-                                    <td class="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">
+                                    <td class="px-6 py-4 text-gray-900 dark:text-gray-100 break-words">
                                         {{ esp.escp_desc }}
                                     </td>
 

@@ -88,16 +88,7 @@ watch(() => page.props.flash, (flash: any) => {
                                     Dashboard
                                 </NavLink>
 
-                                <NavDropdown label="Atendimentos" :active="route ? (route().current('atendimento') || route().current('historico')) : false">
-                                    <DropdownLink href="/atendimento" :active="route ? route().current('atendimento') : false">
-                                        Novo Atendimento
-                                    </DropdownLink>
-                                    <DropdownLink href="/historico" :active="route ? route().current('historico') : false">
-                                        Histórico
-                                    </DropdownLink>
-                                </NavDropdown>
-
-                                <NavDropdown label="Cadastros" :active="route ? (route().current('paciente') || route().current('medico') || route().current('enfermeiro') || route().current('especialidade')) : false">
+<NavDropdown label="Cadastros" :active="route ? (route().current('paciente') || route().current('medico') || route().current('enfermeiro') || route().current('especialidade')) : false">
                                     <DropdownLink href="/paciente" :active="route ? route().current('paciente') : false">
                                         Pacientes
                                     </DropdownLink>
@@ -161,16 +152,7 @@ watch(() => page.props.flash, (flash: any) => {
                             Dashboard
                         </Link>
 
-                        <!-- Atendimentos -->
-                        <div class="ps-3 pe-4 py-2 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Atendimentos</div>
-                        <Link href="/atendimento" class="block w-full ps-6 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600">
-                            Novo Atendimento
-                        </Link>
-                        <Link href="/historico" class="block w-full ps-6 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600">
-                            Histórico
-                        </Link>
-
-                        <!-- Cadastros -->
+<!-- Cadastros -->
                         <div class="ps-3 pe-4 py-2 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Cadastros</div>
                         <Link href="/paciente" class="block w-full ps-6 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600">
                             Pacientes

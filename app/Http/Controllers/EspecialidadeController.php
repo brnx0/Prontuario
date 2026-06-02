@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Atendimento;
 use App\Services\EspecialidadeService;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class EspecialidadeController extends Controller
@@ -26,7 +28,12 @@ class EspecialidadeController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'descEspc' => 'required'
+            'descEspc' => [
+                'required',
+                Rule::unique('especialidades', 'escp_desc')->whereNull('deleted_at'),
+            ]
+        ], [
+            'descEspc.unique' => 'Já existe uma especialidade com esta descrição.',
         ]);
 
         try {
@@ -41,7 +48,12 @@ class EspecialidadeController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'descEspc' => 'required'
+            'descEspc' => [
+                'required',
+                Rule::unique('especialidades', 'escp_desc')->ignore($id, 'esp_cod'),
+            ]
+        ], [
+            'descEspc.unique' => 'Já existe uma especialidade com esta descrição.',
         ]);
 
         try {
@@ -74,14 +86,19 @@ class EspecialidadeController extends Controller
         }
     }
 
-    public function destroy(Request $request) 
+    public function destroy(Request $request)
     {
+        $count = Atendimento::where('esp_cod', $request->espc_cod)->count();
+        if ($count > 0) {
+            return back()->with('error', "Não é possível excluir: esta especialidade está vinculada a {$count} atendimento(s).");
+        }
+
         try {
             $this->especialidadeService->deletarEspecialidade($request->espc_cod);
             Cache::forget('dashboard_options');
             return back()->with('success', 'Registro Excluído com sucesso!');
         } catch (QueryException $th) {
-            return back()->with('error', $th->getMessage());
+            return back()->with('error', 'Erro ao excluir: ' . $th->getMessage());
         }
     }
 }

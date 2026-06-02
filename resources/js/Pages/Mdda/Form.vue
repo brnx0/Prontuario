@@ -6,6 +6,7 @@ import { ref, watch, computed } from 'vue';
 interface MddaCaso {
     id: string | null;
     atendimento_id: string | null;
+    pac_cod: string | null;
     numero_ordem: number;
     data_atendimento: string;
     nome_paciente: string;
@@ -28,9 +29,18 @@ interface MddaRelatorio {
     casos: MddaCaso[];
 }
 
-const props = defineProps<{ relatorio: MddaRelatorio }>();
+interface Paciente {
+    pac_cod: string;
+    nome: string;
+    nascimento: string | null; // d-m-Y from accessor
+}
 
-// ── Cálculo de Semana Epidemiológica ──────────────────────────────────────────
+const props = defineProps<{
+    relatorio: MddaRelatorio;
+    pacientes: Paciente[];
+}>();
+
+// ── Semana Epidemiológica ─────────────────────────────────────────────────────
 function getStartOfSE1(year: number): Date {
     const jan4 = new Date(year, 0, 4);
     const se1 = new Date(jan4);
@@ -43,14 +53,12 @@ function calcularSE(dateStr: string): { semana: number; ano: number } | null {
     const [y, m, d] = dateStr.split('-').map(Number);
     const date = new Date(y, m - 1, d);
     const se1 = getStartOfSE1(date.getFullYear());
-
     if (date < se1) {
         const prevSe1 = getStartOfSE1(date.getFullYear() - 1);
         return { semana: Math.floor((date.getTime() - prevSe1.getTime()) / (7 * 86400000)) + 1, ano: date.getFullYear() - 1 };
     }
     const nextSe1 = getStartOfSE1(date.getFullYear() + 1);
     if (date >= nextSe1) return { semana: 1, ano: date.getFullYear() + 1 };
-
     return { semana: Math.floor((date.getTime() - se1.getTime()) / (7 * 86400000)) + 1, ano: date.getFullYear() };
 }
 
@@ -64,7 +72,6 @@ function formatDate(date: Date): string {
     return date.toLocaleDateString('pt-BR');
 }
 
-// Inicializa o datepicker com o primeiro dia da SE atual do relatório
 const dataSemana = ref(seToDateStr(props.relatorio.semana_epidemiologica, props.relatorio.ano));
 
 const rangeLabel = computed(() => {
@@ -75,6 +82,42 @@ const rangeLabel = computed(() => {
     const fim = new Date(inicio.getTime() + 6 * 86400000);
     return `${formatDate(inicio)} a ${formatDate(fim)}`;
 });
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ── Cálculo de faixa etária (nascimento d-m-Y ou Y-m-d + data_atendimento Y-m-d) ──
+function calcularFaixaEtariaLocal(nascimentoRaw: string | null, dataAtendimento: string): { faixa: string; display: string } {
+    if (!nascimentoRaw || !dataAtendimento) return { faixa: 'IGN', display: '' };
+
+    let nascDate: Date;
+    if (nascimentoRaw.includes('-')) {
+        const parts = nascimentoRaw.split('-');
+        if (parts[0].length === 2) {
+            // d-m-Y
+            nascDate = new Date(Number(parts[2]), Number(parts[1]) - 1, Number(parts[0]));
+        } else {
+            // Y-m-d
+            nascDate = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+        }
+    } else {
+        return { faixa: 'IGN', display: '' };
+    }
+
+    const atendParts = dataAtendimento.split('-').map(Number);
+    const atendDate = new Date(atendParts[0], atendParts[1] - 1, atendParts[2]);
+
+    const diffMs = atendDate.getTime() - nascDate.getTime();
+    if (diffMs < 0) return { faixa: 'IGN', display: '' };
+
+    const dias = Math.floor(diffMs / 86400000);
+    const meses = Math.floor(dias / 30.4375);
+    const anos = Math.floor(dias / 365.25);
+
+    if (dias <= 30) return { faixa: '<1', display: `${dias} dias` };
+    if (meses < 12) return { faixa: '<1', display: `${meses} meses` };
+    if (anos < 5)  return { faixa: '1a4', display: `${anos} anos` };
+    if (anos < 10) return { faixa: '5a9', display: `${anos} anos` };
+    return { faixa: '10+', display: `${anos} anos` };
+}
 // ─────────────────────────────────────────────────────────────────────────────
 
 const form = useForm({
@@ -92,8 +135,6 @@ watch(dataSemana, (val) => {
     }
 });
 
-// Atualiza o formulário quando o Inertia trouxer novos dados do servidor
-// (ex: após sincronização de atendimentos)
 watch(() => props.relatorio, (novo) => {
     form.semana_epidemiologica = novo.semana_epidemiologica;
     form.ano = novo.ano;
@@ -102,9 +143,57 @@ watch(() => props.relatorio, (novo) => {
     dataSemana.value = seToDateStr(novo.semana_epidemiologica, novo.ano);
 }, { deep: true });
 
+// ── Patient picker ────────────────────────────────────────────────────────────
+const pickerAberto = ref<number | null>(null);
+const pickerQuery = ref('');
+
+const pacientesFiltrados = computed(() => {
+    if (!pickerQuery.value) return props.pacientes.slice(0, 10);
+    const q = pickerQuery.value.toLowerCase();
+    return props.pacientes.filter(p => p.nome.toLowerCase().includes(q)).slice(0, 10);
+});
+
+const abrirPicker = (index: number) => {
+    pickerAberto.value = index;
+    pickerQuery.value = '';
+};
+
+const fecharPicker = () => {
+    pickerAberto.value = null;
+    pickerQuery.value = '';
+};
+
+const selecionarPaciente = (index: number, paciente: Paciente) => {
+    const caso = form.casos[index];
+    caso.pac_cod       = paciente.pac_cod;
+    caso.nome_paciente = paciente.nome;
+
+    const faixa = calcularFaixaEtariaLocal(paciente.nascimento, caso.data_atendimento);
+    caso.faixa_etaria  = faixa.faixa;
+    caso.idade_display = faixa.display;
+
+    fecharPicker();
+};
+
+const limparPaciente = (index: number) => {
+    form.casos[index].pac_cod = null;
+};
+
+// Recalcula faixa quando data_atendimento muda e há pac_cod vinculado
+const onDataAtendimentoChange = (index: number) => {
+    const caso = form.casos[index];
+    if (!caso.pac_cod) return;
+    const pac = props.pacientes.find(p => p.pac_cod === caso.pac_cod);
+    if (!pac) return;
+    const faixa = calcularFaixaEtariaLocal(pac.nascimento, caso.data_atendimento);
+    caso.faixa_etaria  = faixa.faixa;
+    caso.idade_display = faixa.display;
+};
+// ─────────────────────────────────────────────────────────────────────────────
+
 const addLinha = () => {
     form.casos.push({
-        id: null, atendimento_id: null,
+        id: null, atendimento_id: null, pac_cod: null,
         numero_ordem: form.casos.length + 1,
         data_atendimento: '', nome_paciente: '', procedencia: '',
         faixa_etaria: 'IGN', idade_display: '', zona: 'IGN',
@@ -133,16 +222,6 @@ const finalizar = () => {
     if (confirm('Deseja finalizar este relatório?')) {
         router.post(`/mdda/${props.relatorio.id}/finalizar`);
     }
-};
-
-const sincronizando = ref(false);
-
-const sincronizar = () => {
-    if (!confirm('Sincronizar buscará atendimentos novos da semana e os adicionará ao relatório sem remover os registros existentes. Continuar?')) return;
-    sincronizando.value = true;
-    router.post(`/mdda/${props.relatorio.id}/sincronizar`, {}, {
-        onFinish: () => { sincronizando.value = false; },
-    });
 };
 </script>
 
@@ -173,25 +252,17 @@ const sincronizar = () => {
                         Identificação
                     </h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
-
-                        <!-- Datepicker de semana -->
                         <div>
-                            <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-                                Data da semana
-                            </label>
+                            <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Data da semana</label>
                             <input v-model="dataSemana" type="date"
                                 class="block w-full rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white text-sm shadow-sm" />
                         </div>
-
-                        <!-- SE calculada -->
                         <div class="p-3 bg-blue-50 dark:bg-blue-900/20 rounded border border-blue-200 dark:border-blue-800">
                             <p class="text-sm font-semibold text-blue-800 dark:text-blue-200">
                                 SE {{ form.semana_epidemiologica }} / {{ form.ano }}
                             </p>
                             <p class="text-xs text-blue-600 dark:text-blue-400 mt-0.5">{{ rangeLabel }}</p>
                         </div>
-
-                        <!-- Responsável -->
                         <div>
                             <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Responsável</label>
                             <input v-model="form.responsavel_nome" type="text" maxlength="255"
@@ -214,7 +285,7 @@ const sincronizar = () => {
 
                     <div v-if="form.casos.length === 0"
                         class="text-center text-gray-400 dark:text-gray-500 py-10 text-sm">
-                        Nenhum atendimento encontrado para esta semana. Use o botão acima para adicionar manualmente.
+                        Nenhum paciente adicionado. Use o botão acima para inserir.
                     </div>
 
                     <div v-else class="overflow-x-auto">
@@ -223,7 +294,7 @@ const sincronizar = () => {
                                 <tr class="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
                                     <th class="border border-gray-300 dark:border-gray-600 px-2 py-1 text-center w-8">Nº</th>
                                     <th class="border border-gray-300 dark:border-gray-600 px-2 py-1 text-left w-28">Data Atend.</th>
-                                    <th class="border border-gray-300 dark:border-gray-600 px-2 py-1 text-left min-w-[160px]">Nome</th>
+                                    <th class="border border-gray-300 dark:border-gray-600 px-2 py-1 text-left min-w-[200px]">Nome</th>
                                     <th class="border border-gray-300 dark:border-gray-600 px-2 py-1 text-left w-24">Faixa Etária</th>
                                     <th class="border border-gray-300 dark:border-gray-600 px-2 py-1 text-left w-14">Idade</th>
                                     <th class="border border-gray-300 dark:border-gray-600 px-2 py-1 text-left min-w-[180px]">Procedência</th>
@@ -239,18 +310,79 @@ const sincronizar = () => {
                                     <td class="border border-gray-200 dark:border-gray-600 px-2 py-1 text-center text-gray-500">
                                         {{ caso.numero_ordem }}
                                     </td>
+
+                                    <!-- Data Atendimento -->
                                     <td class="border border-gray-200 dark:border-gray-600 px-1 py-1">
                                         <input v-model="caso.data_atendimento" type="date"
-                                            :readonly="!!caso.atendimento_id"
-                                            :class="caso.atendimento_id ? 'bg-gray-100 dark:bg-gray-600 cursor-not-allowed text-gray-500 dark:text-gray-400' : 'bg-transparent dark:text-white'"
-                                            class="w-full text-xs rounded border-0 focus:ring-1 focus:ring-blue-500 px-1" />
+                                            @change="onDataAtendimentoChange(index)"
+                                            class="w-full text-xs rounded border-0 bg-transparent dark:text-white focus:ring-1 focus:ring-blue-500 px-1" />
                                     </td>
-                                    <td class="border border-gray-200 dark:border-gray-600 px-1 py-1">
-                                        <input v-model="caso.nome_paciente" type="text" required maxlength="255"
-                                            :readonly="!!caso.atendimento_id"
-                                            :class="caso.atendimento_id ? 'bg-gray-100 dark:bg-gray-600 cursor-not-allowed text-gray-500 dark:text-gray-400' : 'bg-transparent dark:text-white'"
-                                            class="w-full text-xs rounded border-0 focus:ring-1 focus:ring-blue-500 px-1" />
+
+                                    <!-- Nome com picker de paciente -->
+                                    <td class="border border-gray-200 dark:border-gray-600 px-1 py-1 relative">
+                                        <div class="flex items-center gap-1">
+                                            <!-- Indicador de paciente vinculado -->
+                                            <span v-if="caso.pac_cod"
+                                                class="flex-shrink-0 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center"
+                                                title="Paciente cadastrado vinculado">
+                                                <svg class="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/>
+                                                </svg>
+                                            </span>
+                                            <input v-model="caso.nome_paciente" type="text" required maxlength="255"
+                                                @focus="fecharPicker"
+                                                class="flex-1 min-w-0 text-xs rounded border-0 bg-transparent dark:text-white focus:ring-1 focus:ring-blue-500 px-1" />
+                                            <!-- Botão picker -->
+                                            <button type="button" @click.stop="abrirPicker(index)"
+                                                class="flex-shrink-0 text-blue-400 hover:text-blue-600 dark:text-blue-500 dark:hover:text-blue-300"
+                                                title="Buscar paciente cadastrado">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z"/>
+                                                </svg>
+                                            </button>
+                                            <!-- Limpar vínculo -->
+                                            <button v-if="caso.pac_cod" type="button" @click="limparPaciente(index)"
+                                                class="flex-shrink-0 text-gray-400 hover:text-red-500"
+                                                title="Desvincular paciente">
+                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+
+                                        <!-- Dropdown picker -->
+                                        <div v-if="pickerAberto === index"
+                                            class="absolute left-0 top-full mt-1 z-50 w-72 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded shadow-xl">
+                                            <div class="p-2 border-b border-gray-200 dark:border-gray-700">
+                                                <input v-model="pickerQuery" type="text" placeholder="Buscar paciente..."
+                                                    class="block w-full text-xs rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-2 py-1.5"
+                                                    @click.stop
+                                                    autofocus />
+                                            </div>
+                                            <ul class="max-h-48 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-700">
+                                                <li v-for="pac in pacientesFiltrados" :key="pac.pac_cod"
+                                                    @click="selecionarPaciente(index, pac)"
+                                                    class="px-3 py-2 cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/20 text-xs">
+                                                    <p class="font-medium text-gray-900 dark:text-white">{{ pac.nome }}</p>
+                                                    <p class="text-gray-500 dark:text-gray-400">
+                                                        Nasc: {{ pac.nascimento || '-' }}
+                                                    </p>
+                                                </li>
+                                                <li v-if="pacientesFiltrados.length === 0"
+                                                    class="px-3 py-3 text-xs text-gray-400 dark:text-gray-500 text-center">
+                                                    Nenhum paciente encontrado
+                                                </li>
+                                            </ul>
+                                            <div class="p-2 border-t border-gray-200 dark:border-gray-700 text-right">
+                                                <button type="button" @click="fecharPicker"
+                                                    class="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400">
+                                                    Fechar
+                                                </button>
+                                            </div>
+                                        </div>
                                     </td>
+
                                     <td class="border border-gray-200 dark:border-gray-600 px-1 py-1">
                                         <select v-model="caso.faixa_etaria"
                                             class="w-full text-xs rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white">
@@ -303,6 +435,7 @@ const sincronizar = () => {
 
                     <!-- Legenda -->
                     <div class="mt-4 text-xs text-gray-400 dark:text-gray-500 space-y-0.5">
+                        <p>💡 Clique em 🔍 na coluna Nome para buscar um paciente cadastrado. A faixa etária é calculada automaticamente ao selecionar.</p>
                         <p>* Faixa etária: em dias até 1 mês, em meses até 1 ano, em anos para os demais.</p>
                         <p>** Plano A = sem desidratação/domiciliar; B = desidratação/observação (TRO); C = grave/reidratação venosa.</p>
                     </div>
@@ -322,11 +455,6 @@ const sincronizar = () => {
                             class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded shadow disabled:opacity-50 transition">
                             Salvar
                         </button>
-                        <button type="button" @click="sincronizar" :disabled="sincronizando || form.processing"
-                            class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-6 rounded shadow disabled:opacity-50 transition"
-                            title="Adiciona atendimentos novos da semana sem remover os registros existentes">
-                            {{ sincronizando ? 'Sincronizando...' : 'Sincronizar Atendimentos' }}
-                        </button>
                         <button type="button" @click="finalizar"
                             :disabled="relatorio.status === 'finalizado' || form.processing"
                             class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded shadow disabled:opacity-50 transition">
@@ -343,5 +471,8 @@ const sincronizar = () => {
                 </div>
             </div>
         </div>
+
+        <!-- Overlay para fechar o picker ao clicar fora -->
+        <div v-if="pickerAberto !== null" class="fixed inset-0 z-40" @click="fecharPicker"></div>
     </AppLayout>
 </template>
