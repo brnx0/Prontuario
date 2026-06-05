@@ -65,6 +65,7 @@ onMounted(() => {
                     <div class="logo-text">SECRETARIA DE VIGILÂNCIA EM SAÚDE</div>
                 </td>
                 <td class="title-cell">
+                    <div class="title-hospital">HOSPITAL NOSSA SENHORA DA NATIVIDADE</div>
                     <div class="title-main">IMPRESSO I - MONITORIZAÇÃO DAS DOENÇAS DIARREICAS AGUDAS</div>
                     <div class="title-sub">PLANILHA DE CASOS</div>
                 </td>
@@ -176,6 +177,7 @@ body { background: white; }
 .logo-cell { width: 80px; border-right: 1px solid #000; font-size: 6pt; line-height: 1.3; }
 .logo-text { font-weight: bold; }
 .title-cell { text-align: center; }
+.title-hospital { font-size: 9pt; font-weight: bold; margin-bottom: 2px; }
 .title-main { font-size: 10pt; font-weight: bold; }
 .title-sub { font-size: 9pt; font-weight: bold; margin-top: 2px; }
 .se-cell { width: 120px; border-left: 1px solid #000; font-size: 7pt; text-align: center; line-height: 1.5; }

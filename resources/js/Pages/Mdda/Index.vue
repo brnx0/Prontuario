@@ -29,9 +29,14 @@ defineProps<{ relatorios: Paginate<Relatorio> }>();
     <AppLayout>
         <template #header>
             <div class="flex items-center justify-between">
-                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                    MDDA — Monitorização das Doenças Diarreicas Agudas
-                </h2>
+                <div>
+                    <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                        MDDA — Monitorização das Doenças Diarreicas Agudas
+                    </h2>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+                        Hospital Nossa Senhora da Natividade
+                    </p>
+                </div>
                 <a href="/mdda/novo"
                     class="ml-3 bg-green-600 hover:bg-green-700 text-white text-sm font-bold py-2 px-5 rounded shadow transition">
                     + Novo Relatório
